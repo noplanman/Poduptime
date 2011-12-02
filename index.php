@@ -101,18 +101,18 @@ is mostly because of selfsigned or openca certs, if you need a free ssl cert get
         <br>Need help? <a href="https://diasporg.zendesk.com">Support</a>
         <br>
       </div>
+<!-- Piwik --> 
 <script type="text/javascript">
-var clicky_site_ids = clicky_site_ids || [];
-clicky_site_ids.push(66500192);
-(function() {
-  var s = document.createElement('script');
-  s.type = 'text/javascript';
-  s.async = true;
-  s.src = '//static.getclicky.com/js';
-  ( document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0] ).appendChild( s );
-})();
-</script>
-<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/66500192ns.gif" /></p></noscript>
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://s.podupti.me/" : "http://s.podupti.me/");
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 2);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://s.podupti.me/piwik.php?idsite=2" style="border:0" alt="" /></p></noscript>
+<!-- End Piwik Tracking Code -->
       <script type="text/javascript">
       /* <![CDATA[ */
           (function() {

@@ -41,7 +41,7 @@ echo "</feed>";
 
 elseif ($_GET['format'] == "json") {
  $i=0;
- $sql = "SELECT * FROM pods";
+ $sql = "SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,hgitdate,hgitref,pingdomurl,pingdomlast,monthsmonitored,uptimelast7,responsetimelast7,hruntime,hencoding,dateCreated,dateUpdated,dateLaststats,hidden FROM pods";
  $result = pg_query($dbh, $sql);
  if (!$result) {
      die("Error in SQL query: " . pg_last_error());
@@ -54,7 +54,6 @@ echo '"podcount": '.json_encode($numrows);
 //
 echo '"pods": [';
  while ($row = pg_fetch_array($result)) {
-
   echo '{';
   echo '"url":"'.$method.$row["domain"].'",';
   echo '"email":"private",';
