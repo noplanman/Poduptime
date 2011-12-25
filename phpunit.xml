@@ -1,0 +1,7 @@
+<phpunit>
+  <testsuites>
+    <testsuite name="Poduptime">
+      <directory>phpunit</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
