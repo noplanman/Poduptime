@@ -1,7 +1,8 @@
 <phpunit>
   <testsuites>
-    <testsuite name="Poduptime">
-      <directory>phpunit</directory>
+    <testsuite name="poduptime">
+      <file>phpunit/main.php</file>
+      <file>phpunit/RemoteConnectTest.php</file>
     </testsuite>
   </testsuites>
 </phpunit>
