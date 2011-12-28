@@ -3,6 +3,7 @@ php:
   - 5.3
   - 5.4
 
+before_script: "./phpunit/before.sh"
 script: phpunit
 
 notifications:
