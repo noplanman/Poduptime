@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
  include('config.php');
  $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
@@ -7,7 +8,8 @@
     if (!$dbh) {
          die("Error in connection: " . pg_last_error());
      }
-//foreach pod check it and update db    
+//foreach pod check it and update db
+ $domain = ' ';    
  if ($_GET['domain']) {$domain=$_GET['domain'];$sql = "SELECT domain,pingdomurl,score FROM pods WHERE domain = '$domain'";$sleep="0";} 
  else {$sql = "SELECT domain,pingdomurl,score FROM pods";$sleep="1";}
 
@@ -22,7 +24,7 @@
      $score = $row[$i]['score'];
 #echo $score;
 //get ratings
- $userrate=0;$adminrate=0;$userratingavg="";$adminratingavg="";
+ $userrate=0;$adminrate=0;$userratingavg = array();$adminratingavg = array();$userrating = array();$adminrating = array();
  $sqlforr = "SELECT * FROM rating_comments WHERE domain = '$domain'";
  $ratings = pg_query($dbh, $sqlforr);
  if (!$ratings) {
@@ -40,8 +42,8 @@
 #echo "divided by";
 #echo $userrate;
 
-$userrating = round(array_sum($userratingavg) / $userrate,2);
-$adminrating = round(array_sum($adminratingavg) / $adminrate,2);
+if ($userrate > 0) {$userrating = round(array_sum($userratingavg) / $userrate,2);}
+if ($adminrate > 0) {$adminrating = round(array_sum($adminratingavg) / $adminrate,2);}
 #echo $domain."\n";
 #echo $userrating."\n";
 #echo $adminrating."\n";
@@ -93,7 +95,7 @@ $runtime = trim($xruntime[1]);
 preg_match('/Server: (.*?)\n/',$outputssl,$xserver);
 $server = trim($xserver[1]);
 preg_match('/Content-Encoding: (.*?)\n/',$outputssl,$xencoding);
-$encoding = trim($xencoding[1]);
+if ($xencoding) {$encoding = trim($xencoding[1]);}
 
 } elseif (stristr($output, 'Set-Cookie: _diaspora_session=')) {
 "not";$secure="false";
@@ -157,12 +159,13 @@ $ipv6="yes";
         curl_setopt($hostip, CURLOPT_MAXCONNECTS, 5);
         curl_setopt($hostip, CURLOPT_FOLLOWLOCATION, true);
         $ipraw = curl_exec($hostip);
+echo $ipraw;
         curl_close($hostip);
         $obj = json_decode($ipraw);
 
 $ipdata = "Country: ".$obj->{'countryName'}."\n";
 
-$whois = "Country: ".$obj->{'countryName'}." Region: ".$obj->{'regionName'}." City: ".$obj->{'cityName'}."\n Postal Code:".$obj->{'zipcode'}." Lat:".$obj->{'cityLattitude'}." Long:".$obj->{'cityLongitude'};
+$whois = "Country: ".$obj->{'countryName'}." Region: ".$obj->{'regionName'}." City: ".$obj->{'cityName'}."\n Lat:".$obj->{'cityLattitude'}." Long:".$obj->{'cityLongitude'};
 
 $country=$obj->{'countryName'};
 $city=$obj->{'cityName'};
