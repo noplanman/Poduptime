@@ -7,12 +7,14 @@ class WebTest extends PHPUnit_Extensions_SeleniumTestCase
     {
         $this->setBrowser('*firefox');
         $this->setBrowserUrl('http://podupti.me/');
+        $this->setHost('localhost');
+        $this->setPort(4444);
     }
  
     public function testTitle()
     {
         $this->open('http://podupti.me/');
-        $this->assertTitle('DIaspora Pod uptime - Find your new social home');
+        $this->assertTitle('Diaspora Pod uptime - Find your new social home');
     }
 }
 ?>
