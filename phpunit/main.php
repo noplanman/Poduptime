@@ -13,7 +13,6 @@ class WebTest extends PHPUnit_Extensions_SeleniumTestCase
  
     public function testTitle()
     {
-        $this->open('http://podupti.me/');
         $this->assertTitle('Diaspora Pod uptime - Find your new social home');
     }
 }
