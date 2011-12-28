@@ -4,7 +4,7 @@ php:
   - 5.4
 
 before_script: "./phpunit/before.sh"
-script: export DISPLAY=:99.0 phpunit
+script: export DISPLAY=:99.0 && phpunit
 
 notifications:
   irc: "irc.freenode.org#diasporg"
