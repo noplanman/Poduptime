@@ -79,8 +79,9 @@ s1.parentNode.insertBefore(s, s1);
         <?php include("show.php"); ?>
       </div>
       <div id="add">
-        Pod Host? <u style="cursor: pointer; cursor: hand;">Click here</u> to manage your listing.<br>
-        Our source is on <a href="https://github.com/diasporg/Poduptime">GitHub</a><br><br>
+        Pod Host? <u style="cursor: pointer; cursor: hand;">Click here</u> to add/manage your listing.<br>
+        Poduptime is run by <a href="https://diasp.org/u/davidmorley" target=_new>David Morley</a> and is open source on <a href="https://github.com/diasporg/Poduptime">GitHub</a><br>
+        I also run the pods <a href="https://diasp.org/?2" target=_new>diasp.org</a> and <a href="https://usr.io/?2" target=_new>usr.io</a> and the <a href="http://dia.so" target=_new>dia.so</a> site.<br>
         Some pods are <a href="http://podupti.me/?hidden=true">Hidden</a> That have too many issues.<br><br>
       </div>
       <div id="howto" style="display:none; margin-left:50px">

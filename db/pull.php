@@ -10,8 +10,8 @@
      }
 //foreach pod check it and update db
  $domain = ' ';    
- if ($_GET['domain']) {$domain=$_GET['domain'];$sql = "SELECT domain,pingdomurl,score FROM pods WHERE domain = '$domain'";$sleep="0";} 
- else {$sql = "SELECT domain,pingdomurl,score FROM pods";$sleep="1";}
+ if ($_GET['domain']) {$domain=$_GET['domain'];$sql = "SELECT domain,pingdomurl,score,datecreated FROM pods WHERE domain = '$domain'";$sleep="0";} 
+ else {$sql = "SELECT domain,pingdomurl,score,datecreated FROM pods";$sleep="1";}
 
  $result = pg_query($dbh, $sql);
  if (!$result) {
@@ -22,7 +22,7 @@
  for ($i = 0; $i < $numrows; $i++) {
      $domain =  $row[$i]['domain'];
      $score = $row[$i]['score'];
-#echo $score;
+     $dateadded = $row[$i]['datecreated'];
 //get ratings
  $userrate=0;$adminrate=0;$userratingavg = array();$adminratingavg = array();$userrating = array();$adminrating = array();
  $sqlforr = "SELECT * FROM rating_comments WHERE domain = '$domain'";
@@ -159,7 +159,7 @@ $ipv6="yes";
         curl_setopt($hostip, CURLOPT_MAXCONNECTS, 5);
         curl_setopt($hostip, CURLOPT_FOLLOWLOCATION, true);
         $ipraw = curl_exec($hostip);
-echo $ipraw;
+//echo $ipraw;
         curl_close($hostip);
         $obj = json_decode($ipraw);
 
@@ -174,7 +174,7 @@ $state=$obj->{'regionName'};
 $lat=$obj->{'cityLattitude'};
 $long=$obj->{'cityLongitude'};
 $connection="";
-
+if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {
 //curl the pingdom page 
         $ping = curl_init();
         $thismonth = "/".date("Y")."/".date("m");
@@ -210,33 +210,43 @@ preg_match_all('/<h3>Last checked<\/h3>
 $pingdom_timestamp = $matchdate[1][0];
 $Date_parts = preg_split("/[\s-]+/", $pingdom_timestamp);
 if (strlen($Date_parts[0]) == "2") {
-//echo $pingdom_timestamp;
-//this is broken also on something like 13-10-2011 09:24:11
-//$pingdomdate = $pingdom_timestamp;
-//hack
 $pingdomdate = date('Y-m-d H:i:s');
 }
 else {
-//$splitdate = explode(" ",$matchdate[1][0]);
-//echo $row[$i]['pingdomurl'].$thismonth;
-//$newtimestamp = $splitdate[0];
-//$matchdate[1][0] = preg_replace("/./", "/", $matchdate[1][0]);
-//echo $matchdate[1][0];
-//$dateTime = DateTime::createFromFormat('d/m/Y H:i:s', $matchdate[1][0]);
-//$dateTime = DateTime::createFromFormat('m.d.Y. H:i:s', $matchdate[1][0]);
-//$newunpin = strtotime($dateTime->format('Y-m-d h:i:s a'));
-//fuck it so many date formats from pingdom
 $pingdomdate = date('Y-m-d H:i:s');
-//echo $dateTime->format('Y-m-d h:i:s a');
-//$pingdomdate = $splitdate[0];
 }
-
 //status
 if (strpos($pingdom,"class=\"up\"")) { $live="up"; }
 elseif (strpos($pingdom,"class=\"down\"")) { $live="down"; }
 elseif (strpos($pingdom,"class=\"paused\"")) { $live="paused";}
 else {$live="error";}
+} else {
+//do uptimerobot API instead
+        $ping = curl_init();
+        curl_setopt($ping, CURLOPT_URL, "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row[$i]['pingdomurl']);
+        curl_setopt($ping, CURLOPT_POST, 0);
+        curl_setopt($ping, CURLOPT_HEADER, 0);
+        curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ping, CURLOPT_CONNECTTIMEOUT, 8);
+        curl_setopt($ping, CURLOPT_NOBODY, 0);
+        curl_setopt($ping, CURLOPT_MAXCONNECTS, 5);
+        curl_setopt($ping, CURLOPT_FOLLOWLOCATION, true);
+        $uptimerobot = curl_exec($ping);
+        curl_close($ping);
+	$json_encap = "jsonUptimeRobotApi()";
+        $up2 = substr ($uptimerobot, strlen($json_encap) - 1, strlen ($uptimerobot) - strlen($json_encap)); 
+	$uptr = json_decode($up2);
+$responsetime = 'n/a';
+$uptime = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
+$diff = abs(strtotime(date('Y-m-d H:i:s')) - strtotime($dateadded));
+$months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+if ($uptr->monitors->monitor{'0'}->status == 2) {$live = "Up";}
+if ($uptr->monitors->monitor{'0'}->status == 1) {$live = "Paused";}
+if ($uptr->monitors->monitor{'0'}->status == 8) {$live = "Seems Down";}
+if ($uptr->monitors->monitor{'0'}->status == 9) {$live = "Down";}
 
+$pingdomdate =  date('Y-m-d H:i:s');
+}
 //sql it
      $timenow = date('Y-m-d H:i:s');
      $sql = "UPDATE pods SET Hgitdate='$gitdate', Hencoding='$encoding', secure='$secure', hidden='$hidden', Hruntime='$runtime', Hgitref='$gitrev', ip='$ipnum', ipv6='$ipv6', monthsmonitored='$months', uptimelast7='$uptime', status='$live', dateLaststats='$pingdomdate', dateUpdated='$timenow', responsetimelast7='$responsetime', score='$score', adminrating='$adminrating', country='$country', city='$city', state='$state', lat='$lat', long='$long', postalcode='$postalcode', connection='$connection', whois='$whois', userrating='$userrating' WHERE domain='$domain'";
