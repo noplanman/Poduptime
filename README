@@ -1,4 +1,4 @@
-<img src=https://secure.travis-ci.org/diasporg/Poduptime.png>
+[![Build Status](https://secure.travis-ci.org/diasporg/Poduptime.png)](http://travis-ci.org/diasporg/Poduptime)
 Source for http://podupti.me
 
     Poduptime is software to get live stats and data on listed Diaspora Pods.
