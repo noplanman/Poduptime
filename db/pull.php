@@ -237,7 +237,7 @@ else {$live="error";}
         $up2 = substr ($uptimerobot, strlen($json_encap) - 1, strlen ($uptimerobot) - strlen($json_encap)); 
 	$uptr = json_decode($up2);
 $responsetime = 'n/a';
-$uptime = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
+$uptime = $uptr->monitors->monitor{'0'}->alltimeuptimeratio."%";
 $diff = abs(strtotime(date('Y-m-d H:i:s')) - strtotime($dateadded));
 $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
 if ($uptr->monitors->monitor{'0'}->status == 2) {$live = "Up";}
