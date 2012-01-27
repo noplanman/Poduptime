@@ -26,7 +26,7 @@ $tt=0;
  if ($_GET['hidden'] == "true") {
  $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY Hgitdate DESC, uptimelast7 DESC";
  } else {
- $sql = "SELECT * FROM pods WHERE hidden <> 'yes' ORDER BY Hgitdate DESC, uptimelast7 DESC";
+ $sql = "SELECT * FROM pods WHERE hidden <> 'yes' OR adminrating <> 0 ORDER BY Hgitdate DESC, uptimelast7 DESC";
  }
  $result = pg_query($dbh, $sql);
  if (!$result) {
