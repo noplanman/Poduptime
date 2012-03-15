@@ -11,7 +11,7 @@
 //foreach pod check it and update db
  $domain = ' ';    
  if ($_GET['domain']) {$domain=$_GET['domain'];$sql = "SELECT domain,pingdomurl,score,datecreated FROM pods WHERE domain = '$domain'";$sleep="0";} 
- else {$sql = "SELECT domain,pingdomurl,score,datecreated FROM pods";$sleep="1";}
+ else {$sql = "SELECT domain,pingdomurl,score,datecreated,adminrating FROM pods";$sleep="1";}
 
  $result = pg_query($dbh, $sql);
  if (!$result) {
@@ -23,6 +23,7 @@
      $domain =  $row[$i]['domain'];
      $score = $row[$i]['score'];
      $dateadded = $row[$i]['datecreated'];
+     $admindb = $row[$i]['adminrating'];
 //get ratings
  $userrate=0;$adminrate=0;$userratingavg = array();$adminratingavg = array();$userrating = array();$adminrating = array();
  $sqlforr = "SELECT * FROM rating_comments WHERE domain = '$domain'";
@@ -52,6 +53,7 @@ if (!$userrating) {$userrating=0;}
 if ($userrating > 10) {$userrating=10;}
 if (!$adminrating) {$adminrating=0;}
 if ($adminrating > 10) {$adminrating=10;}
+if ($admindb == -1) {$adminrating=-1;}
      pg_free_result($ratings);
 #echo $userrating."\n";
 #echo $adminrating."\n";
@@ -148,31 +150,20 @@ $ipv6="no";
 $ipv6="yes";
 }
 //curl ip
-        $hostip = curl_init();
-        #curl_setopt($hostip, CURLOPT_URL, "http://freegeoip.net/json/".$ipnum);
-        curl_setopt($hostip, CURLOPT_URL, "http://api.ip2locationapi.com/v2/?user=".$geouser."&format=json&key=".$geokey."&ip=".$ipnum);
-        curl_setopt($hostip, CURLOPT_POST, 0);
-        curl_setopt($hostip, CURLOPT_HEADER, 0);
-        curl_setopt($hostip, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($hostip, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($hostip, CURLOPT_NOBODY, 0);
-        curl_setopt($hostip, CURLOPT_MAXCONNECTS, 5);
-        curl_setopt($hostip, CURLOPT_FOLLOWLOCATION, true);
-        $ipraw = curl_exec($hostip);
-//echo $ipraw;
-        curl_close($hostip);
-        $obj = json_decode($ipraw);
-
-$ipdata = "Country: ".$obj->{'countryName'}."\n";
-
-$whois = "Country: ".$obj->{'countryName'}." Region: ".$obj->{'regionName'}." City: ".$obj->{'cityName'}."\n Lat:".$obj->{'cityLattitude'}." Long:".$obj->{'cityLongitude'};
-
-$country=$obj->{'countryName'};
-$city=$obj->{'cityName'};
-$state=$obj->{'regionName'};
-//$postalcode=$obj->{'zipcode'};
-$lat=$obj->{'cityLattitude'};
-$long=$obj->{'cityLongitude'};
+require_once "Net/GeoIP.php";
+$geoip = Net_GeoIP::getInstance("GeoLiteCity.dat");
+try {
+    $location = $geoip->lookupLocation($ipnum);
+} catch (Exception $e) {
+    // Handle exception
+}
+$ipdata = "Country: ".$location->countryName."\n";
+$whois = "Country: ".$location->countryName."\n Lat:".$location->latitude." Long:".$location->longitude;
+$country=$location->countryName;
+$city=$location->city;
+$state="";
+$lat=$location->latitude;
+$long=$location->longitude;
 $connection="";
 if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {
 //curl the pingdom page 
