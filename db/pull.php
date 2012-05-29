@@ -160,7 +160,7 @@ try {
 $ipdata = "Country: ".$location->countryName."\n";
 $whois = "Country: ".$location->countryName."\n Lat:".$location->latitude." Long:".$location->longitude;
 $country=$location->countryName;
-$city=$location->city;
+$city=  iconv("UTF-8", "UTF-8//IGNORE", $location->city);
 $state="";
 $lat=$location->latitude;
 $long=$location->longitude;
@@ -241,6 +241,7 @@ $pingdomdate =  date('Y-m-d H:i:s');
 //sql it
      $timenow = date('Y-m-d H:i:s');
      $sql = "UPDATE pods SET Hgitdate='$gitdate', Hencoding='$encoding', secure='$secure', hidden='$hidden', Hruntime='$runtime', Hgitref='$gitrev', ip='$ipnum', ipv6='$ipv6', monthsmonitored='$months', uptimelast7='$uptime', status='$live', dateLaststats='$pingdomdate', dateUpdated='$timenow', responsetimelast7='$responsetime', score='$score', adminrating='$adminrating', country='$country', city='$city', state='$state', lat='$lat', long='$long', postalcode='$postalcode', connection='$connection', whois='$whois', userrating='$userrating' WHERE domain='$domain'";
+     if ($_GET["debug"] == "true") {echo $sql;}
      $result = pg_query($dbh, $sql);
      if (!$result) {
          die("Error in SQL query: " . pg_last_error());

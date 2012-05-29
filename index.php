@@ -10,8 +10,8 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 <script src="OpenLayers.js"></script>
 <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.3.0/bootstrap.min.css">
-<link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/newstyle.css" />
+<link rel="stylesheet" href="http://c790230.r16.cf2.rackcdn.com/bootstrap.min.css">
+<link rel="stylesheet" href="css/newstyle.css" />
 <link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/facebox.css" />
 
 <?php include("vendor/Mobile_Detect.php");$detect = new Mobile_Detect();if ($detect->isMobile()) {echo '<link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/mobile.css" /><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">';} ?>
@@ -61,16 +61,20 @@ s1.parentNode.insertBefore(s, s1);
   </header>
   <div class="container-fluid">
     <div class="sidebar"> 
-      <div class="adsense"><script type="text/javascript">
-      <!-- 
-      google_ad_client = "ca-pub-3662181805557062"; 
-      /* podup2 */ 
-      google_ad_slot = "3334221511"; 
-      google_ad_width = 200; 
-      google_ad_height = 200; 
-      //--> 
-      </script> 
-      <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script></div>
+      <div class="adsense2">
+<!-- Begin: adBrite, Generated: 2012-04-29 16:22:25  -->
+<script type="text/javascript">
+var AdBrite_Title_Color = '46A546';
+var AdBrite_Text_Color = '000000';
+var AdBrite_Background_Color = 'FFFFFF';
+var AdBrite_Border_Color = 'dddddd';
+var AdBrite_URL_Color = '46A546';
+try{var AdBrite_Iframe=window.top!=window.self?2:1;var AdBrite_Referrer=document.referrer==''?document.location:document.referrer;AdBrite_Referrer=encodeURIComponent(AdBrite_Referrer);}catch(e){var AdBrite_Iframe='';var AdBrite_Referrer='';}
+</script>
+<script type="text/javascript">document.write(String.fromCharCode(60,83,67,82,73,80,84));document.write(' src="http://ads.adbrite.com/mb/text_group.php?sid=2143050&zs=3330305f323530&ifr='+AdBrite_Iframe+'&ref='+AdBrite_Referrer+'" type="text/javascript">');document.write(String.fromCharCode(60,47,83,67,82,73,80,84,62));</script>
+<!-- End: adBrite -->
+
+      </div>
       <a href="https://market.android.com/details?id=appinventor.ai_david_morley.DiasporaPoduptime"><img src="http://c807316.r16.cf2.rackcdn.com/android-dude128.png"></a>
     </div>
     <div class="content">
