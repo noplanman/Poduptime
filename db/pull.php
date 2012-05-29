@@ -186,12 +186,12 @@ preg_match_all('/<h3>Avg. resp. time this month<\/h3>
 $responsetime = $matcheach[1][0];
 
 //months monitored
-preg_match_all('/<option value=(.*?)</i',$pingdom,$matchdates);
+preg_match_all('/"historySelect">\s*(.*?)\s*<\/select/is',$pingdom,$matchhistory);
+$implodemonths = implode(" ", $matchhistory[1]);
+preg_match_all('/<option(.*?)/s',$implodemonths,$matchdates);
 $months = count($matchdates[0]);
-
 //uptime %
-preg_match_all('/<h3>Uptime this month<\/h3>
-        <p class="large">(.*?)</',$pingdom,$matchper);
+preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)</',$pingdom,$matchper);
 $uptime = preg_replace("/,/", ".", $matchper[1][0]);
 //var_dump($matchper);
 //last check
