@@ -182,7 +182,7 @@ if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {
 
 //response time
 preg_match_all('/<h3>Avg. resp. time this month<\/h3>
-<p class="large">(.*?)</',$pingdom,$matcheach);
+        <p class="large">(.*?)</',$pingdom,$matcheach);
 $responsetime = $matcheach[1][0];
 
 //months monitored
@@ -191,9 +191,9 @@ $months = count($matchdates[0]);
 
 //uptime %
 preg_match_all('/<h3>Uptime this month<\/h3>
-<p class="large">(.*?)</',$pingdom,$matchper);
+        <p class="large">(.*?)</',$pingdom,$matchper);
 $uptime = preg_replace("/,/", ".", $matchper[1][0]);
-
+//var_dump($matchper);
 //last check
 preg_match_all('/<h3>Last checked<\/h3>
 <p>(.*?)</',$pingdom,$matchdate);
