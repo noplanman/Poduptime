@@ -1,15 +1,15 @@
 <!doctype html><html><head><meta charset="utf-8"><title>Diaspora Pod uptime - Find your new social home</title>
 <meta name="keywords" content="diaspora, podupti.me, diasp, diasporg, diasp.org, facebook, open source social, open source facebook, open source social network" />
 <meta name="description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!" />
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script> 
+<script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.min.js"></script> 
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.tablesorter.min.js"></script> 
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.loading.1.6.4.min.js"></script> 
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.tipsy.js"></script>
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/podup.js"></script>
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/facebox.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery-ui-1.8.21.custom.min.js"></script>
 <script src="OpenLayers.js"></script>
-<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="http://c807316.r16.cf2.rackcdn.com/jquery-ui-1.8.21.custom.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="http://c790230.r16.cf2.rackcdn.com/bootstrap.min.css">
 <link rel="stylesheet" href="css/newstyle.css" />
 <link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/facebox.css" />
@@ -106,18 +106,28 @@ is mostly because of selfsigned or openca certs, if you need a free ssl cert get
         <br>Need help? <a href="https://diasporg.zendesk.com">Support</a>
         <br>
       </div>
-<!-- Piwik --> 
+				
+				
+<!-- Start Open Web Analytics Tracker -->
 <script type="text/javascript">
-var pkBaseURL = (("https:" == document.location.protocol) ? "https://s.podupti.me/" : "http://s.podupti.me/");
-document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
-</script><script type="text/javascript">
-try {
-var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 2);
-piwikTracker.trackPageView();
-piwikTracker.enableLinkTracking();
-} catch( err ) {}
-</script><noscript><p><img src="http://s.podupti.me/piwik.php?idsite=2" style="border:0" alt="" /></p></noscript>
-<!-- End Piwik Tracking Code -->
+//<![CDATA[
+var owa_baseUrl = 'http://podupti.me/owa/';
+var owa_cmds = owa_cmds || [];
+owa_cmds.push(['setSiteId', '516d23035f26941cd716f6817aceb9d3']);
+owa_cmds.push(['trackPageView']);
+owa_cmds.push(['trackClicks']);
+owa_cmds.push(['trackDomStream']);
+
+(function() {
+	var _owa = document.createElement('script'); _owa.type = 'text/javascript'; _owa.async = true;
+	owa_baseUrl = ('https:' == document.location.protocol ? window.owa_baseSecUrl || owa_baseUrl.replace(/http:/, 'https:') : owa_baseUrl );
+	_owa.src = owa_baseUrl + 'modules/base/js/owa.tracker-combined-min.js';
+	var _owa_s = document.getElementsByTagName('script')[0]; _owa_s.parentNode.insertBefore(_owa, _owa_s);
+}());
+//]]>
+</script>
+<!-- End Open Web Analytics Code -->
+						
       <script type="text/javascript">
       /* <![CDATA[ */
           (function() {
