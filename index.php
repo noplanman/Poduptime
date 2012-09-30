@@ -14,7 +14,11 @@
 <link rel="stylesheet" href="css/newstyle.css" />
 <link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/facebox.css" />
 
-<?php include("vendor/Mobile_Detect.php");$detect = new Mobile_Detect();if ($detect->isMobile()) {echo '<link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/mobile.css" /><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">';} ?>
+<?php 
+include("vendor/Mobile_Detect.php");
+$detect = new Mobile_Detect();
+if ($detect->isMobile()) {echo '<link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/mobile.css" /><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">';} 
+?>
 <script type="text/javascript">
 (function() {
 var s = document.createElement('SCRIPT'), s1 = document.getElementsByTagName('SCRIPT')[0];
@@ -62,18 +66,17 @@ s1.parentNode.insertBefore(s, s1);
   <div class="container-fluid">
     <div class="sidebar"> 
       <div class="adsense2">
-<!-- Begin: adBrite, Generated: 2012-04-29 16:22:25  -->
-<script type="text/javascript">
-var AdBrite_Title_Color = '46A546';
-var AdBrite_Text_Color = '000000';
-var AdBrite_Background_Color = 'FFFFFF';
-var AdBrite_Border_Color = 'dddddd';
-var AdBrite_URL_Color = '46A546';
-try{var AdBrite_Iframe=window.top!=window.self?2:1;var AdBrite_Referrer=document.referrer==''?document.location:document.referrer;AdBrite_Referrer=encodeURIComponent(AdBrite_Referrer);}catch(e){var AdBrite_Iframe='';var AdBrite_Referrer='';}
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-3662181805557062";
+/* poduptimenew */
+google_ad_slot = "3969028081";
+google_ad_width = 300;
+google_ad_height = 250;
+//-->
 </script>
-<script type="text/javascript">document.write(String.fromCharCode(60,83,67,82,73,80,84));document.write(' src="http://ads.adbrite.com/mb/text_group.php?sid=2143050&zs=3330305f323530&ifr='+AdBrite_Iframe+'&ref='+AdBrite_Referrer+'" type="text/javascript">');document.write(String.fromCharCode(60,47,83,67,82,73,80,84,62));</script>
-<!-- End: adBrite -->
-
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
       </div>
       <a href="https://market.android.com/details?id=appinventor.ai_david_morley.DiasporaPoduptime"><img src="http://c807316.r16.cf2.rackcdn.com/android-dude128.png"></a>
     </div>
@@ -84,10 +87,12 @@ try{var AdBrite_Iframe=window.top!=window.self?2:1;var AdBrite_Referrer=document
       </div>
       <div id="add">
         Pod Host? <u style="cursor: pointer; cursor: hand;">Click here</u> to add/manage your listing.<br>
+	</div>
+	<div id="info">
         Poduptime is run by <a href="https://diasp.org/u/davidmorley" target=_new>David Morley</a> and is open source on <a href="https://github.com/diasporg/Poduptime">GitHub</a><br>
-        I also run the pods <a href="https://diasp.org/?2" target=_new>diasp.org</a> and <a href="https://usr.io/?2" target=_new>usr.io</a> and the <a href="http://dia.so" target=_new>dia.so</a> site.<br>
+        I also run the pods <a href="https://diasp.org/?2" target=_new>diasp.org</a> and the <a href="http://dia.so" target=_new>dia.so</a> site.<br>
         Some pods are <a href="http://podupti.me/?hidden=true">Hidden</a> That have too many issues.<br><br>
-      </div>
+	</div>
       <div id="howto" style="display:none; margin-left:50px">
         <br>
         Want your pod listed?<br>
@@ -110,13 +115,12 @@ is mostly because of selfsigned or openca certs, if you need a free ssl cert get
 				
 <!-- Start Open Web Analytics Tracker -->
 <script type="text/javascript">
-//<![CDATA[
 var owa_baseUrl = 'http://podupti.me/owa/';
 var owa_cmds = owa_cmds || [];
 owa_cmds.push(['setSiteId', '516d23035f26941cd716f6817aceb9d3']);
 owa_cmds.push(['trackPageView']);
 owa_cmds.push(['trackClicks']);
-owa_cmds.push(['trackDomStream']);
+//owa_cmds.push(['trackDomStream']);
 
 (function() {
 	var _owa = document.createElement('script'); _owa.type = 'text/javascript'; _owa.async = true;
@@ -124,7 +128,6 @@ owa_cmds.push(['trackDomStream']);
 	_owa.src = owa_baseUrl + 'modules/base/js/owa.tracker-combined-min.js';
 	var _owa_s = document.getElementsByTagName('script')[0]; _owa_s.parentNode.insertBefore(_owa, _owa_s);
 }());
-//]]>
 </script>
 <!-- End Open Web Analytics Code -->
 						
