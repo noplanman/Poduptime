@@ -39,7 +39,8 @@ if ($row["secure"] == "true") {$method = "https://";$class="green";$tip="This po
 //if ($tt == "3") {echo "<tr rowspan=9><td></td></tr>";}
      echo "<tr><td><div title='$tip' class='tipsy'><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $method . $row["domain"] . "</a></div></td>";
      echo "<td>" . $row["status"] . "</td>";
-     echo "<td><div class='tipsy' title='Git Revision ".$row["hgitref"]."'><div id='".$row["hgitdate"]."' class='utc-timestamp'>" . strtotime($row["hgitdate"]) . "</div></div></td>";
+     echo "<td><div class='tipsy' title='Diaspora Version ".$row["connection"]."\n\r Git Revision ".$row["hgitref"]."'><div id='".$row["hgitdate"]."' class='utc-timestamp'>" . strtotime($row["hgitdate"]) . 
+"</div></div></td>";
      echo "<td>" . $row["uptimelast7"] . "</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row["pingdomurl"];}
      echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a target='new' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";

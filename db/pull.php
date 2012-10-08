@@ -92,6 +92,8 @@ $gitdate = trim($xgitdate[1]);
 //$gitdate = strtotime($gitdate);
 preg_match('/X-Git-Revision: (.*?)\n/',$outputssl,$xgitrev);
 $gitrev = trim($xgitrev[1]);
+preg_match('/X-Diaspora-Version: (.*?)\n/',$outputssl,$xdver);
+$dver = trim($xdver[1]);
 preg_match('/X-Runtime: (.*?)\n/',$outputssl,$xruntime);
 $runtime = trim($xruntime[1]);
 preg_match('/Server: (.*?)\n/',$outputssl,$xserver);
@@ -109,6 +111,8 @@ $gitdate = trim($xgitdate[1]);
 //$gitdate = strtotime($gitdate);
 preg_match('/X-Git-Revision: (.*?)\n/',$output,$xgitrev);
 $gitrev = trim($xgitrev[1]);
+preg_match('/X-Diaspora-Version: (.*?)\n/',$output,$xdver);
+$dver = trim($xdver[1]);
 preg_match('/X-Runtime: (.*?)\n/',$output,$xruntime);
 $runtime = trim($xruntime[1]);
 preg_match('/Server: (.*?)\n/',$output,$xserver);
@@ -240,7 +244,9 @@ $pingdomdate =  date('Y-m-d H:i:s');
 }
 //sql it
      $timenow = date('Y-m-d H:i:s');
-     $sql = "UPDATE pods SET Hgitdate='$gitdate', Hencoding='$encoding', secure='$secure', hidden='$hidden', Hruntime='$runtime', Hgitref='$gitrev', ip='$ipnum', ipv6='$ipv6', monthsmonitored='$months', uptimelast7='$uptime', status='$live', dateLaststats='$pingdomdate', dateUpdated='$timenow', responsetimelast7='$responsetime', score='$score', adminrating='$adminrating', country='$country', city='$city', state='$state', lat='$lat', long='$long', postalcode='$postalcode', connection='$connection', whois='$whois', userrating='$userrating' WHERE domain='$domain'";
+     $sql = "UPDATE pods SET Hgitdate='$gitdate', Hencoding='$encoding', secure='$secure', hidden='$hidden', Hruntime='$runtime', Hgitref='$gitrev', ip='$ipnum', ipv6='$ipv6', monthsmonitored='$months', 
+uptimelast7='$uptime', status='$live', dateLaststats='$pingdomdate', dateUpdated='$timenow', responsetimelast7='$responsetime', score='$score', adminrating='$adminrating', country='$country', city='$city', 
+state='$state', lat='$lat', long='$long', postalcode='$postalcode', connection='$dver', whois='$whois', userrating='$userrating' WHERE domain='$domain'";
      if ($_GET["debug"] == "true") {echo $sql;}
      $result = pg_query($dbh, $sql);
      if (!$result) {
