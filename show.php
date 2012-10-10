@@ -7,6 +7,7 @@
 <th>Live Status<a class="tipsy" title="Up or Down according to Pingdom">?</a></th>
 <th>Last Code Pull<a class="tipsy" title="Because the alpha is updated everyday pods with old software will not work correcly with pods with new software. This is the date the p
 od last updated from the main Diaspora code.">?</a></th>
+<th>Version<a class="tipsy" title="Version of Diaspora this pod runs">?</a></th>
 <th>Uptime<a class="tipsy" title="Percent of the time the pod is online for <?php echo date("F") ?>.">?</a></th>
 <th>Months<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
 <th>Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
@@ -39,8 +40,16 @@ if ($row["secure"] == "true") {$method = "https://";$class="green";$tip="This po
 //if ($tt == "3") {echo "<tr rowspan=9><td></td></tr>";}
      echo "<tr><td><div title='$tip' class='tipsy'><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $method . $row["domain"] . "</a></div></td>";
      echo "<td>" . $row["status"] . "</td>";
-     echo "<td><div class='tipsy' title='Diaspora Version ".$row["connection"]."\n\r Git Revision ".$row["hgitref"]."'><div id='".$row["hgitdate"]."' class='utc-timestamp'>" . strtotime($row["hgitdate"]) . 
-"</div></div></td>";
+     echo "<td><div id='".$row["hgitdate"]."' class='utc-timestamp'>" . strtotime($row["hgitdate"]) . 
+"</div></td>";
+
+if (stristr($row["shortversion"],'pre')) {$version=$row["shortversion"];$pre = "This pod runs pre release development code";} elseif (!$row["shortversion"]) 
+{$version="unknown";$pre = "This pod runs 
+unknown code";} 
+else 
+{$version=$row["shortversion"];$pre="This pod runs production code";}
+if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "") {$classver = "green";} else {$classver = "black";}
+     echo "<td class='$classver'><div title='{$pre} codename: {$row["longversion"]} master version is: {$row["masterversion"]}' class='tipsy'>{$version}</div></td>";
      echo "<td>" . $row["uptimelast7"] . "</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row["pingdomurl"];}
      echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a target='new' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";

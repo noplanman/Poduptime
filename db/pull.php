@@ -3,6 +3,18 @@
 
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
  include('config.php');
+//get master code version
+        $mv = curl_init();
+        curl_setopt($mv, CURLOPT_URL, "https://raw.github.com/diaspora/diaspora/master/config/defaults.yml");
+        curl_setopt($mv, CURLOPT_POST, 0);
+        curl_setopt($mv, CURLOPT_HEADER, 0);
+        curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($mv, CURLOPT_NOBODY, 0);
+        $outputmv = curl_exec($mv);
+        curl_close($mv);
+	preg_match('/number: (.*?)\n/',$outputmv,$version);
+ $masterversion = trim($version[1], '"');
  $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
  $dbh2 = pg_connect("dbname=$pgdb user=$pguser password=$pgpass"); 
     if (!$dbh) {
@@ -93,7 +105,8 @@ $gitdate = trim($xgitdate[1]);
 preg_match('/X-Git-Revision: (.*?)\n/',$outputssl,$xgitrev);
 $gitrev = trim($xgitrev[1]);
 preg_match('/X-Diaspora-Version: (.*?)\n/',$outputssl,$xdver);
-$dver = trim($xdver[1]);
+$dverr = split("-",trim($xdver[1]));
+$dver = $dverr[0];
 preg_match('/X-Runtime: (.*?)\n/',$outputssl,$xruntime);
 $runtime = trim($xruntime[1]);
 preg_match('/Server: (.*?)\n/',$outputssl,$xserver);
@@ -112,7 +125,8 @@ $gitdate = trim($xgitdate[1]);
 preg_match('/X-Git-Revision: (.*?)\n/',$output,$xgitrev);
 $gitrev = trim($xgitrev[1]);
 preg_match('/X-Diaspora-Version: (.*?)\n/',$output,$xdver);
-$dver = trim($xdver[1]);
+$dverr = split("-",trim($xdver[1]));
+$dver = $dverr[0];
 preg_match('/X-Runtime: (.*?)\n/',$output,$xruntime);
 $runtime = trim($xruntime[1]);
 preg_match('/Server: (.*?)\n/',$output,$xserver);
@@ -246,7 +260,10 @@ $pingdomdate =  date('Y-m-d H:i:s');
      $timenow = date('Y-m-d H:i:s');
      $sql = "UPDATE pods SET Hgitdate='$gitdate', Hencoding='$encoding', secure='$secure', hidden='$hidden', Hruntime='$runtime', Hgitref='$gitrev', ip='$ipnum', ipv6='$ipv6', monthsmonitored='$months', 
 uptimelast7='$uptime', status='$live', dateLaststats='$pingdomdate', dateUpdated='$timenow', responsetimelast7='$responsetime', score='$score', adminrating='$adminrating', country='$country', city='$city', 
-state='$state', lat='$lat', long='$long', postalcode='$postalcode', connection='$dver', whois='$whois', userrating='$userrating' WHERE domain='$domain'";
+state='$state', lat='$lat', long='$long', postalcode='$postalcode', connection='$dver', whois='$whois', userrating='$userrating', longversion='$xdver[1]', shortversion='$dver', 
+masterversion='$masterversion' 
+WHERE 
+domain='$domain'";
      if ($_GET["debug"] == "true") {echo $sql;}
      $result = pg_query($dbh, $sql);
      if (!$result) {
