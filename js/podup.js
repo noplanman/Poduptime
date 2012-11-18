@@ -26,7 +26,7 @@ $.facebox.settings.loadingImage = 'http://c807316.r16.cf2.rackcdn.com/loading.gi
   $('#add').click(function() {
     $('#howto').show('slow'); $('#add').hide('slow');$('#results').hide('slow');
   });
-  $("#myTable").tablesorter( {sortList: [[2,1], [3,1]]} );
+  $("#myTable").tablesorter( {sortList: [[1,1], [2,1]]} );
   $('#add').delay(8000).fadeIn(2000);
   $('#others').delay(8000).fadeIn(2000);
   //$('#buttonsy').delay(5550).slideDown(3330);

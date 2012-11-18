@@ -4,16 +4,11 @@
 <thead>
 <tr>
 <th width="220px">Diaspora Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
-<th>Live Status<a class="tipsy" title="Up or Down according to Pingdom">?</a></th>
-<th>Last Code Pull<a class="tipsy" title="Because the alpha is updated everyday pods with old software will not work correcly with pods with new software. This is the date the p
-od last updated from the main Diaspora code.">?</a></th>
-<th>Version<a class="tipsy" title="Version of Diaspora this pod runs">?</a></th>
-<th>Uptime<a class="tipsy" title="Percent of the time the pod is online for <?php echo date("F") ?>.">?</a></th>
-<th>Months<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
-<th>Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
-<th>Response Time<a class="tipsy" title="Average response time for <?php echo date("F") ?>.">?</a></th>
-<th>Ipv6<a class="tipsy" title="Does this pod look to have ipv6">?</a></th>
-<th>Location<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
+<th>Version Code<a class="tipsy" title="Version of Diaspora this pod runs">?</a></th>
+<th>Uptime Percent<a class="tipsy" title="Percent of the time the pod is online for <?php echo date("F") ?>.">?</a></th>
+<th>Months Online<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
+<th>User Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
+<th>Server Location<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
 </tr>
 </thead>
 <tbody>
@@ -39,12 +34,14 @@ $tt=$tt+1;
 if ($row["secure"] == "true") {$method = "https://";$class="green";$tip="This pod uses SSL encryption for traffic.";} else {$method = "http://";$class="red";$tip="This pod does not offer SSL";} 
 //if ($tt == "3") {echo "<tr rowspan=9><td></td></tr>";}
      echo "<tr><td><div title='$tip' class='tipsy'><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $method . $row["domain"] . "</a></div></td>";
-     echo "<td>" . $row["status"] . "</td>";
-     echo "<td><div id='".$row["hgitdate"]."' class='utc-timestamp'>" . strtotime($row["hgitdate"]) . 
+//     echo "<td>" . $row["status"] . "</td>";
+//     echo "<td><div id='".$row["hgitdate"]."' class='utc-timestamp'>" . strtotime($row["hgitdate"]) . 
 "</div></td>";
 
-if (stristr($row["shortversion"],'pre')) {$version=$row["shortversion"];$pre = "This pod runs pre release development code";} elseif (!$row["shortversion"]) 
-{$version="unknown";$pre = "This pod runs 
+if (stristr($row["shortversion"],'pre')) 
+{$version=".".$row["shortversion"];$pre = "This pod runs pre release 
+development code";} elseif (!$row["shortversion"]) 
+{$version="0";$pre = "This pod runs 
 unknown code";} 
 else 
 {$version=$row["shortversion"];$pre="This pod runs production code";}
@@ -66,8 +63,8 @@ echo "✪";
 }
 
      echo "</div></a></td>";
-     echo "<td>" . $row["responsetimelast7"] . "</td>";
-     echo "<td>" . $row["ipv6"] . "</td>\n";
+  //   echo "<td>" . $row["responsetimelast7"] . "</td>";
+  //   echo "<td>" . $row["ipv6"] . "</td>\n";
      echo "<td class='tipsy' title='".$row["whois"]." '>" . $row["country"] . "</td></tr>\n";
 
  }

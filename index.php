@@ -5,7 +5,7 @@
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.tablesorter.min.js"></script> 
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.loading.1.6.4.min.js"></script> 
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.tipsy.js"></script>
-<script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/podup.js"></script>
+<script type="text/javascript" src="js/podup.js"></script>
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/facebox.js"></script>
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery-ui-1.8.21.custom.min.js"></script>
 <script src="OpenLayers.js"></script>

@@ -57,7 +57,7 @@
 
 if ($userrate > 0) {$userrating = round(array_sum($userratingavg) / $userrate,2);}
 if ($adminrate > 0) {$adminrating = round(array_sum($adminratingavg) / $adminrate,2);}
-#echo $domain."\n";
+echo $domain."\n";
 #echo $userrating."\n";
 #echo $adminrating."\n";
 
