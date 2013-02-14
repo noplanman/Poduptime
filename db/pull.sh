@@ -1,2 +1,2 @@
 cd /var/www/podup/db
-php pull.php
+php5 pull.php
