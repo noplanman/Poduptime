@@ -107,6 +107,7 @@ $gitrev = trim($xgitrev[1]);
 preg_match('/X-Diaspora-Version: (.*?)\n/',$outputssl,$xdver);
 $dverr = split("-",trim($xdver[1]));
 $dver = $dverr[0];
+if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$outputssl,$xruntime);
 $runtime = trim($xruntime[1]);
 preg_match('/Server: (.*?)\n/',$outputssl,$xserver);
@@ -127,6 +128,7 @@ $gitrev = trim($xgitrev[1]);
 preg_match('/X-Diaspora-Version: (.*?)\n/',$output,$xdver);
 $dverr = split("-",trim($xdver[1]));
 $dver = $dverr[0];
+if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$output,$xruntime);
 $runtime = trim($xruntime[1]);
 preg_match('/Server: (.*?)\n/',$output,$xserver);
