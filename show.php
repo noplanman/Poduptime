@@ -45,7 +45,9 @@ development code";} elseif (!$row["shortversion"])
 unknown code";} 
 else 
 {$version=$row["shortversion"];$pre="This pod runs production code";}
-if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "") {$classver = "green";} else {$classver = "black";}
+$verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $row["shortversion"]);
+//echo is_numeric($verdiff);
+if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "") {$classver = "green";} elseif ($verdiff > 6) {$classver = "red";} else {$classver = "black";}
      echo "<td class='$classver'><div title='{$pre} codename: {$row["longversion"]} master version is: {$row["masterversion"]}' class='tipsy'>{$version}</div></td>";
      echo "<td>" . $row["uptimelast7"] . "</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row["pingdomurl"];}
