@@ -38,8 +38,8 @@ if ($row["secure"] == "true") {$method = "https://";$class="green";$tip="This po
 //     echo "<td><div id='".$row["hgitdate"]."' class='utc-timestamp'>" . strtotime($row["hgitdate"]) . 
 "</div></td>";
 
-if (stristr($row["shortversion"],'pre')) 
-{$version=".".$row["shortversion"];$pre = "This pod runs pre release 
+if (stristr($row["shortversion"],'head')) 
+{$version=".development code";$pre = "This pod runs pre release 
 development code";} elseif (!$row["shortversion"]) 
 {$version="0";$pre = "This pod runs 
 unknown code";} 
