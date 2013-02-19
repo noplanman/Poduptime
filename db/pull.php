@@ -1,6 +1,5 @@
-#!/usr/bin/php
 <?php
-
+if ($_GET['debug'] == 1) {$debug = 1;}
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
  include('config.php');
 //get master code version
@@ -57,7 +56,7 @@
 
 if ($userrate > 0) {$userrating = round(array_sum($userratingavg) / $userrate,2);}
 if ($adminrate > 0) {$adminrating = round(array_sum($adminratingavg) / $adminrate,2);}
-echo $domain."\n";
+if ($debug) {echo "Domain: ".$domain."<br>";}
 #echo $userrating."\n";
 #echo $adminrating."\n";
 
@@ -107,6 +106,7 @@ $gitrev = trim($xgitrev[1]);
 preg_match('/X-Diaspora-Version: (.*?)\n/',$outputssl,$xdver);
 $dverr = split("-",trim($xdver[1]));
 $dver = $dverr[0];
+if ($debug) {echo "Version code: ".$dverr[1]."<br>";}
 if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$outputssl,$xruntime);
 $runtime = trim($xruntime[1]);
@@ -128,6 +128,7 @@ $gitrev = trim($xgitrev[1]);
 preg_match('/X-Diaspora-Version: (.*?)\n/',$output,$xdver);
 $dverr = split("-",trim($xdver[1]));
 $dver = $dverr[0];
+if ($debug) {echo "Version code: ".$dverr[1]."<br>";}
 if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$output,$xruntime);
 $runtime = trim($xruntime[1]);
@@ -142,9 +143,11 @@ $score = $score - 1;
 //no diaspora cookie on either, lets set this one as hidden and notify someone its not really a pod
 //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
 }
+if ($debug) {echo "SSL: ".$secure."<br>";}
 if (!$gitdate) {
 //if a pod is not displaying the git header data its really really really old lets lower your score
 //$hidden="yes";
+if ($debug) {echo "Valid Headers: ".$gitdate."<br>";}
 $score = $score - 2;
 }
 if ($score > 5) {
@@ -174,6 +177,7 @@ require_once "Net/GeoIP.php";
 $geoip = Net_GeoIP::getInstance("GeoLiteCity.dat");
 try {
     $location = $geoip->lookupLocation($ipnum);
+if ($debug) {echo "GEOIP: ".$location."<br>";}
 } catch (Exception $e) {
     // Handle exception
 }
@@ -266,13 +270,13 @@ state='$state', lat='$lat', long='$long', postalcode='$postalcode', connection='
 masterversion='$masterversion' 
 WHERE 
 domain='$domain'";
-     if ($_GET["debug"] == "true") {echo $sql;}
+     if ($debug) {echo "SQL: ".$sql."<br>";}
      $result = pg_query($dbh, $sql);
      if (!$result) {
          die("Error in SQL query: " . pg_last_error());
      }
     
-     echo $score;
+if ($debug) {echo "Score out of 20: ".$score."<br>";}
 
 
 //end foreach
