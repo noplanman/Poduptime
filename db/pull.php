@@ -12,7 +12,7 @@ if ($_GET['debug'] == 1) {$debug = 1;}
         curl_setopt($mv, CURLOPT_NOBODY, 0);
         $outputmv = curl_exec($mv);
         curl_close($mv);
-	preg_match('/number: (.*?)\n/',$outputmv,$version);
+	preg_match('/number: "(.*?)"/',$outputmv,$version);
  $masterversion = trim($version[1], '"');
  $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
  $dbh2 = pg_connect("dbname=$pgdb user=$pguser password=$pgpass"); 
@@ -26,7 +26,7 @@ if ($_GET['debug'] == 1) {$debug = 1;}
 
  $result = pg_query($dbh, $sql);
  if (!$result) {
-     die("Error in SQL query: " . pg_last_error());
+     die("Error in SQL query1: " . pg_last_error());
  }
  while ($row = pg_fetch_all($result)) {
  $numrows = pg_num_rows($result);
@@ -40,7 +40,7 @@ if ($_GET['debug'] == 1) {$debug = 1;}
  $sqlforr = "SELECT * FROM rating_comments WHERE domain = '$domain'";
  $ratings = pg_query($dbh, $sqlforr);
  if (!$ratings) {
-     die("Error in SQL query: " . pg_last_error());
+     die("Error in SQL query2: " . pg_last_error());
  }
  $numratings = pg_num_rows($ratings);
  while($myrow = pg_fetch_assoc($ratings)) {
@@ -273,7 +273,7 @@ domain='$domain'";
      if ($debug) {echo "SQL: ".$sql."<br>";}
      $result = pg_query($dbh, $sql);
      if (!$result) {
-         die("Error in SQL query: " . pg_last_error());
+         die("Error in SQL query3: " . pg_last_error());
      }
     
 if ($debug) {echo "Score out of 20: ".$score."<br>";}
