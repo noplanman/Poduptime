@@ -54,7 +54,7 @@ elseif ($_GET['format'] == "json") {
  print json_encode($obj);
 } else {
  $i=0;
- $sql = "SELECT * FROM pods WHERE hidden <> 'yes' ORDER BY Hgitdate DESC, uptimelast7 DESC";
+ $sql = "SELECT * FROM pods WHERE hidden <> 'yes' ORDER BY uptimelast7 DESC";
  $result = pg_query($dbh, $sql);
  if (!$result) {
      die("Error in SQL query: " . pg_last_error());
@@ -63,7 +63,7 @@ elseif ($_GET['format'] == "json") {
  while ($row = pg_fetch_array($result)) {
   if ($row["status"] == "up"){$status="Online";}else{$status="Offline";} 
   if ($row["secure"] == "true") {$method = "https://";$class="green";} else {$method = "http://";$class="red";}
-  echo $method.$row["domain"] ." - ".$status." Now - Up ".$row["uptimelast7"]." This Month";
+  echo $row["domain"] ." Up ".$row["uptimelast7"]." This Month - Located in: ".$row["country"];
   if ($i < ($numrows -1)) {
     echo ",";
   }
