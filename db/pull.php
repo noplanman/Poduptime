@@ -203,7 +203,7 @@ if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {
         curl_setopt($ping, CURLOPT_FOLLOWLOCATION, true);
         $pingdom = curl_exec($ping);
         curl_close($ping);
-
+if ($debug) {echo "Pingdom: ".$pingdom."<br>";}
 //response time
 preg_match_all('/<h3>Avg. resp. time this month<\/h3>
         <p class="large">(.*?)</',$pingdom,$matcheach);
@@ -234,7 +234,7 @@ $pingdomdate = date('Y-m-d H:i:s');
 if (strpos($pingdom,"class=\"up\"")) { $live="up"; }
 elseif (strpos($pingdom,"class=\"down\"")) { $live="down"; }
 elseif (strpos($pingdom,"class=\"paused\"")) { $live="paused";}
-else {$live="error";}
+else {$live="error";$score=$score-2;}
 } else {
 //do uptimerobot API instead
         $ping = curl_init();
@@ -277,7 +277,7 @@ domain='$domain'";
      }
     
 if ($debug) {echo "Score out of 20: ".$score."<br>";}
-
+if (!$debug) {echo "Success";}
 
 //end foreach
 sleep($sleep);

@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/facebox.css" />
 
 <?php 
+$lastfile = 'db/last.data';
 include("vendor/Mobile_Detect.php");
 $detect = new Mobile_Detect();
 if ($detect->isMobile()) {echo '<link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/mobile.css" /><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">';} 
@@ -89,6 +90,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
         Pod Host? <u style="cursor: pointer; cursor: hand;">Click here</u> to add/manage your listing.<br>
 	</div>
 	<div id="info">
+	Data last refreshed at: <?php echo date("F d Y H:i:s.", filemtime($lastfile)) ?> Pacific Time<br>
         Poduptime is run by <a href="https://diasp.org/u/davidmorley" target=_new>David Morley</a> and is open source on <a href="https://github.com/diasporg/Poduptime">GitHub</a><br>
         I also run the pods <a href="https://diasp.org/?2" target=_new>diasp.org</a> and the <a href="http://dia.so" target=_new>dia.so</a> site.<br>
         Some pods are <a href="http://podupti.me/?hidden=true">Hidden</a> That have too many issues.<br><br>

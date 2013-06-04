@@ -54,7 +54,7 @@ elseif ($_GET['format'] == "json") {
  print json_encode($obj);
 } else {
  $i=0;
- $sql = "SELECT * FROM pods WHERE hidden <> 'yes' ORDER BY uptimelast7 DESC";
+ $sql = "SELECT * FROM pods WHERE hidden <> 'yes' ORDER BY uptimelast7 ASC";
  $result = pg_query($dbh, $sql);
  if (!$result) {
      die("Error in SQL query: " . pg_last_error());
