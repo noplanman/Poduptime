@@ -1,5 +1,6 @@
 <?php
-if ($_GET['debug'] == 1) {$debug = 1;}
+//if ($_GET['debug'] == 1) {
+$debug = 1;//}
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
  include('config.php');
 //get master code version
@@ -203,7 +204,7 @@ if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {
         curl_setopt($ping, CURLOPT_FOLLOWLOCATION, true);
         $pingdom = curl_exec($ping);
         curl_close($ping);
-if ($debug) {echo "Pingdom: ".$pingdom."<br>";}
+//if ($debug) {echo "Pingdom: ".$pingdom."<br>";}
 //response time
 preg_match_all('/<h3>Avg. resp. time this month<\/h3>
         <p class="large">(.*?)</',$pingdom,$matcheach);
