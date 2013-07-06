@@ -44,7 +44,7 @@ $tip="This pod does not offer SSL";
 $verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $row["shortversion"]);
 
 
-$tip.="\n This pod {$row["domain"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]} this month and was last checked on {$row["dateupdated"]}. "; 
+$tip.="\n This pod {$row["domain"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. "; 
 $tip.="Code base is {$row["shortversion"]} and the current github base is {$row["masterversion"]}. ";
 $tip.="This pod is {$verdiff} versions behind the current code. This pods IP {$row["ip"]} has IPv6 {$row["ipv6"]} and is located in {$row["country"]}. On a score of -20 to +20 this pod is a {$row["score"]} right now, all data is checked every hour.";
 
@@ -63,7 +63,7 @@ else
 {$version=$row["shortversion"];$pre="This pod runs production code";}
 if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "") {$classver = "green";} elseif ($verdiff > 6) {$classver = "red";} else {$classver = "black";}
      echo "<td class='$classver'><div title='{$pre} codename: {$row["longversion"]} master version is: {$row["masterversion"]}' class='tipsy'>{$version}</div></td>";
-     echo "<td>" . $row["uptimelast7"] . "</td>";
+     echo "<td>" . $row["uptimelast7"] . "%</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row["pingdomurl"];}
      echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a target='new' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";
 if ($row["userrating"] >6) {$userratingclass="green";} elseif ($row["userrating"] <7) {$userratingclass="yellow";} elseif ($row["userrating"] <3) {$userratingclass="red";}

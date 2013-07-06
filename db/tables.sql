@@ -26,7 +26,7 @@ CREATE TABLE pods (
  pingdomurl text,
  pingdomlast text,
  monthsmonitored int,
- uptimelast7 numeric{3,3},
+ uptimelast7 numeric(5,2),
  status text,
  responsetimelast7 text,
  dateUpdated timestamp DEFAULT current_timestamp,
