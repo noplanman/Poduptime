@@ -217,7 +217,7 @@ $implodemonths = implode(" ", $matchhistory[1]);
 preg_match_all('/<option(.*?)/s',$implodemonths,$matchdates);
 $months = count($matchdates[0]);
 //uptime %
-preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)</',$pingdom,$matchper);
+preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)%</',$pingdom,$matchper);
 $uptime = preg_replace("/,/", ".", $matchper[1][0]);
 //var_dump($matchper);
 //last check

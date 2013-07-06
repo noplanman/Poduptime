@@ -35,7 +35,7 @@ if ($row["secure"] == "true") {$method = "https://";$class="green";$tip="This po
      echo "<tr><td><div title='$tip' class='tipsy'><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $method . $row["domain"] . "</a></div></td>";
      echo "<td>" . $row["status"] . "</td>";
      echo "<td><div class='tipsy' title='Git Revision ".$row["hgitref"]."'><div id='".$row["hgitdate"]."' class='utc-timestamp'>" . strtotime($row["hgitdate"]) . "</div></div></td>";
-     echo "<td>" . $row["uptimelast7"] . "</td>";
+     echo "<td>" . $row["uptimelast7"] . "%</td>";
      echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a target='new' href='".$row["pingdomurl"]."'>" . $row["monthsmonitored"] . "</a></div></td>";
 if ($row["userrating"] >6) {$userratingclass="green";} elseif ($row["userrating"] <7) {$userratingclass="yellow";} elseif ($row["userrating"] <3) {$userratingclass="red";}
      echo "<td><div class='tipsy rating ".$userratingclass."' title='User rating is ".$row["adminrating"]."'>";
