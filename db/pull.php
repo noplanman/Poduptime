@@ -195,6 +195,7 @@ if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {
         $ping = curl_init();
         $thismonth = "/".date("Y")."/".date("m");
         curl_setopt($ping, CURLOPT_URL, $row[$i]['pingdomurl'].$thismonth);
+if ($debug) {echo $row[$i]['pingdomurl'].$thismonth;}
         curl_setopt($ping, CURLOPT_POST, 0);
         curl_setopt($ping, CURLOPT_HEADER, 1);
         curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);

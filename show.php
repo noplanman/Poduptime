@@ -31,7 +31,23 @@ $tt=0;
  $numrows = pg_num_rows($result);
  while ($row = pg_fetch_array($result)) {
 $tt=$tt+1;
-if ($row["secure"] == "true") {$method = "https://";$class="green";$tip="This pod uses SSL encryption for traffic.";} else {$method = "http://";$class="red";$tip="This pod does not offer SSL";} 
+if ($row["secure"] == "true") {
+$method = "https://";
+$class="green";
+$tip="This pod uses SSL encryption for traffic.";} 
+
+else {
+$method = "http://";
+$class="red";
+$tip="This pod does not offer SSL";
+} 
+$verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $row["shortversion"]);
+
+
+$tip.="\n This pod {$row["domain"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]} this month and was last checked on {$row["dateupdated"]}. "; 
+$tip.="Code base is {$row["shortversion"]} and the current github base is {$row["masterversion"]}. ";
+$tip.="This pod is {$verdiff} versions behind the current code. This pods IP {$row["ip"]} has IPv6 {$row["ipv6"]} and is located in {$row["country"]}. On a score of -20 to +20 this pod is a {$row["score"]} right now, all data is checked every hour.";
+
 //if ($tt == "3") {echo "<tr rowspan=9><td></td></tr>";}
      echo "<tr><td><div title='$tip' class='tipsy'><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $method . $row["domain"] . "</a></div></td>";
 //     echo "<td>" . $row["status"] . "</td>";
@@ -45,8 +61,6 @@ development code";} elseif (!$row["shortversion"])
 unknown code";} 
 else 
 {$version=$row["shortversion"];$pre="This pod runs production code";}
-$verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $row["shortversion"]);
-//echo is_numeric($verdiff);
 if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "") {$classver = "green";} elseif ($verdiff > 6) {$classver = "red";} else {$classver = "black";}
      echo "<td class='$classver'><div title='{$pre} codename: {$row["longversion"]} master version is: {$row["masterversion"]}' class='tipsy'>{$version}</div></td>";
      echo "<td>" . $row["uptimelast7"] . "</td>";
