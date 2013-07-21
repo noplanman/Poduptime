@@ -46,7 +46,7 @@ $verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $
 
 $tip.="\n This pod {$row["domain"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. "; 
 $tip.="Code base is {$row["shortversion"]} and the current github base is {$row["masterversion"]}. ";
-$tip.="This pod is {$verdiff} versions behind the current code. This pods IP {$row["ip"]} has IPv6 {$row["ipv6"]} and is located in {$row["country"]}. On a score of -20 to +20 this pod is a {$row["score"]} right now, all data is checked every hour.";
+$tip.="This pod is {$verdiff} versions behind the current code. This pods IP {$row["ip"]} ". ($row["ipv6"] == "yes" ? "has" : "does not have") ." IPv6 and is located in {$row["country"]}. On a score of -20 to +20 this pod is a {$row["score"]} right now, all data is checked every hour.";
 
 //if ($tt == "3") {echo "<tr rowspan=9><td></td></tr>";}
      echo "<tr><td><div title='$tip' class='tipsy'><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $method . $row["domain"] . "</a></div></td>";
