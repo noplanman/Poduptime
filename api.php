@@ -51,7 +51,11 @@ elseif ($_GET['format'] == "json") {
  $rows=array_values(pg_fetch_all($result));
  $obj->podcount          = $numrows;
  $obj->pods             = $rows;
- print json_encode($obj);
+ if ($_GET['method'] == "jsonp") {
+     print $_GET['callback'] . '(' . json_encode($obj) . ')';
+ } else {
+     print json_encode($obj);
+ }
 } else {
  $i=0;
  $sql = "SELECT * FROM pods WHERE hidden <> 'yes' ORDER BY uptimelast7 DESC";
