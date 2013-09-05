@@ -15,8 +15,9 @@
 <link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/facebox.css" />
 
 <?php 
+$hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
 $lastfile = 'db/last.data';
-include("vendor/Mobile_Detect.php");
+include("vendor/mobiledetect/Mobile_Detect.php");
 $detect = new Mobile_Detect();
 if ($detect->isMobile()) {echo '<link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/mobile.css" /><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">';} 
 ?>
@@ -84,7 +85,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
     <div class="content">
     <div id="map" style="width:80%;height:500px;position:absolute;display:none"></div>
       <div id="results">
-        <?php if ($_GET["hidden"] == "true") {echo "<a href='http://podupti.me' class='btn danger large'>NOTICE: These pods are Hidden and have problems, click here to go to working pods</a>";} include("show.php"); ?>
+        <?php if ($hidden == "true") {echo "<a href='http://podupti.me' class='btn danger large'>NOTICE: These pods are Hidden and have problems, click here to go to working pods</a>";} include("show.php"); ?>
       </div>
       <div id="add">
         Pod Host? <u style="cursor: pointer; cursor: hand;">Click here</u> to add/manage your listing.<br>
@@ -115,17 +116,22 @@ is mostly because of selfsigned or openca certs, if you need a free ssl cert get
       </div>
 				
 <!-- Piwik -->
-<script type="text/javascript">
-var pkBaseURL = (("https:" == document.location.protocol) ? "https://podupti.me/s/" : "http://podupti.me/s/");
-document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
-</script><script type="text/javascript">
-try {
-var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
-piwikTracker.trackPageView();
-piwikTracker.enableLinkTracking();
-} catch( err ) {}
-</script><noscript><p><img src="http://podupti.me/s/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
-<!-- End Piwik Tracking Code -->				
+<script type="text/javascript"> 
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u=(("https:" == document.location.protocol) ? "https" : "http") + "://podupti.me/s//";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 1]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript';
+    g.defer=true; g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+
+</script>
+<noscript><p><img src="http://podupti.me/s/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+
 						
       <script type="text/javascript">
       /* <![CDATA[ */

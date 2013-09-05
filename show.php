@@ -19,7 +19,8 @@ $tt=0;
  if (!$dbh) {
      die("Error in connection: " . pg_last_error());
  }  
- if ($_GET['hidden'] == "true") {
+ $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
+ if ($hidden == "true") {
  $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY Hgitdate DESC, uptimelast7 DESC";
  } else {
  $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' ORDER BY Hgitdate DESC, uptimelast7 DESC";
