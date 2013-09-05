@@ -1,6 +1,5 @@
 <?php
-//if ($_GET['debug'] == 1) {
-$debug = 1;//}
+$debug = isset($_GET['debug'])?1:0;
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
  include('config.php');
 //get master code version
@@ -21,8 +20,8 @@ $debug = 1;//}
          die("Error in connection: " . pg_last_error());
      }
 //foreach pod check it and update db
- $domain = ' ';    
- if ($_GET['domain']) {$domain=$_GET['domain'];$sql = "SELECT domain,pingdomurl,score,datecreated FROM pods WHERE domain = '$domain'";$sleep="0";} 
+ $domain = isset($_GET['domain'])?$_GET['domain']:null;
+ if ($domain) {$sql = "SELECT domain,pingdomurl,score,datecreated FROM pods WHERE domain = '$domain'";$sleep="0";} 
  else {$sql = "SELECT domain,pingdomurl,score,datecreated,adminrating FROM pods";$sleep="1";}
 
  $result = pg_query($dbh, $sql);
@@ -114,7 +113,7 @@ $runtime = trim($xruntime[1]);
 preg_match('/Server: (.*?)\n/',$outputssl,$xserver);
 $server = trim($xserver[1]);
 preg_match('/Content-Encoding: (.*?)\n/',$outputssl,$xencoding);
-if ($xencoding) {$encoding = trim($xencoding[1]);}
+if ($xencoding) {$encoding = trim($xencoding[1]);} else {$encoding = null;}
 
 } elseif (stristr($output, 'Set-Cookie: _diaspora_session=')) {
 "not";$secure="false";
@@ -221,17 +220,17 @@ preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)%</',$pingd
 $uptime = preg_replace("/,/", ".", $matchper[1][0]);
 //var_dump($matchper);
 //last check
-preg_match_all('/<h3>Last checked<\/h3>
-<p>(.*?)</',$pingdom,$matchdate);
-
-$pingdom_timestamp = $matchdate[1][0];
-$Date_parts = preg_split("/[\s-]+/", $pingdom_timestamp);
-if (strlen($Date_parts[0]) == "2") {
+//preg_match_all('/<h3>Last checked<\/h3>
+//<p>(.*?)</',$pingdom,$matchdate);
+//var_dump($matchdate);
+//$pingdom_timestamp = $matchdate[1][0];
+//$Date_parts = preg_split("/[\s-]+/", $pingdom_timestamp);
+//if (strlen($Date_parts[0]) == "2") {
+//$pingdomdate = date('Y-m-d H:i:s');
+//}
+//else {
 $pingdomdate = date('Y-m-d H:i:s');
-}
-else {
-$pingdomdate = date('Y-m-d H:i:s');
-}
+//}
 //status
 if (strpos($pingdom,"class=\"up\"")) { $live="up"; }
 elseif (strpos($pingdom,"class=\"down\"")) { $live="down"; }
@@ -268,7 +267,7 @@ $pingdomdate =  date('Y-m-d H:i:s');
      $timenow = date('Y-m-d H:i:s');
      $sql = "UPDATE pods SET Hgitdate='$gitdate', Hencoding='$encoding', secure='$secure', hidden='$hidden', Hruntime='$runtime', Hgitref='$gitrev', ip='$ipnum', ipv6='$ipv6', monthsmonitored='$months', 
 uptimelast7='$uptime', status='$live', dateLaststats='$pingdomdate', dateUpdated='$timenow', responsetimelast7='$responsetime', score='$score', adminrating='$adminrating', country='$country', city='$city', 
-state='$state', lat='$lat', long='$long', postalcode='$postalcode', connection='$dver', whois='$whois', userrating='$userrating', longversion='$xdver[1]', shortversion='$dver', 
+state='$state', lat='$lat', long='$long', postalcode='', connection='$dver', whois='$whois', userrating='$userrating', longversion='$xdver[1]', shortversion='$dver', 
 masterversion='$masterversion' 
 WHERE 
 domain='$domain'";
