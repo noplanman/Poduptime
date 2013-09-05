@@ -12,7 +12,7 @@
 <link href="http://c807316.r16.cf2.rackcdn.com/jquery-ui-1.8.21.custom.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="http://c790230.r16.cf2.rackcdn.com/bootstrap.min.css">
 <link rel="stylesheet" href="css/newstyle.css" />
-<link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/facebox.css" />
+<link rel="stylesheet" href="css/facebox.css" />
 
 <?php 
 $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
