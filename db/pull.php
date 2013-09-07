@@ -110,7 +110,7 @@ $dver = $dverr[0];
 if ($debug) {echo "Version code: ".$dverr[1]."<br>";}
 if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$outputssl,$xruntime);
-$runtime = trim($xruntime[1]);
+$runtime = isset($xruntime[1])?trim($xruntime[1]):null;
 preg_match('/Server: (.*?)\n/',$outputssl,$xserver);
 $server = isset($xserver[1])?trim($xserver[1]):null;
 preg_match('/Content-Encoding: (.*?)\n/',$outputssl,$xencoding);
@@ -122,21 +122,20 @@ if ($xencoding) {$encoding = trim($xencoding[1]);} else {$encoding = null;}
 $score = $score +1;
 //parse header data
 preg_match('/X-Git-Update: (.*?)\n/',$output,$xgitdate);
-$gitdate = trim($xgitdate[1]);
-//$gitdate = strtotime($gitdate);
+$gitdate = isset($xgitdate[1])?trim($xgitdate[1]):null;
 preg_match('/X-Git-Revision: (.*?)\n/',$output,$xgitrev);
-$gitrev = trim($xgitrev[1]);
+$gitrev = isset($xgitrev[1])?trim($xgitrev[1]):null;
 preg_match('/X-Diaspora-Version: (.*?)\n/',$output,$xdver);
 $dverr = split("-",trim($xdver[1]));
 $dver = $dverr[0];
 if ($debug) {echo "Version code: ".$dverr[1]."<br>";}
 if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$output,$xruntime);
-$runtime = trim($xruntime[1]);
+$runtime = isset($xruntime[1])?trim($xruntime[1]):null;
 preg_match('/Server: (.*?)\n/',$output,$xserver);
-$server = trim($xserver[1]);
+$server = isset($xserver[1])?trim($xserver[1]):null
 preg_match('/Content-Encoding: (.*?)\n/',$output,$xencoding);
-$encoding = trim($xencoding[1]);
+$encoding = isset($xencoding[1])?trim($xencoding[1]):null
 } else {
 $secure="false";
 $score = $score - 1;
