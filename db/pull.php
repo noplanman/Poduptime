@@ -1,5 +1,6 @@
 <?php
 $debug = isset($_GET['debug'])?1:0;
+$debug = isset($argv[1])?1:0;
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
  include('config.php');
 //get master code version
@@ -111,7 +112,7 @@ if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$outputssl,$xruntime);
 $runtime = trim($xruntime[1]);
 preg_match('/Server: (.*?)\n/',$outputssl,$xserver);
-$server = trim($xserver[1]);
+$server = isset($xserver[1])?trim($xserver[1]):null;
 preg_match('/Content-Encoding: (.*?)\n/',$outputssl,$xencoding);
 if ($xencoding) {$encoding = trim($xencoding[1]);} else {$encoding = null;}
 
@@ -194,7 +195,7 @@ if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {
         $ping = curl_init();
         $thismonth = "/".date("Y")."/".date("m");
         curl_setopt($ping, CURLOPT_URL, $row[$i]['pingdomurl'].$thismonth);
-if ($debug) {echo $row[$i]['pingdomurl'].$thismonth;}
+	if ($debug) {echo $row[$i]['pingdomurl'].$thismonth;}
         curl_setopt($ping, CURLOPT_POST, 0);
         curl_setopt($ping, CURLOPT_HEADER, 1);
         curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);
@@ -203,8 +204,11 @@ if ($debug) {echo $row[$i]['pingdomurl'].$thismonth;}
         curl_setopt($ping, CURLOPT_MAXCONNECTS, 5);
         curl_setopt($ping, CURLOPT_FOLLOWLOCATION, true);
         $pingdom = curl_exec($ping);
+	$info = curl_getinfo($ping);
         curl_close($ping);
-//if ($debug) {echo "Pingdom: ".$pingdom."<br>";}
+if ($debug) {echo "Pingdom code: ".$info['http_code']."<br>";}
+if ($info['http_code'] == 200) {
+
 //response time
 preg_match_all('/<h3>Avg. resp. time this month<\/h3>
         <p class="large">(.*?)</',$pingdom,$matcheach);
@@ -236,6 +240,10 @@ if (strpos($pingdom,"class=\"up\"")) { $live="up"; }
 elseif (strpos($pingdom,"class=\"down\"")) { $live="down"; }
 elseif (strpos($pingdom,"class=\"paused\"")) { $live="paused";}
 else {$live="error";$score=$score-2;}
+} else {
+//pingdom url is <> 200 so stats are gone, lower score
+$score=$score-2;
+}
 } else {
 //do uptimerobot API instead
         $ping = curl_init();
