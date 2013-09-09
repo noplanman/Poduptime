@@ -133,9 +133,9 @@ if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$output,$xruntime);
 $runtime = isset($xruntime[1])?trim($xruntime[1]):null;
 preg_match('/Server: (.*?)\n/',$output,$xserver);
-$server = isset($xserver[1])?trim($xserver[1]):null
+$server = isset($xserver[1])?trim($xserver[1]):null;
 preg_match('/Content-Encoding: (.*?)\n/',$output,$xencoding);
-$encoding = isset($xencoding[1])?trim($xencoding[1]):null
+$encoding = isset($xencoding[1])?trim($xencoding[1]):null;
 } else {
 $secure="false";
 $score = $score - 1;
@@ -184,11 +184,14 @@ if ($debug) {echo "GEOIP: ".$location."<br>";}
 $ipdata = "Country: ".$location->countryName."\n";
 $whois = "Country: ".$location->countryName."\n Lat:".$location->latitude." Long:".$location->longitude;
 $country=$location->countryName;
-$city=  iconv("UTF-8", "UTF-8//IGNORE", $location->city);
+$city=  isset($location->city)?iconv("UTF-8", "UTF-8//IGNORE", $location->city):null;
 $state="";
+$months=0;
+$uptime=0;
 $lat=$location->latitude;
 $long=$location->longitude;
 $connection="";
+$pingdomdate = date('Y-m-d H:i:s');
 if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {
 //curl the pingdom page 
         $ping = curl_init();
@@ -217,24 +220,12 @@ $responsetime = $matcheach[1][0];
 preg_match_all('/"historySelect">\s*(.*?)\s*<\/select/is',$pingdom,$matchhistory);
 $implodemonths = implode(" ", $matchhistory[1]);
 preg_match_all('/<option(.*?)/s',$implodemonths,$matchdates);
-$months = count($matchdates[0]);
+$months = isset($matchdates[0])?count($matchdates[0]):0;
+echo $matchdates[0];
 //uptime %
 preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)%</',$pingdom,$matchper);
-$uptime = preg_replace("/,/", ".", $matchper[1][0]);
-//var_dump($matchper);
-//last check
-//preg_match_all('/<h3>Last checked<\/h3>
-//<p>(.*?)</',$pingdom,$matchdate);
-//var_dump($matchdate);
-//$pingdom_timestamp = $matchdate[1][0];
-//$Date_parts = preg_split("/[\s-]+/", $pingdom_timestamp);
-//if (strlen($Date_parts[0]) == "2") {
-//$pingdomdate = date('Y-m-d H:i:s');
-//}
-//else {
+$uptime = isset($matchper[1][0])?preg_replace("/,/", ".", $matchper[1][0]):0;
 $pingdomdate = date('Y-m-d H:i:s');
-//}
-//status
 if (strpos($pingdom,"class=\"up\"")) { $live="up"; }
 elseif (strpos($pingdom,"class=\"down\"")) { $live="down"; }
 elseif (strpos($pingdom,"class=\"paused\"")) { $live="paused";}
