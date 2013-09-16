@@ -99,7 +99,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
       <div id="howto" style="display:none; margin-left:50px">
         <br>
         Want your pod listed?<br>
-        Its easy start monitoring on your pod with a free <a href="http://www.pingdom.com" target="new">www.pingdom.com</a> account.<br>
+        Its easy start monitoring on your pod with a free <a href="https://www.pingdom.com/free/" target="new">www.pingdom.com</a> account.<br>
         <br>Make a public report public and then enter your URL below (note its the one you view after you goto it)<br><br>
         Pingdom shows me http://stats.pingdom.com/b4gasnh1c176 when I click it to goes to http://stats.pingdom.com/b4gasnh1c176/240588
         <br> So URL should look very close to this: http://stats.pingdom.com/b4gasnh1c176/240588<br>
@@ -111,7 +111,6 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
         </form>
         <br>Is your pod missing? If the server can not get a diaspora session its on the hidden list <a href="http://podupti.me/?hidden=true">Show</a>. This
 is mostly because of selfsigned or openca certs, if you need a free ssl cert get one from startssl.com.
-        <br>Need help? <a href="https://diasporg.zendesk.com">Support</a>
         <br>
       </div>
 				
