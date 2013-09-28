@@ -14,7 +14,7 @@ echo "var domain = \"{$_GET['domain']}\";";
 ?>
 $.ajax({
    type: "POST",
-   url: "saverating.php",
+   url: "db/saverating.php",
    data: "username="+$('#username').val()+"&userurl="+$('#userurl').val()+"&comment="+$('#comment').val()+"&rating="+$('#rating').val()+"&domain="+domain,
    success: function(msg){
           if (msg == 1) {

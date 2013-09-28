@@ -10,7 +10,7 @@
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery-ui-1.8.21.custom.min.js"></script>
 <script src="OpenLayers.js"></script>
 <link href="http://c807316.r16.cf2.rackcdn.com/jquery-ui-1.8.21.custom.css" rel="stylesheet" type="text/css"/>
-<link rel="stylesheet" href="http://c790230.r16.cf2.rackcdn.com/bootstrap.min.css">
+<link rel="stylesheet" href="css/bootstrap.min.css">
 <link rel="stylesheet" href="css/newstyle.css" />
 <link rel="stylesheet" href="css/facebox.css" />
 
@@ -68,16 +68,14 @@ s1.parentNode.insertBefore(s, s1);
   <div class="container-fluid">
     <div class="sidebar"> 
       <div class="adsense2">
-<script type="text/javascript"><!--
-google_ad_client = "ca-pub-3662181805557062";
-/* poduptimenew */
-google_ad_slot = "3969028081";
-google_ad_width = 300;
-google_ad_height = 250;
-//-->
-</script>
-<script type="text/javascript"
-src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- poduptimebigger -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:336px;height:280px"
+     data-ad-client="ca-pub-3662181805557062"
+     data-ad-slot="8271090637"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
 </script>
       </div>
       <a href="https://market.android.com/details?id=appinventor.ai_david_morley.DiasporaPoduptime"><img src="http://c807316.r16.cf2.rackcdn.com/android-dude128.png"></a>
@@ -88,13 +86,12 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
         <?php if ($hidden == "true") {echo "<a href='http://podupti.me' class='btn danger large'>NOTICE: These pods are Hidden and have problems, click here to go to working pods</a>";} include("show.php"); ?>
       </div>
       <div id="add">
-        Pod Host? <u style="cursor: pointer; cursor: hand;">Click here</u> to add/manage your listing.<br>
+        Pod Host? <u style="cursor: pointer; cursor: hand;">Click here</u> to add your listing.<br>
 	</div>
 	<div id="info">
 	Data last refreshed at: <?php echo date("F d Y H:i:s.", filemtime($lastfile)) ?> Pacific Time<br>
-        Poduptime is run by <a href="https://diasp.org/u/davidmorley" target=_new>David Morley</a> and is open source on <a href="https://github.com/diasporg/Poduptime">GitHub</a><br>
-        I also run the pods <a href="https://diasp.org/?2" target=_new>diasp.org</a> and the <a href="http://dia.so" target=_new>dia.so</a> site.<br>
-        Some pods are <a href="http://podupti.me/?hidden=true">Hidden</a> That have too many issues.<br><br>
+        Poduptime is run by <a href="https://diasp.org/u/davidmorley" target=_new>David Morley</a> and is open source on <a href="https://github.com/diasporg/Poduptime">GitHub</a> Feel free to contribute with pull requests or bugs!<br>
+        Some pods are <a href="http://podupti.me/?hidden=true">Hidden</a> hat have too many issues, see <a href="https://github.com/diasporg/Poduptime/wiki">Wiki</a> for more.<br><br>
 	</div>
       <div id="howto" style="display:none; margin-left:50px">
         <br>
