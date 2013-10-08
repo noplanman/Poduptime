@@ -8,3 +8,4 @@ cd /var/www/podup/db
 php5 pull.php
 touch last.data
 fi
+php5 backup.php
