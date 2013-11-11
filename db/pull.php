@@ -263,6 +263,7 @@ $pingdomdate =  date('Y-m-d H:i:s');
 }
 //sql it
      $timenow = date('Y-m-d H:i:s');
+     $city = pg_escape_string($city);    
      $sql = "UPDATE pods SET Hgitdate='$gitdate', Hencoding='$encoding', secure='$secure', hidden='$hidden', Hruntime='$runtime', Hgitref='$gitrev', ip='$ipnum', ipv6='$ipv6', monthsmonitored='$months', 
 uptimelast7='$uptime', status='$live', dateLaststats='$pingdomdate', dateUpdated='$timenow', responsetimelast7='$responsetime', score='$score', adminrating='$adminrating', country='$country', city='$city', 
 state='$state', lat='$lat', long='$long', postalcode='', connection='$dver', whois='$whois', userrating='$userrating', longversion='$xdver[1]', shortversion='$dver', 
