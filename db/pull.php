@@ -22,10 +22,17 @@ $debug = isset($argv[1])?1:0;
      }
 //foreach pod check it and update db
  $domain = isset($_GET['domain'])?$_GET['domain']:null;
- if ($domain) {$sql = "SELECT domain,pingdomurl,score,datecreated FROM pods WHERE domain = '$domain'";$sleep="0";} 
- else {$sql = "SELECT domain,pingdomurl,score,datecreated,adminrating FROM pods";$sleep="1";}
+ if ($domain) {
+	 $sql = "SELECT domain,pingdomurl,score,datecreated FROM pods WHERE domain = $1";
+	 $sleep="0";
+	 $result = pg_query_params($dbh, $sql, array($domain));
+ } 
+ else {
+	 $sql = "SELECT domain,pingdomurl,score,datecreated,adminrating FROM pods";
+	 $sleep="1";
+	 $result = pg_query($dbh, $sql);
+ }
 
- $result = pg_query($dbh, $sql);
  if (!$result) {
      die("Error in SQL query1: " . pg_last_error());
  }
@@ -38,8 +45,8 @@ $debug = isset($argv[1])?1:0;
      $admindb = $row[$i]['adminrating'];
 //get ratings
  $userrate=0;$adminrate=0;$userratingavg = array();$adminratingavg = array();$userrating = array();$adminrating = array();
- $sqlforr = "SELECT * FROM rating_comments WHERE domain = '$domain'";
- $ratings = pg_query($dbh, $sqlforr);
+ $sqlforr = "SELECT * FROM rating_comments WHERE domain = $1";
+ $ratings = pg_query_params($dbh, $sqlforr, array($domain));
  if (!$ratings) {
      die("Error in SQL query2: " . pg_last_error());
  }
@@ -263,15 +270,14 @@ $pingdomdate =  date('Y-m-d H:i:s');
 }
 //sql it
      $timenow = date('Y-m-d H:i:s');
-     $city = pg_escape_string($city);    
-     $sql = "UPDATE pods SET Hgitdate='$gitdate', Hencoding='$encoding', secure='$secure', hidden='$hidden', Hruntime='$runtime', Hgitref='$gitrev', ip='$ipnum', ipv6='$ipv6', monthsmonitored='$months', 
-uptimelast7='$uptime', status='$live', dateLaststats='$pingdomdate', dateUpdated='$timenow', responsetimelast7='$responsetime', score='$score', adminrating='$adminrating', country='$country', city='$city', 
-state='$state', lat='$lat', long='$long', postalcode='', connection='$dver', whois='$whois', userrating='$userrating', longversion='$xdver[1]', shortversion='$dver', 
-masterversion='$masterversion' 
+     $sql = "UPDATE pods SET Hgitdate=$1, Hencoding=$2, secure=$3, hidden=$4, Hruntime=$5, Hgitref=$6, ip=$7, ipv6=$8, monthsmonitored=$9, 
+uptimelast7=$10, status$11', dateLaststats=$12, dateUpdated=$13, responsetimelast7=$14, score=$15, adminrating=$16, country=$17, city=$18, 
+state=$19, lat=$20, long=$21, postalcode='', connection=$22, whois=$23, userrating=$24, longversion=$25, shortversion=$26, 
+masterversion=$27 
 WHERE 
-domain='$domain'";
+domain=$28";
      if ($debug) {echo "SQL: ".$sql."<br>";}
-     $result = pg_query($dbh, $sql);
+     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver[1], $dver, $masterversion, $domain));
      if (!$result) {
          die("Error in SQL query3: " . pg_last_error());
      }

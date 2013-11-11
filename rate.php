@@ -40,11 +40,11 @@ $("#rating").prop( "value", value )
  if (!$dbh) {
      die("Error in connection: " . pg_last_error());
  }  
- if ($_GET['domain']) {
- $domain = $_GET['domain'];
- $sql = "SELECT * FROM rating_comments WHERE domain = '$domain'";
- } 
- $result = pg_query($dbh, $sql);
+ if (~ $_GET['domain']) {
+     die(domain not specified);
+ }
+ $sql = "SELECT * FROM rating_comments WHERE domain = $1";
+ $result = pg_query_params($dbh, $sql, array($_GET['domain']));
  if (!$result) {
      die("Error in SQL query: " . pg_last_error());
  }   

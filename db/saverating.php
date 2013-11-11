@@ -21,17 +21,12 @@ if (!$_POST['rating']){
  die;
 }
 
-$domain = pg_escape_string($_POST['domain']);
-$comment = pg_escape_string($_POST['comment']);
-$rating = pg_escape_string($_POST['rating']);
-$username = pg_escape_string($_POST['username']);
-$userurl = pg_escape_string($_POST['userurl']);
  $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
      if (!$dbh) {
          die("Error in connection: " . pg_last_error());
      }
-     $sql = "INSERT INTO rating_comments (domain, comment, rating, username, userurl) VALUES('$domain', '$comment', '$rating', '$username', '$userurl')";
-     $result = pg_query($dbh, $sql);
+     $sql = "INSERT INTO rating_comments (domain, comment, rating, username, userurl) VALUES($1, $2, $3, $4, $5)";
+     $result = pg_query_params($dbh, $sql, array($_POST['domain'], $_POST['comment'], $_POST['rating'], $_POST['username'], $_POST['userurl']));
      if (!$result) {
          die("Error in SQL query: " . pg_last_error());
      }
