@@ -271,7 +271,7 @@ $pingdomdate =  date('Y-m-d H:i:s');
 //sql it
      $timenow = date('Y-m-d H:i:s');
      $sql = "UPDATE pods SET Hgitdate=$1, Hencoding=$2, secure=$3, hidden=$4, Hruntime=$5, Hgitref=$6, ip=$7, ipv6=$8, monthsmonitored=$9, 
-uptimelast7=$10, status$11', dateLaststats=$12, dateUpdated=$13, responsetimelast7=$14, score=$15, adminrating=$16, country=$17, city=$18, 
+uptimelast7=$10, status=$11, dateLaststats=$12, dateUpdated=$13, responsetimelast7=$14, score=$15, adminrating=$16, country=$17, city=$18, 
 state=$19, lat=$20, long=$21, postalcode='', connection=$22, whois=$23, userrating=$24, longversion=$25, shortversion=$26, 
 masterversion=$27 
 WHERE 
