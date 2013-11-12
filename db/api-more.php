@@ -6,9 +6,8 @@
  if (!$dbh) {
      die("Error in connection: " . pg_last_error());
  }  
- $domain = $_GET['url'];
- $sql = "SELECT * FROM pods WHERE domain = '$domain'";
- $result = pg_query($dbh, $sql);
+ $sql = "SELECT * FROM pods WHERE domain = $1";
+ $result = pg_query_params($dbh, $sql, array($_GET['url']));
  if (!$result) {
      die("Error in SQL query: " . pg_last_error());
  }   

@@ -73,12 +73,8 @@ if (stristr($output, 'Set-Cookie: _diaspora_session=')) {
 }
 
 if ($valid=="1") {    
-     $pingdomurl = pg_escape_string($_POST['url']);
-     $domain = pg_escape_string($_POST['domain']);
-     $email = pg_escape_string($_POST['email']);
-    
-     $sql = "INSERT INTO pods (domain, pingdomurl, email) VALUES('$domain', '$pingdomurl', '$email')";
-     $result = pg_query($dbh, $sql);
+     $sql = "INSERT INTO pods (domain, pingdomurl, email) VALUES($1, $2, $3)";
+     $result = pg_query_params($dbh, $sql, array($_POST['domain'], $_POST['url'], $_POST['email']));
      if (!$result) {
          die("Error in SQL query: " . pg_last_error());
      }
