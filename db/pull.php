@@ -1,6 +1,7 @@
 <?php
 $debug = isset($_GET['debug'])?1:0;
-$debug = isset($argv[1])?1:0;
+//if ($_GET['debug'] == 1) {$debug =1;}
+//$debug = isset($argv[1])?1:0;
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
  include('config.php');
 //get master code version
@@ -15,6 +16,7 @@ $debug = isset($argv[1])?1:0;
         curl_close($mv);
 	preg_match('/number: "(.*?)"/',$outputmv,$version);
  $masterversion = trim($version[1], '"');
+ if ($debug) {echo "Masterversion: ".$masterversion."<br>";} 
  $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
  $dbh2 = pg_connect("dbname=$pgdb user=$pguser password=$pgpass"); 
     if (!$dbh) {
@@ -100,10 +102,11 @@ unset($adminratingavg);
         curl_setopt($ch, CURLOPT_NOBODY, 1);
         $output = curl_exec($ch);
         curl_close($ch);
-
-if (stristr($outputssl, 'Set-Cookie: _diaspora_session=')) {
+if ($debug) {print $outputssl;}
+if (stristr($outputssl, '_diaspora_session')) {
 //parse header data
 $secure="true";
+if ($debug) {echo "Secure: ".$secure."<br>";}
 //$hidden="no";
 $score = $score +1;
 preg_match('/X-Git-Update: (.*?)\n/',$outputssl,$xgitdate);
@@ -111,10 +114,11 @@ $gitdate = trim($xgitdate[1]);
 //$gitdate = strtotime($gitdate);
 preg_match('/X-Git-Revision: (.*?)\n/',$outputssl,$xgitrev);
 $gitrev = trim($xgitrev[1]);
+if ($debug) {echo "GitRevssl: ".$gitrev."<br>";}
 preg_match('/X-Diaspora-Version: (.*?)\n/',$outputssl,$xdver);
 $dverr = split("-",trim($xdver[1]));
 $dver = $dverr[0];
-if ($debug) {echo "Version code: ".$dverr[1]."<br>";}
+if ($debug) {echo "Version code: ".$dver."<br>";}
 if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$outputssl,$xruntime);
 $runtime = isset($xruntime[1])?trim($xruntime[1]):null;
@@ -151,12 +155,12 @@ $score = $score - 1;
 //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
 }
 if ($debug) {echo "SSL: ".$secure."<br>";}
-if (!$gitdate) {
+//if (!$gitdate) {
 //if a pod is not displaying the git header data its really really really old lets lower your score
 //$hidden="yes";
-if ($debug) {echo "Valid Headers: ".$gitdate."<br>";}
-$score = $score - 2;
-}
+//if ($debug) {echo "Valid Headers: ".$gitdate."<br>";}
+//$score = $score - 2;
+//}
 if ($score > 5) {
 $hidden = "no";
 } else {
