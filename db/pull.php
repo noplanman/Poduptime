@@ -166,13 +166,13 @@ $hidden = "no";
 } else {
 $hidden = "yes";
 }
+if ($debug) {echo "Hidden: ".$hidden."<br>";}
 // lets cap the scores or you can go too high or too low to never be effected by them
 if ($score > 20) {
 $score = 20;
 } elseif ($score < -20) {
 $score = -20;
 }
-
 $ip6 = escapeshellcmd('dig +nocmd '.$domain.' aaaa +noall +short');
 $ip = escapeshellcmd('dig +nocmd '.$domain.' a +noall +short');
 $ip6num = exec($ip6);
