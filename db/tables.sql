@@ -26,6 +26,7 @@ CREATE TABLE pods (
  pingdomurl text,
  pingdomlast text,
  monthsmonitored int,
+ signup int,
  uptimelast7 numeric(5,2),
  status text,
  responsetimelast7 text,

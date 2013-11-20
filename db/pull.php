@@ -154,6 +154,22 @@ $score = $score - 1;
 //no diaspora cookie on either, lets set this one as hidden and notify someone its not really a pod
 //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
 }
+if ($secure == "true") {$sorno = "s";} else {$sorno- "";}
+        $chksup = curl_init();
+        curl_setopt($chksup, CURLOPT_URL, "http".$sorno."://".$domain."/users/sign_up");
+        curl_setopt($chksup, CURLOPT_POST, 1);
+        curl_setopt($chksup, CURLOPT_HEADER, 1);
+        curl_setopt($chksup, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($chksup, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($chksup, CURLOPT_NOBODY, 1);
+        $outputchksup = curl_exec($chksup);
+        curl_close($chksup);
+
+preg_match('/Status:(.*?)\n/',$outputchksup,$xsignupon);
+$signupon = isset($xsignupon[1])?trim($xsignupon[1]):null;
+
+if ($debug) {echo "Signup Header Status: ".$signupon."<br>";}
+
 if ($debug) {echo "SSL: ".$secure."<br>";}
 //if (!$gitdate) {
 //if a pod is not displaying the git header data its really really really old lets lower your score
