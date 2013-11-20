@@ -167,8 +167,8 @@ if ($secure == "true") {$sorno = "s";} else {$sorno- "";}
 
 preg_match('/Status:(.*?)\n/',$outputchksup,$xsignupon);
 $signupon = isset($xsignupon[1])?trim($xsignupon[1]):null;
-
-if ($debug) {echo "Signup Header Status: ".$signupon."<br>";}
+if ($signupon == "200 OK") {$signup = 1;} else {$signup = 0;}
+if ($debug) {echo "Signup Open: ".$signup."<br>";}
 
 if ($debug) {echo "SSL: ".$secure."<br>";}
 //if (!$gitdate) {
@@ -293,11 +293,11 @@ $pingdomdate =  date('Y-m-d H:i:s');
      $sql = "UPDATE pods SET Hgitdate=$1, Hencoding=$2, secure=$3, hidden=$4, Hruntime=$5, Hgitref=$6, ip=$7, ipv6=$8, monthsmonitored=$9, 
 uptimelast7=$10, status=$11, dateLaststats=$12, dateUpdated=$13, responsetimelast7=$14, score=$15, adminrating=$16, country=$17, city=$18, 
 state=$19, lat=$20, long=$21, postalcode='', connection=$22, whois=$23, userrating=$24, longversion=$25, shortversion=$26, 
-masterversion=$27 
+masterversion=$27, signup=$28
 WHERE 
-domain=$28";
+domain=$29";
      if ($debug) {echo "SQL: ".$sql."<br>";}
-     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver[1], $dver, $masterversion, $domain));
+     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver[1], $dver, $masterversion, $signup, $domain));
      if (!$result) {
          die("Error in SQL query3: " . pg_last_error());
      }
