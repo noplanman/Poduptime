@@ -6,7 +6,7 @@ else
 	echo "Checking for internet";
 fi
 
-$WGET -d -v --tries=10 --timeout=15 http://www.google.com -O /tmp/index.google
+$WGET -d --tries=10 --timeout=15 http://www.google.com -O /tmp/index.google
 # &> /dev/null
 sleep 2
 
