@@ -90,8 +90,8 @@ s1.parentNode.insertBefore(s, s1);
 	</div>
 	<div id="info">
 	Data last refreshed at: <?php echo date("F d Y H:i:s.", filemtime($lastfile)) ?> Pacific Time<br>
-        Poduptime is run by <a href="https://diasp.org/u/davidmorley" target=_new>David Morley</a> and is open source on <a href="https://github.com/diasporg/Poduptime">GitHub</a> Feel free to contribute with pull requests or bugs!<br>
-        Some pods are <a href="http://podupti.me/?hidden=true">Hidden</a> hat have too many issues, see <a href="https://github.com/diasporg/Poduptime/wiki">Wiki</a> for more.<br><br>
+        Poduptime is run by <a href="https://diasp.org/u/davidmorley" target=_new>David Morley</a> and is open source on <a href="https://github.com/diasporg/Poduptime">GitHub</a> Feel free to contribute with pull requests or bug reports!<br>
+        Some pods are <a href="http://podupti.me/?hidden=true">Hidden</a> since they have too many issues, see the <a href="https://github.com/diasporg/Poduptime/wiki">Wiki</a> for more.<br><br>
 	</div>
       <div id="howto" style="display:none; margin-left:50px">
         <br>
