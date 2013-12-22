@@ -164,10 +164,11 @@ if ($secure == "true") {$sorno = "s";} else {$sorno- "";}
         curl_setopt($chksup, CURLOPT_NOBODY, 1);
         $outputchksup = curl_exec($chksup);
         curl_close($chksup);
-
 preg_match('/Status:(.*?)\n/',$outputchksup,$xsignupon);
 $signupon = isset($xsignupon[1])?trim($xsignupon[1]):null;
-if ($signupon == "200 OK") {$signup = 1;} else {$signup = 0;}
+$signupon = substr($signupon, 0, 3);
+if ($signupon == "200") {$signup = 1;} else {$signup = 0;}
+
 if ($debug) {echo "Signup Open: ".$signup."<br>";}
 
 if ($debug) {echo "SSL: ".$secure."<br>";}
@@ -296,7 +297,6 @@ state=$19, lat=$20, long=$21, postalcode='', connection=$22, whois=$23, userrati
 masterversion=$27, signup=$28
 WHERE 
 domain=$29";
-     if ($debug) {echo "SQL: ".$sql."<br>";}
      $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver[1], $dver, $masterversion, $signup, $domain));
      if (!$result) {
          die("Error in SQL query3: " . pg_last_error());
