@@ -15,11 +15,11 @@ if (!$_POST['domain']){
  die;
 }
 if (!$_POST['url']){
-  echo "no pingdom url for your stats";
+  echo "no API key for your stats";
  die;
 }
-if (substr_count($_POST['url'], '/') != 4){
-  echo "pingdom url bad, needs to look like http://stats.pingdom.com/xxxxxxxxxxx/xxxxxx";
+if (strlen($_POST['url']) < 14){
+  echo "API key bad needs to be like m58978-80abdb799f6ccf15e3e3787ee";
  die;
 }
 
@@ -37,7 +37,7 @@ if ($row["domain"] == $_POST['domain']) {
 echo "domain already exists";die;
 }
 if ($row["pingdomurl"] == $_POST['url']) {
-echo "pingdom report already exists";die;
+echo "API key already exists";die;
 }
  }
 

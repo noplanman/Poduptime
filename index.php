@@ -96,12 +96,10 @@ s1.parentNode.insertBefore(s, s1);
       <div id="howto" style="display:none; margin-left:50px">
         <br>
         Want your pod listed?<br>
-        Its easy start monitoring on your pod with a free <a href="https://www.pingdom.com/free/" target="new">www.pingdom.com</a> account.<br>
-        <br>Make a public report public and then enter your URL below (note its the one you view after you goto it)<br><br>
-        Pingdom shows me http://stats.pingdom.com/b4gasnh1c176 when I click it to goes to http://stats.pingdom.com/b4gasnh1c176/240588
-        <br> So URL should look very close to this: http://stats.pingdom.com/b4gasnh1c176/240588<br>
+        Its easy start monitoring on your pod with a free <a href="https://uptimerobot.com" target="new">Uptime Robot</a> account.<br>
+	Create a monitor for your pod, then in "My Settings" create a monitor-specific API key and paste below.<br>
         <br><form action="db/add.php" method="post">
-        Stats URL:<input type="text" name="url" class="xlarge span8" placeholder="http://stats.pingdom.com/b4gasnh1c176/240588"><br>
+        Monitor API Key:<input type="text" name="url" class="xlarge span8" placeholder="m58978-80abdb799f6ccf15e3e4ttwe"><br>
         Pod domainname:<input type="text" name="domain" class="xlarge span4" placeholder="domain.com"><br>
         Your Email:<input type="text" name="email" class="xlarge span4" placeholder="user@domain.com"><br>
         <input type="submit" value="submit">

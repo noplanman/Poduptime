@@ -6,7 +6,7 @@ else
 	echo "Checking for internet";
 fi
 
-$WGET -d --tries=10 --timeout=15 http://www.google.com -O /tmp/index.google
+$WGET -q --tries=10 --timeout=15 http://www.google.com -O /tmp/index.google
 # &> /dev/null
 sleep 2
 
@@ -17,8 +17,8 @@ exit;
 else
 	echo "Pulling in new pod data";
 	cd /var/www/podup/db
-	php5 pull.php
-	touch last.data
+	php5 pull.php debug=1
+ 	touch last.data
 	php5 backup.php
 	rm /tmp/index.google
 fi

@@ -102,6 +102,7 @@ unset($adminratingavg);
         curl_setopt($ch, CURLOPT_NOBODY, 1);
         $output = curl_exec($ch);
         curl_close($ch);
+if ($debug) {print $output;}
 if ($debug) {print $outputssl;}
 if (stristr($outputssl, '_diaspora_session')) {
 //parse header data
@@ -164,14 +165,15 @@ if ($secure == "true") {$sorno = "s";} else {$sorno- "";}
         curl_setopt($chksup, CURLOPT_NOBODY, 1);
         $outputchksup = curl_exec($chksup);
         curl_close($chksup);
+if ($debug) {print $outputchksup;}
 preg_match('/Status:(.*?)\n/',$outputchksup,$xsignupon);
 $signupon = isset($xsignupon[1])?trim($xsignupon[1]):null;
 $signupon = substr($signupon, 0, 3);
 if ($signupon == "200") {$signup = 1;} else {$signup = 0;}
 
-if ($debug) {echo "Signup Open: ".$signup."<br>";}
+if ($debug) {echo "<br>Signup Open: ".$signup."<br>";}
 
-if ($debug) {echo "SSL: ".$secure."<br>";}
+if ($debug) {echo "<br>SSL: ".$secure."<br>";}
 //if (!$gitdate) {
 //if a pod is not displaying the git header data its really really really old lets lower your score
 //$hidden="yes";
@@ -236,7 +238,7 @@ if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {
         $pingdom = curl_exec($ping);
 	$info = curl_getinfo($ping);
         curl_close($ping);
-if ($debug) {echo "Pingdom code: ".$info['http_code']."<br>";}
+if ($debug) {echo "<br>Pingdom code: ".$info['http_code']."<br>";}
 if ($info['http_code'] == 200) {
 
 //response time
@@ -249,7 +251,7 @@ preg_match_all('/"historySelect">\s*(.*?)\s*<\/select/is',$pingdom,$matchhistory
 $implodemonths = implode(" ", $matchhistory[1]);
 preg_match_all('/<option(.*?)/s',$implodemonths,$matchdates);
 $months = isset($matchdates[0])?count($matchdates[0]):0;
-echo $matchdates[0];
+//echo $matchdates[0];
 //uptime %
 preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)%</',$pingdom,$matchper);
 $uptime = isset($matchper[1][0])?preg_replace("/,/", ".", $matchper[1][0]):0;
@@ -302,11 +304,10 @@ domain=$29";
          die("Error in SQL query3: " . pg_last_error());
      }
     
-if ($debug) {echo "Score out of 20: ".$score."<br>";}
+if ($debug) {echo "<br>Score out of 20: ".$score."<br>";}
 if (!$debug) {echo "Success";}
 
 //end foreach
-sleep($sleep);
  }
  }   
      pg_free_result($result);
