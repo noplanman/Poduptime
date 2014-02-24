@@ -4,12 +4,14 @@
 <thead>
 <tr>
 <th width="220px">Diaspora Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
-<th>Version Code<a class="tipsy" title="Version of Diaspora this pod runs">?</a></th>
-<th>Uptime Percent<a class="tipsy" title="Percent of the time the pod is online for <?php echo date("F") ?>.">?</a></th>
+<th>Version<a class="tipsy" title="Version of Diaspora this pod runs">?</a></th>
+<th>Uptime<a class="tipsy" title="Percent of the time the pod is online for <?php echo date("F") ?>.">?</a></th>
 <th>Signups<a class="tipsy" title="Open to public or Closed/Invite only.">?</a></th>
+<th>Users<a class="tipsy" title="Number of total users on this pod.">?</a></th>
+<th>Posts<a class="tipsy" title="Number of total posts on this pod.">?</a></th>
 <th>Months Online<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
 <th>User Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
-<th>Server Location<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
+<th>Location<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
 </tr>
 </thead>
 <tbody>
@@ -46,7 +48,7 @@ $tip="This pod does not offer SSL";
 $verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $row["shortversion"]);
 
 
-$tip.="\n This pod {$row["domain"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. "; 
+$tip.="\n This pod {$row["name"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. "; 
 $tip.="Code base is {$row["shortversion"]} and the current github base is {$row["masterversion"]}. ";
 $tip.="This pod is {$verdiff} versions behind the current code. This pods IP {$row["ip"]} ". ($row["ipv6"] == "yes" ? "has" : "does not have") ." IPv6 and is located in {$row["country"]}. On a score of -20 to +20 this pod is a {$row["score"]} right now, all data is checked every hour. Pod " . ($row["signup"] == "1" ? "does" : "does not") . " allow new users.";
 
@@ -54,7 +56,7 @@ $tip.="This pod is {$verdiff} versions behind the current code. This pods IP {$r
 "</div></td>";
 
 if (stristr($row["shortversion"],'head')) 
-{$version=".development code";$pre = "This pod runs pre release 
+{$version=".dev code";$pre = "This pod runs pre release 
 development code";} elseif (!$row["shortversion"]) 
 {$version="0";$pre = "This pod runs 
 unknown code";} 
@@ -65,6 +67,8 @@ if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "")
      echo "<td>" . $row["uptimelast7"] . "%</td>";
 if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $signup . "</td>";
+     echo "<td>" . $row["total_users"] . "</td>";
+     echo "<td>" . $row["local_posts"] . "</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row["pingdomurl"];}
      echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a target='new' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";
 if ($row["userrating"] >6) {$userratingclass="green";} elseif ($row["userrating"] <7) {$userratingclass="yellow";} elseif ($row["userrating"] <3) {$userratingclass="red";}

@@ -1,6 +1,7 @@
 CREATE TABLE pods (
  id serial8 UNIQUE PRIMARY KEY,
  domain text UNIQUE NOT NULL,
+ name text,
  score int DEFAULT 10,
  adminrating decimal DEFAULT 10,
  userrating decimal DEFAULT 10,
@@ -27,6 +28,10 @@ CREATE TABLE pods (
  pingdomlast text,
  monthsmonitored int,
  signup int,
+ total_users int, 
+ active_users_halfyear int,
+ active_users_monthly int,
+ local_posts int,
  uptimelast7 numeric(5,2),
  status text,
  responsetimelast7 text,

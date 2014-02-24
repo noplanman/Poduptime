@@ -1,5 +1,5 @@
 <?php
-$debug = isset($_GET['debug'])?1:0;
+$debug = 1;//isset($_GET['debug'])?1:0;
 //if ($_GET['debug'] == 1) {$debug =1;}
 //$debug = isset($argv[1])?1:0;
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
@@ -82,29 +82,34 @@ $userrate=0;$adminrate=0;
 unset($userratingavg);
 unset($adminratingavg);
      //curl the header of pod with and without https
-
+unset($name);
+unset($total_users);
+unset($active_users_halfyear);
+unset($active_users_monthly);
+unset($local_posts);
+unset($registrations_open);
         $chss = curl_init();
-        curl_setopt($chss, CURLOPT_URL, "https://".$domain."/users/sign_in"); 
-        curl_setopt($chss, CURLOPT_POST, 1);
+        curl_setopt($chss, CURLOPT_URL, "https://".$domain."/statistics.json"); 
+        curl_setopt($chss, CURLOPT_POST, 0);
         curl_setopt($chss, CURLOPT_HEADER, 1);
         curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($chss, CURLOPT_NOBODY, 1);
+        curl_setopt($chss, CURLOPT_NOBODY, 0);
         $outputssl = curl_exec($chss);      
         curl_close($chss);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://".$domain."/users/sign_in");
-        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_URL, "http://".$domain."/statistics.json");
+        curl_setopt($ch, CURLOPT_POST, 0);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_NOBODY, 1);
+        curl_setopt($ch, CURLOPT_NOBODY, 0);
         $output = curl_exec($ch);
         curl_close($ch);
 if ($debug) {print $output;}
 if ($debug) {print $outputssl;}
-if (stristr($outputssl, '_diaspora_session')) {
+if (stristr($outputssl, 'registrations_open')) {
 //parse header data
 $secure="true";
 if ($debug) {echo "Secure: ".$secure."<br>";}
@@ -127,7 +132,15 @@ preg_match('/Server: (.*?)\n/',$outputssl,$xserver);
 $server = isset($xserver[1])?trim($xserver[1]):null;
 preg_match('/Content-Encoding: (.*?)\n/',$outputssl,$xencoding);
 if ($xencoding) {$encoding = trim($xencoding[1]);} else {$encoding = null;}
-
+//get new json
+preg_match_all("/{(.*?)}/", $outputssl, $jsonssl_array);
+$jsonssl = json_decode($jsonssl_array[0][0]);
+if ($jsonssl->registrations_open === true) {$registrations_open=1;}
+$name = isset($jsonssl->name)?$jsonssl->name:"null";
+$total_users = isset($jsonssl->total_users)?$jsonssl->total_users:0;
+$active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active_users_halfyear:0;
+$active_users_monthly = isset($jsonssl->active_users_monthly)?$jsonssl->active_users_monthly:0;
+$local_posts = isset($jsonssl->local_posts)?$jsonssl->local_posts:0;
 } elseif (stristr($output, 'Set-Cookie: _diaspora_session=')) {
 "not";$secure="false";
 //$hidden="no";
@@ -148,6 +161,14 @@ preg_match('/Server: (.*?)\n/',$output,$xserver);
 $server = isset($xserver[1])?trim($xserver[1]):null;
 preg_match('/Content-Encoding: (.*?)\n/',$output,$xencoding);
 $encoding = isset($xencoding[1])?trim($xencoding[1]):null;
+preg_match_all("/{(.*?)}/", $output, $jsonssl_array);
+$jsonssl = json_decode($jsonssl_array[0][0]);
+if ($jsonssl->registrations_open === true) {$registrations_open=1;}
+$name = isset($jsonssl->name)?$jsonssl->name:"null";
+$total_users = isset($jsonssl->total_users)?$jsonssl->total_users:0;
+$active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active_users_halfyear:0;
+$active_users_monthly = isset($jsonssl->active_users_monthly)?$jsonssl->active_users_monthly:0;
+$local_posts = isset($jsonssl->local_posts)?$jsonssl->local_posts:0;
 } else {
 $secure="false";
 $score = $score - 1;
@@ -155,31 +176,8 @@ $score = $score - 1;
 //no diaspora cookie on either, lets set this one as hidden and notify someone its not really a pod
 //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
 }
-if ($secure == "true") {$sorno = "s";} else {$sorno- "";}
-        $chksup = curl_init();
-        curl_setopt($chksup, CURLOPT_URL, "http".$sorno."://".$domain."/users/sign_up");
-        curl_setopt($chksup, CURLOPT_POST, 1);
-        curl_setopt($chksup, CURLOPT_HEADER, 1);
-        curl_setopt($chksup, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($chksup, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($chksup, CURLOPT_NOBODY, 1);
-        $outputchksup = curl_exec($chksup);
-        curl_close($chksup);
-if ($debug) {print $outputchksup;}
-preg_match('/Status:(.*?)\n/',$outputchksup,$xsignupon);
-$signupon = isset($xsignupon[1])?trim($xsignupon[1]):null;
-$signupon = substr($signupon, 0, 3);
-if ($signupon == "200") {$signup = 1;} else {$signup = 0;}
-
+$signup = $registrations_open;
 if ($debug) {echo "<br>Signup Open: ".$signup."<br>";}
-
-if ($debug) {echo "<br>SSL: ".$secure."<br>";}
-//if (!$gitdate) {
-//if a pod is not displaying the git header data its really really really old lets lower your score
-//$hidden="yes";
-//if ($debug) {echo "Valid Headers: ".$gitdate."<br>";}
-//$score = $score - 2;
-//}
 if ($score > 5) {
 $hidden = "no";
 } else {
@@ -296,10 +294,10 @@ $pingdomdate =  date('Y-m-d H:i:s');
      $sql = "UPDATE pods SET Hgitdate=$1, Hencoding=$2, secure=$3, hidden=$4, Hruntime=$5, Hgitref=$6, ip=$7, ipv6=$8, monthsmonitored=$9, 
 uptimelast7=$10, status=$11, dateLaststats=$12, dateUpdated=$13, responsetimelast7=$14, score=$15, adminrating=$16, country=$17, city=$18, 
 state=$19, lat=$20, long=$21, postalcode='', connection=$22, whois=$23, userrating=$24, longversion=$25, shortversion=$26, 
-masterversion=$27, signup=$28
+masterversion=$27, signup=$28, total_users=$29, active_users_halfyear=$30, active_users_monthly=$31, local_posts=$32, name=$33
 WHERE 
-domain=$29";
-     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver[1], $dver, $masterversion, $signup, $domain));
+domain=$34";
+     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver[1], $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain));
      if (!$result) {
          die("Error in SQL query3: " . pg_last_error());
      }
