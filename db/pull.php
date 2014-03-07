@@ -9,21 +9,32 @@
 require_once "Net/GeoIP.php";
 require_once 'config.php';
 
+
+// Database connection
+// To be moved into the config.php once all sql is adapted to pdo
+
+define("DB_DRIVER","pgsql"); //requires pdo-pgsql
+// define("DB_DRIVER","mysql"); // requires pdo-mysql
+define("DB_NAME",$pguser);
+define("DB_HOST","localhost");
+define("DB_USER",$pguser);
+define("DB_PASSWORD",$pgpass);
+
 // The options for the cUrl Requests
+// Better not touch unless you know what you do
 define("CURL_POST", 0);
-define("CURL_HEADER", 1);
 define("CURL_CONNECTTIMEOUT", 5);
 define("CURL_RETURNTRANSFER", 1);
 define("CURL_NOBODY", 0);
 
-define("DEBUG", true);
-define("VERBOSE_CURL", false);
+define("DEBUG", true); // If set to true it prints out debug-logs
+define("VERBOSE_CURL", false); // If set to true it prints out the complete cUrl Responses
 
 /**
  * Class collecting functions for pulling data from Pods
  * @author J. Brunswicker
  * @version 1.0
- *
+ * @todo Evaluate if it is still required to pull the http header from the pod, as there is a statistics.json now
  */
 class Pull {
 	
@@ -38,7 +49,7 @@ class Pull {
 		
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_POST, CURL_POST);
-		curl_setopt($curl, CURLOPT_HEADER, CURL_HEADER);
+		curl_setopt($curl, CURLOPT_HEADER, 1);
 		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, CURL_CONNECTTIMEOUT);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, CURL_RETURNTRANSFER);
 		curl_setopt($curl, CURLOPT_NOBODY, CURL_NOBODY);
@@ -53,7 +64,7 @@ class Pull {
 	 * @param string $url
 	 * @return string
 	 */
-	public static function getCurlResult($url) {
+	public static function getCurlResult($url, $withoutHeader=false) {
 		$curl = curl_init();
 		
 		if (DEBUG) {
@@ -61,8 +72,12 @@ class Pull {
 		}
 		
 		curl_setopt($curl, CURLOPT_URL, $url);
+		if ($withoutHeader) {
+			curl_setopt($curl, CURLOPT_HEADER, 0);
+		} else {
+			curl_setopt($curl, CURLOPT_HEADER, 1);
+		}
 		curl_setopt($curl, CURLOPT_POST, CURL_POST);
-		curl_setopt($curl, CURLOPT_HEADER, CURL_HEADER);
 		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, CURL_CONNECTTIMEOUT);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, CURL_RETURNTRANSFER);
 		curl_setopt($curl, CURLOPT_NOBODY, CURL_NOBODY);
@@ -255,7 +270,7 @@ class Pull {
 	
 	public static function getPodList($domain, PDO $dbConnection) {
 		if (DEBUG) {
-			echo "Getting List of Pods from Database<br />";
+			echo "Getting List of Pods from Database<br /><br />";
 		}
 		
 		if ($domain) {
@@ -373,53 +388,63 @@ class Pull {
 	 * @param string $live
 	 * @param string $score
 	 * @deprecated
+	 * @todo Evaluate if this function is still needed
 	 */
 	private static function getPingdomData($pingdomUrl, &$responsetime, &$months, &$uptime, &$live, &$score) {
 		// Pod is monitored via pingdom
 		$thismonth = "/".date("Y")."/".date("m");
 		Pull::getCurlResultAndInfo($pingdomUrl.$thismonth,$pingdom,$info);
 
-		if ($info['http_code'] == 200) {
-		
-			//response time
-			preg_match_all('/<h3>Avg. resp. time this month<\/h3>
-				        <p class="large">(.*?)</',$pingdom,$matcheach);
-			$responsetime = $matcheach[1][0];
-		
-			//months monitored
-			preg_match_all('/"historySelect">\s*(.*?)\s*<\/select/is',$pingdom,$matchhistory);
-			$implodemonths = implode(" ", $matchhistory[1]);
-		
-			preg_match_all('/<option(.*?)/s',$implodemonths,$matchdates);
-			$months = isset($matchdates[0])?count($matchdates[0]):0;
-		
-			preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)%</',$pingdom,$matchper);
-			$uptime = isset($matchper[1][0])?preg_replace("/,/", ".", $matchper[1][0]):0;
-		
-			if (strpos($pingdom,"class=\"up\"")) {
-				$live="up";
-			} elseif (strpos($pingdom,"class=\"down\"")) {
-				$live="down";
-			} elseif (strpos($pingdom,"class=\"paused\"")) {
-				$live="paused";
+		if ($pingdom) {
+			if ($info['http_code'] == 200) {
+			
+				//response time
+				preg_match_all('/<h3>Avg. resp. time this month<\/h3>
+					        <p class="large">(.*?)</',$pingdom,$matcheach);
+				$responsetime = $matcheach[1][0];
+			
+				//months monitored
+				preg_match_all('/"historySelect">\s*(.*?)\s*<\/select/is',$pingdom,$matchhistory);
+				$implodemonths = implode(" ", $matchhistory[1]);
+			
+				preg_match_all('/<option(.*?)/s',$implodemonths,$matchdates);
+				$months = isset($matchdates[0])?count($matchdates[0]):0;
+			
+				preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)%</',$pingdom,$matchper);
+				$uptime = isset($matchper[1][0])?preg_replace("/,/", ".", $matchper[1][0]):0;
+			
+				if (strpos($pingdom,"class=\"up\"")) {
+					$live="up";
+				} elseif (strpos($pingdom,"class=\"down\"")) {
+					$live="down";
+				} elseif (strpos($pingdom,"class=\"paused\"")) {
+					$live="paused";
+				} else {
+					$live="error";
+					$score -= 2;
+				}
 			} else {
-				$live="error";
+				//pingdom url is <> 200 so stats are gone, lower score
 				$score -= 2;
 			}
+			
+			if (DEBUG) {
+				echo "Pingdom - Url: ".$pingdomUrl.$thismonth."<br />";
+				echo "Pingdom code: ".$info['http_code']."<br />";
+				echo "Responsetime: ".$responsetime."<br />";
+				echo "Months: ".$months."<br />";
+				echo "Live: ".$live."<br />";
+				echo "Score: ".$score."<br />";
+			}
+			
+			return true;
+			
 		} else {
-			//pingdom url is <> 200 so stats are gone, lower score
-			$score -= 2;
+			if (DEBUG) {
+				echo "No connection to pingdomdata.com";
+			}
+			return false;
 		}
-		
-		if (DEBUG) {
-			echo "Pingdom - Url: ".$pingdomUrl.$thismonth."<br />";
-			echo "Pingdom code: ".$info['http_code']."<br />";
-			echo "Responsetime: ".$responsetime."<br />";
-			echo "Months: ".$months."<br />";
-			echo "Live: ".$live."<br />";
-			echo "Score: ".$score."<br />";
-		}
-		
 	}
 	
 	/**
@@ -430,53 +455,69 @@ class Pull {
 	 * @param string $uptime
 	 * @param string $live
 	 */
-	private static function getUptimerobotData($pingdomUrl, &$responsetime, &$months, &$uptime, &$live) {
+	private static function getUptimerobotData($pingdomUrl, $datecreated, &$responsetime, &$months, &$uptime, &$live) {
 		//do uptimerobot API instead
-		$uptimerobot = Pull::getCurlResult($pingdomUrl);
-		$json_encap = "jsonUptimeRobotApi()";
-		$up2 = substr ($uptimerobot, strlen($json_encap) - 1, strlen ($uptimerobot) - strlen($json_encap));
+		$uptimerobot = Pull::getCurlResult($pingdomUrl, true);
+		if ($uptimerobot) {
+			$json_encap = "jsonUptimeRobotApi()";
+			$up2 = substr ($uptimerobot, strlen($json_encap) - 1, strlen ($uptimerobot) - strlen($json_encap));
+				
+			$JSON = json_decode($up2);
 			
-		$JSON = json_decode($up2);
-		$responsetime = 'n/a';
-		$uptime = $JSON->monitors->monitor{'0'}->alltimeuptimeratio;
-		$diff = abs(strtotime(date('Y-m-d H:i:s')) - strtotime($dateadded));
-		$months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
-		
-		switch ($JSON->monitors->monitor{'0'}->status) {
-			case 1:
-				$live = "Paused";
-				break;
-			case 2:
-				$live = "Up";
-				break;
-			case 8:
-				$live = "Seems Down";
-				break;
-			case 9:
-				$live = "Down";
-				break;
-		}
-		
-		if (DEBUG) {
-			echo "UptimeRobot - Url: ".$pingdomUrl."<br />";
-			echo "Responsetime: ".$responsetime."<br />";
-			echo "Months: ".$months."<br />";
-			echo "Live: ".$live."<br />";
+			$responsetime = 'n/a';
+			$uptime = $JSON->monitors->monitor{'0'}->alltimeuptimeratio; // Uptimeratio
+			
+			$diff = abs(strtotime(date('Y-m-d H:i:s')) - strtotime($datecreated));
+			$months = floor($diff / (30*24*60*60));
+			
+			switch ($JSON->monitors->monitor{'0'}->status) {
+				case 1:
+					$live = "Paused";
+					break;
+				case 2:
+					$live = "Up";
+					break;
+				case 8:
+					$live = "Seems Down";
+					break;
+				case 9:
+					$live = "Down";
+					break;
+			}
+			
+			if (DEBUG) {
+				echo "UptimeRobot - Url: ".$pingdomUrl."<br />";
+				echo "Uptime: ".$uptime."<br />";
+				echo "Responsetime: ".$responsetime."<br />";
+				echo "Months: ".$months."<br />";
+				echo "Live: ".$live."<br />";
+			}
+			return true;
+			
+		} else {
+			if (DEBUG) {
+				echo "No connection to uptimerobot. Will not update data<br />";
+			}
+			
+			return false;
 		}
 	}
 	
-	public static function getRobotData($pingdomUrl, &$responsetime, &$months, &$uptime, &$live, &$score) {
+	public static function getRobotData($pingdomUrl, $datecreated, &$responsetime, &$months, &$uptime, &$live, &$score) {
 		$month = 0;
 		$uptime = 0;
 		
 		if ($pingdomUrl != '') {
 			if (strpos($pingdomUrl, "pingdom.com")) {
-				Pull::getPingdomData($pingdomUrl, $responsetime, $months, $uptime, $live, $score);
+				$result = Pull::getPingdomData($pingdomUrl, $responsetime, $months, $uptime, $live, $score);
 			} else {
-				Pull::getUptimerobotData("http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$pingdomUrl, $responsetime, $months, $uptime, $live);
+				$result = Pull::getUptimerobotData("http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$pingdomUrl, $datecreated, $responsetime, $months, $uptime, $live);
 			}
+			
+			return $result;
 		} else {
 			echo "No PingdomURL provided<br />";
+			return false;
 		}
 	}
 	
@@ -527,7 +568,7 @@ $gitrev 				= "";
 $ipnum 					= ""; 
 $ipv6 					= ""; 
 $months 				= 0; 
-$uptime 				= ""; 
+$uptime 				= 0; 
 $live 					= "";  
 $responsetime 			= ""; 
 $score 					= ""; 
@@ -561,7 +602,7 @@ foreach ($result->fetchAll() as $row) {
 	
 	$domain = $row['domain'];
 	$score = $row['score'];
-	//$datecreated = $row['datecreated']; Not used
+	$datecreated = $row['datecreated'];
 	$adminRating = $row['adminrating'];
 	
 	if (DEBUG) {
@@ -613,37 +654,57 @@ foreach ($result->fetchAll() as $row) {
 		}
 	}
 	
-	if ($score > 5) {
-		$hidden = "no";
-	} else {
-		$hidden = "yes";
-	}
 	
 	if (DEBUG) {
 		echo "Hidden: ".$hidden."<br />";
 	}
 	
-	Pull::capScore($score);
+	// Get IPv6 if present
 	$ip6num = Pull::getIPv6($domain);
 	if ($ip6num == '') {
 		$podHasIPv6 = "no";
 	} else {
 		$podHasIPv6 = "yes";
 	}
-	$ipnum = Pull::getIPv4($domain);
-	Pull::getGeoIPData($ipnum, $whois, $country, $city, $lat, $long);
-	Pull::getRobotData($row['pingdomurl'], $responsetime, $months, $uptime, $live, $score);
-	Pull::writeData($dbh, $gitdate, $encoding, $podSecure, $hidden, $runtime, $gitrev, $ipnum, 
-					$ip6num, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, 
-					$score, $adminRating, $country, $city, $state, $lat, $long, 
-					$diasporaVersion, $whois, $userRating, $xdver, $masterVersion, 
-					$registrationsOpen, $totalUsers, $activeUsersHalfyear, $activeUsersMonthly, 
-					$localPosts, $podName, $domain);	
 	
-	if (DEBUG) {
-		echo "<br />Score out of 20: ".$score."<br />";
-		echo "Success <br /><hr><br />";
-	}
+	//Get IPv4 if present
+	$ipnum = Pull::getIPv4($domain);
+	
+	// Try to get the position of the Pod via GeoIP
+	Pull::getGeoIPData($ipnum, $whois, $country, $city, $lat, $long);
+	
+	// Pull the uptimedata
+	$robotData = Pull::getRobotData($row['pingdomurl'], $datecreated, $responsetime, $months, $uptime, $live, $score);
+	
+	if ($robotData) {
+		// All data is present.
+		// Cap the score
+		Pull::capScore($score);
+		
+		// Check if the Pod should be hidden or not
+		if ($score > 5) {
+			$hidden = "no";
+		} else {
+			$hidden = "yes";
+		}
+		
+		// Update Databse entry
+		Pull::writeData($dbh, $gitdate, $encoding, $podSecure, $hidden, $runtime, $gitrev, $ipnum, 
+						$ip6num, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, 
+						$score, $adminRating, $country, $city, $state, $lat, $long, 
+						$diasporaVersion, $whois, $userRating, $xdver, $masterVersion, 
+						$registrationsOpen, $totalUsers, $activeUsersHalfyear, $activeUsersMonthly, 
+						$localPosts, $podName, $domain);
+		if (DEBUG) {
+			echo "<br />Score out of 20: ".$score."<br />";
+			echo "Success <br /><hr><br />";
+		}
+	} else {
+		
+		if (DEBUG) {
+			echo "Not succesfull.<br /><hr><br />";
+		}
+	}	
 	
 } // end while	
 unset($dbh);
