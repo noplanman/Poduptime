@@ -18,7 +18,4 @@ $adminkey = '';
 $chimpkey = '';
 //apikey for public api calls
 $apikey= '';
-
-
-
 ?>
