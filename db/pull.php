@@ -1,4 +1,5 @@
-<?php 
+<?php
+error_reporting(E_ALL); 
 /** 
  * Copyright (c) 2011, David Morley. 
  * This file is licensed under the Affero General Public License version 3 or later. 
@@ -8,52 +9,77 @@
 require_once "Net/GeoIP.php";
 
 define("CURL_POST", 0);
-define("CURL_HEADER", 0);
+define("CURL_HEADER", 1);
 define("CURL_CONNECTTIMEOUT", 5);
 define("CURL_RETURNTRANSFER", 1);
 define("CURL_NOBODY", 0);
 
-define("DB_DRIVER","mysql");
-define("DB_NAME","dbname");
+define("DB_DRIVER","pgsql"); //requires pdo-pgsql
+// define("DB_DRIVER","mysql"); // requires pdo-mysql
+define("DB_NAME","poduptime");
 define("DB_HOST","localhost");
-define("DB_USER","dbUser");
-define("DB_PASSWORD","dbPassword");
+define("DB_USER","poduptime");
+define("DB_PASSWORD","poduptimetest");
 
 define("DEBUG", true);
+define("VERBOSE_CURL", false);
 
 class Pull {
 	
+	/**
+	 * issues a cUrl request and sends back the result AND the http_info
+	 * @param string $url
+	 * @param string $result
+	 * @param array $info
+	 */
 	public static function getCurlResultAndInfo($url, &$result, &$info) {
 		$curl = curl_init();
 		
-		curl_setopt($mv, CURLOPT_URL, $url);
-		curl_setopt($mv, CURLOPT_POST, CURL_POST);
-		curl_setopt($mv, CURLOPT_HEADER, CURL_HEADER);
-		curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, CURL_CONNECTTIMEOUT);
-		curl_setopt($mv, CURLOPT_RETURNTRANSFER, CURL_RETURNTRANSFER);
-		curl_setopt($mv, CURLOPT_NOBODY, CURL_NOBODY);
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_POST, CURL_POST);
+		curl_setopt($curl, CURLOPT_HEADER, CURL_HEADER);
+		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, CURL_CONNECTTIMEOUT);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, CURL_RETURNTRANSFER);
+		curl_setopt($curl, CURLOPT_NOBODY, CURL_NOBODY);
 		
 		$result = curl_exec($curl);
 		$info = curl_getinfo($curl);
 		curl_close($curl);
 	}
 	
+	/**
+	 * Issues a cUrl request to $url and returns the result
+	 * @param string $url
+	 * @return string
+	 */
 	public static function getCurlResult($url) {
 		$curl = curl_init();
-
-		curl_setopt($mv, CURLOPT_URL, $url);
-		curl_setopt($mv, CURLOPT_POST, CURL_POST);
-		curl_setopt($mv, CURLOPT_HEADER, CURL_HEADER);
-		curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, CURL_CONNECTTIMEOUT);
-		curl_setopt($mv, CURLOPT_RETURNTRANSFER, CURL_RETURNTRANSFER);
-		curl_setopt($mv, CURLOPT_NOBODY, CURL_NOBODY);
+		
+		if (DEBUG) {
+			echo "Curl-Target: ".$url."<br />";
+		}
+		
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_POST, CURL_POST);
+		curl_setopt($curl, CURLOPT_HEADER, CURL_HEADER);
+		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, CURL_CONNECTTIMEOUT);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, CURL_RETURNTRANSFER);
+		curl_setopt($curl, CURLOPT_NOBODY, CURL_NOBODY);
 		
 		$result = curl_exec($curl);
 		curl_close($curl);
 		
+		if (VERBOSE_CURL) {
+			echo "Curl-Result: ".$result."<br />";
+		}
+		
 		return $result;
 	}
 
+	/**
+	 * returns a database Connection
+	 * @return PDO
+	 */
 	public static function getDatabaseConnection() {
 		$dsn = DB_DRIVER.":dbname=".DB_NAME.";host=".DB_HOST;
 				
@@ -61,63 +87,94 @@ class Pull {
 			$connection = new PDO($dsn, DB_USER, DB_PASSWORD);
 			return $connection;
 		} catch (PDOException $e) {
-			die('Connection to databse failed: ' . $e->getMessage());
+			echo ("User: ".DB_USER."<br />");
+			die('Connection to database with dsn '.$dsn.' failed: ' . $e->getMessage());
 		}
 	}
 	
-	public static function getRatings(&$adminRating=0, &$userRating=0, String $podUrl, PDO $db) {
+	/**
+	 * Calculates the adminRating and userRating for the given Pod
+	 * @param number $adminRating
+	 * @param number $userRating
+	 * @param string $podUrl
+	 * @param PDO $db
+	 */
+	public static function getRatings(&$adminRating=0, &$userRating=0, $podUrl, PDO $db) {
 		$adminRatingCounter = 0;
 		$userRatingCounter = 0;
 		$adminRatingTemp = 0;
 		$userRatingTemp = 0;
-		$sql = "SELECT * FROM rating_comments WHERE domain = ".$podUrl;
+		$sql = "SELECT * FROM rating_comments WHERE domain = ".$db->quote($podUrl);
+				
+		$result = $db->query($sql);
 		
-		$quotedSql = $db->quote($sql);
+		if (!$result) {
+			echo("Error fetching SQL Result for Ratings. Error: <pre>");
+			print_r($db->errorInfo());
+			die();
+		}
 		
-		if ($quotedSql === false) {
-			die('Problem with SQL Statement. '.$sql);
-		} else {
-			$result = $db->query($quotedSql);
-			
-			if (!result) {
-				die("Error fetching SQL Result for Ratings. Error: ".$result->errorCode());
+		while ($row = $result->fetchAll()) {
+			if ($row['admin'] == 1) {
+				$adminRatingCounter++;
+				$adminRatingTemp += $row['rating'];
+			} elseif ($row['admin'] == 0) {
+				$userRatingCounter++;
+				$userRatingTemp += $row['rating'];
 			}
-			
-			while ($row = $result->fetchAll()) {
-				if ($row['admin'] == 1) {
-					$adminRatingCounter++;
-					$adminRatingTemp += $row['rating'];
-				} elseif ($row['admin'] == 0) {
-					$userRatingCounter++;
-					$userRatingTemp += $row['rating'];
-				}
-			}
-			
-			// Set the Ratingvalues
+		}
+		
+		// Set the Ratingvalues
+		if ($adminRatingCounter > 0) {
 			$adminRating = round($adminRatingTemp/$adminRatingCounter,22);
+		} else {
+			$adminRating = 0;
+		}
+		
+		if ($userRatingCounter > 0) {
 			$userRating = round($userRatingTemp/$userRatingCounter, 2);
+		} else {
+			$userRating = 0;
 		}
 	}
 	
+	/**
+	 * Parses the header that is returned from the cUrl request
+	 * @param string $header
+	 * @param string $gitdate
+	 * @param string $gitrev
+	 * @param string $xdver
+	 * @param string $diasporaVersion
+	 * @param string $runtime
+	 * @param string $server
+	 * @param string $encoding
+	 */
 	public static function parseHeader($header, &$gitdate, &$gitrev, &$xdver, &$diasporaVersion, &$runtime, &$server, &$encoding) {
 		
 		preg_match('/X-Git-Update: (.*?)\n/', $header, $xgitdate);
-		$gitdate = trim($xgitdate[1]);
+		
+		if (count($xgitdate) > 0) {
+			$gitdate = trim($xgitdate[1]);
+		}
 			
 		preg_match('/X-Git-Revision: (.*?)\n/',$header,$xgitrev);
-		$gitrev = trim($xgitrev[1]);
+		if (count($xgitrev) > 0) {
+			$gitrev = trim($xgitrev[1]);
+		}
 			
 		preg_match('/X-Diaspora-Version: (.*?)\n/',$header,$xdver);
-		$dverr = split("-",trim($xdver[1]));
-		$diasporaVersion = $dverr[0];
+		if (count($xdver) > 0) {
+			$dverr = explode("-",trim($xdver[1]));
+			$diasporaVersion = $dverr[0];
+		}
 			
-		preg_match('/X-Runtime: (.*?)\n/',$outputssl,$xruntime);
+		preg_match('/X-Runtime: (.*?)\n/',$header,$xruntime);
 		$runtime = isset($xruntime[1]) ? trim($xruntime[1]) : null;
 			
-		preg_match('/Server: (.*?)\n/',$outputssl,$xserver);
+		preg_match('/Server: (.*?)\n/',$header,$xserver);
 		$server = isset($xserver[1]) ? trim($xserver[1]) : null;
 			
-		preg_match('/Content-Encoding: (.*?)\n/',$outputssl,$xencoding);
+		preg_match('/Content-Encoding: (.*?)\n/',$header,$xencoding);
 		if ($xencoding) {
 			$encoding = trim($xencoding[1]);
 		} else {
@@ -135,7 +192,19 @@ class Pull {
 		
 	}
 	
-	public static function parseJSON($header, &$podName, &$registrationsOpen, &$totalUsers, &$activeUsersHalfyear, &$activeUsersMonthly, &$localPosts) {
+	/**
+	 * parse the statistics.json
+	 * @param string $header
+	 * @param string $podName
+	 * @param string $registrationsOpen
+	 * @param string $totalUsers
+	 * @param string $activeUsersHalfyear
+	 * @param string $activeUsersMonthly
+	 * @param string $localPosts
+	 * @param string $diasporaVersion
+	 * @param string $xdver
+	 */
+	public static function parseJSON($header, &$podName, &$registrationsOpen, &$totalUsers, &$activeUsersHalfyear, &$activeUsersMonthly, &$localPosts, &$diasporaVersion, &$xdver) {
 		preg_match_all("/{(.*?)}/", $header, $JSONArray);
 		$JSON = json_decode($JSONArray[0][0]);
 
@@ -150,6 +219,11 @@ class Pull {
 		$activeUsersHalfyear = isset($JSON->active_users_halfyear) ? $JSON->active_users_halfyear : 0;
 		$activeUsersMonthly = isset($JSON->active_users_monthly) ? $JSON->active_users_monthly : 0;
 		$localPosts = isset($JSON->local_posts) ? $JSON->local_posts : 0;
+		if (isset($JSON->version)) {
+			$version = explode("-", $JSON->version);
+			$xdver = $JSON->version;
+			$diasporaVersion = $version[0];
+		}
 		
 		if (DEBUG) {
 			echo "Registrations Open: ".$registrationsOpen."<br />";
@@ -164,33 +238,45 @@ class Pull {
 	public static function getMasterVersion() {
 		//get master code version
 		$masterVersionResult = Pull::getCurlResult("https://raw.github.com/diaspora/diaspora/master/config/defaults.yml");
-		preg_match('/number: "(.*?)"/', $masterVersionResult, $version);
-
+		preg_match('/number: "(.*?)"/', $masterVersionResult, $masterVersion);
+		$masterVersion = trim($masterVersion[1], '"');
+		
 		if (DEBUG) {
-			echo "MasterVersion: ".$masterVersion."<br>";
+			echo "MasterVersion: ".$masterVersion."<br />";
 		} 
 		
-		return trim($version[1], '"');
+		return $masterVersion;
 	}
 	
 	public static function getPodList($domain, PDO $dbConnection) {
-		if ($domain) {
-			// Pull is requested for specific Domain
-			$sql = $dbConnection->quote("SELECT domain,pingdomurl,score,datecreated FROM pods WHERE domain = ".$domain);
-		} else {
-			// General pull. Get all pods from Database
-			$sql = $dbConnection->quote("SELECT domain,pingdomurl,score,datecreated,adminrating FROM pods");
+		if (DEBUG) {
+			echo "Getting List of Pods from Database<br />";
 		}
 		
+		if ($domain) {
+			// Pull is requested for specific Domain
+			$sql = "SELECT domain, pingdomurl, score, datecreated, adminrating FROM pods WHERE domain = ".$dbConnection->quote($domain);
+		} else {
+			// General pull. Get all pods from Database
+			$sql = "SELECT domain, pingdomurl, score, datecreated, adminrating FROM pods";
+		}
+				
 		$result = $dbConnection->query($sql);
 		
 		if (!$result) {
 			if ($domain) {
-				die("Error fetching SQL Result for Pod: ".$domain.". Error:" . $result->errorCode());
+				echo("Error fetching SQL Result for Pod: ".$domain.". Error: <pre>");
+				print_r($dbConnection->errorInfo());
+				die();
 			} else {
-				die("Error fetching SQL Result. Error: " . $result->errorCode());
+				echo("Error fetching SQL Result. Error: <pre>");
+				print_r($dbConnection->errorInfo());
+				die();
 			}
 		} else {
+			if ($result->rowCount() <= 0 && DEBUG) {
+				echo "Podlist is empty";
+			}
 			return $result;
 		}
 	}
@@ -214,7 +300,11 @@ class Pull {
 	 */
 	public static function getIPv6($podurl) {
 		$command = escapeshellcmd('dig +nocmd '.$podurl.' aaaa +noall +short');
-		return exec($command);
+		$result = exec($command);
+		if (DEBUG) {
+			echo "IPv6: ".$result."<br />";
+		}
+		return $result;
 	}
 
 	/**
@@ -224,7 +314,11 @@ class Pull {
 	 */
 	public static function getIPv4($podurl) {
 		$command = escapeshellcmd('dig +nocmd '.$podurl.' a +noall +short');
-		return exec($command);
+		$result = exec($command);
+		if (DEBUG) {
+			echo "IPv4: ".$result."<br />";
+		}
+		return $result;
 	}
 	
 	/**
@@ -240,18 +334,29 @@ class Pull {
 		$geoip = Net_GeoIP::getInstance("GeoLiteCity.dat");
 		try {
     		$location = $geoip->lookupLocation($ipnum);
-			if ($debug) {
-				echo "GEOIP: ".$location."<br>";
+			if (DEBUG) {
+				echo "GEOIP: ".$location."<br />";
 			}
 		} catch (Exception $e) {
     		// 	Handle exception
 		}
-		
 		$whois = "Country: ".$location->countryName."\n Lat:".$location->latitude." Long:".$location->longitude;
 		$country = $location->countryName;
-		$city = isset($location->city) ? iconv("UTF-8", "UTF-8//IGNORE", $location->city) : null;
+		if (isset($location->city) && ($location->city != '')) {
+			$city = utf8_encode($location->city);
+		} else {
+			$city = "null";
+		}
 		$lat = $location->latitude;
 		$long = $location->longitude;
+		
+	 	if (DEBUG) {
+	 		echo "Whois: ".$whois."<br />";
+	 		echo "Country: ".$country."<br />";
+	 		echo "City: ".$city."<br />";
+	 		echo "Latitude: ".$lat."<br />";
+	 		echo "Longitude: ".$long."<br />";
+	 	}
 	}
 	
 	private static function getPingdomData($pingdomUrl, &$responsetime, &$months, &$uptime, &$live, &$score) {
@@ -343,39 +448,43 @@ class Pull {
 		$month = 0;
 		$uptime = 0;
 		
-		if (strpos($pingdomUrl, "pingdom.com")) {
-			Pull::getPingdomData($pingdomUrl, $responsetime, $months, $uptime, $live, $score);
+		if ($pingdomUrl != '') {
+			if (strpos($pingdomUrl, "pingdom.com")) {
+				Pull::getPingdomData($pingdomUrl, $responsetime, $months, $uptime, $live, $score);
+			} else {
+				Pull::getUptimerobotData($pingdomUrl, $responsetime, $months, $uptime, $live);
+			}
 		} else {
-			Pull::getUptimerobotData($pingdomUrl, $responsetime, $months, $uptime, $live);
+			echo "No PingdomURL provided<br />";
 		}
 	}
 	
 	public static function writeData(PDO $connection, $gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminRating, $country, $city, $state, $lat, $long, $diasporaVersion, $whois, $userRating, $xdver, $masterVersion, $registrationsOpen, $totalUsers, $activeUsersHalfyear, $activeUsersMonthly, $localPosts, $podName, $domain) {
 		
-		$sql = "UPDATE pods SET Hgitdate=".$gitDate.", Hencoding=".$encoding.", secure=".$secure.", hidden=".$hidden.", Hruntime=".$runtime.", ";
-		$sql .= "Hgitref=".$gitrev.", ip=".$ipnum.", ipv6=".$ipv6.", monthsmonitored=".$months.", uptimelast7=".$uptime.", status=".$live.", ";
-		$sql .= "dateLaststats=".$pingdomdate.", dateUpdated=".$timenow.", responsetimelast7=".$responsetime.", score=".$score.", ";
-		$sql .= "adminrating=".$adminRating.", country=".$country.", city=".$city.", state=".$state.", lat=".$lat.", long=".$long.", ";
-		$sql .= "postalcode='', connection=".$diasporaVersion.", whois=".$whois.", userrating=".$userRating.", longversion=".$xdver.", ";
-		$sql .= "shortversion=".$diasporaVersion.", masterversion=".$masterVersion.", signup=".$registrationsOpen.", total_users=".$totalUsers.", ";
-		$sql .= "active_users_halfyear=".$activeUsersHalfyear.", active_users_monthly=".$activeUsersMonthly.", local_posts=".$localPosts.", ";
-		$sql .= "name=".$podName;
-		$sql .= "WHERE";
-		$sql .= "domain=".$domain;
+		$sql = "UPDATE pods SET Hgitdate=".$connection->quote($gitdate).", Hencoding=".$connection->quote($encoding).", secure=".$connection->quote($secure).", hidden=".$connection->quote($hidden).", Hruntime=".$connection->quote($runtime).", ";
+		$sql .= "Hgitref=".$connection->quote($gitrev).", ip=".$connection->quote($ipnum).", ipv6=".$connection->quote($ipv6).", monthsmonitored=".$months.", uptimelast7=".$connection->quote($uptime).", status=".$connection->quote($live).", ";
+		$sql .= "dateLaststats=".$connection->quote($pingdomdate).", dateUpdated=".$connection->quote($timenow).", responsetimelast7=".$connection->quote($responsetime).", score=".$connection->quote($score).", ";
+		$sql .= "adminrating=".$connection->quote($adminRating).", country=".$connection->quote($country).", city=".$connection->quote($city).", state=".$connection->quote($state).", lat=".$connection->quote($lat).", long=".$connection->quote($long).", ";
+		$sql .= "postalcode='', connection=".$connection->quote($diasporaVersion).", whois=".$connection->quote($whois).", userrating=".$connection->quote($userRating).", longversion=".$connection->quote($xdver).", ";
+		$sql .= "shortversion=".$connection->quote($diasporaVersion).", masterversion=".$connection->quote($masterVersion).", signup=".$connection->quote($registrationsOpen).", total_users=".$connection->quote($totalUsers).", ";
+		$sql .= "active_users_halfyear=".$connection->quote($activeUsersHalfyear).", active_users_monthly=".$connection->quote($activeUsersMonthly).", local_posts=".$connection->quote($localPosts).", ";
+		$sql .= "name=".$connection->quote($podName)." ";
+		$sql .= "WHERE ";
+		$sql .= "domain=".$connection->quote($domain);
 		
-		$escapedSql = $connection->quote($sql); 
-		
-		if (!$escapedSql) {
-			die("Error escaping SQL query: ".$sql);
-		} else {
-			$result = $connection->query($escapedSql);
-			if (!$result) {
-				die("Error executing SQL query: ". $result->errorCode());
-			}
+		$result = $connection->query($sql);
+		if (!$result) {
+			echo("Error executing SQL query: <pre>");
+			print_r($connection->errorInfo());
+			die();
 		}
 	}
 }
 
+
+if (DEBUG) {
+	echo "Starting script<br/>";
+}
 // Inititialize variables
 
 $state 					= ""; // Seems to be always empty. Deprecated?
@@ -389,17 +498,14 @@ $runtime 				= "";
 $gitrev 				= ""; 
 $ipnum 					= ""; 
 $ipv6 					= ""; 
-$months 				= ""; 
+$months 				= 0; 
 $uptime 				= ""; 
-$live 					= ""; 
-$pingdomdate 			= ""; 
-$timenow 				= ""; 
+$live 					= "";  
 $responsetime 			= ""; 
 $score 					= ""; 
 $adminRating 			= ""; 
 $country 				= ""; 
 $city 					= ""; 
-$state 					= ""; 
 $lat 					= ""; 
 $long 					= ""; 
 $diasporaVersion		= ""; 
@@ -421,9 +527,9 @@ $domain = isset($_GET['domain']) ? $_GET['domain'] : null;
 $result = Pull::getPodList($domain, $dbh);
 
 // Iterate over each Pod in the resultset
-while ($row = $result->fetchAll()) {
-	
-	$podSecure = false;
+foreach ($result->fetchAll() as $row) {
+
+	$podSecure = "false";
 	
 	$domain = $row['domain'];
 	$score = $row['score'];
@@ -442,11 +548,11 @@ while ($row = $result->fetchAll()) {
 		$header = Pull::getCurlResult("http://".$domain."/statistics.json");
 	} else {
 		// Got https connection. Pod seems to be secure
-		$podSecure = true;
+		$podSecure = "true";
 	}
 	
 	if (DEBUG) {
-		if ($podSecure) {
+		if ($podSecure == "true") {
 			echo "Pod has SSL connection<br />";
 		} else {
 			echo "Pod has no SSL connection<br />";
@@ -457,7 +563,7 @@ while ($row = $result->fetchAll()) {
 	if ($header) {
 		// Parse Header Data, if there is a header
 		Pull::parseHeader($header, $gitdate, $gitrev, $xdver, $diasporaVersion, $runtime, $server, $encoding);
-		Pull::parseJSON($header, $podName, $registrationsOpen, $totalUsers, $activeUsersHalfyear, $activeUsersMonthly, $localPosts);
+		Pull::parseJSON($header, $podName, $registrationsOpen, $totalUsers, $activeUsersHalfyear, $activeUsersMonthly, $localPosts, $diasporaVersion, $xdver);
 		
 		if (!$diasporaVersion) {
 			// No Diaspora-Version identifier. might not be trustable?
@@ -486,7 +592,7 @@ while ($row = $result->fetchAll()) {
 	}
 	
 	if (DEBUG) {
-		echo "Hidden: ".$hidden;
+		echo "Hidden: ".$hidden."<br />";
 	}
 	
 	Pull::capScore($score);
@@ -499,11 +605,16 @@ while ($row = $result->fetchAll()) {
 	$ipnum = Pull::getIPv4($domain);
 	Pull::getGeoIPData($ipnum, $whois, $country, $city, $lat, $long);
 	Pull::getRobotData($row['pingdomurl'], $responsetime, $months, $uptime, $live, $score);
-	Pull::writeData($dbh, $gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminRating, $country, $city, $state, $lat, $long, $diasporaVersion, $whois, $userRating, $xdver, $masterVersion, $registrationsOpen, $totalUsers, $activeUsersHalfyear, $activeUsersMonthly, $localPosts, $podName, $domain);	
+	Pull::writeData($dbh, $gitdate, $encoding, $podSecure, $hidden, $runtime, $gitrev, $ipnum, 
+					$ip6num, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, 
+					$score, $adminRating, $country, $city, $state, $lat, $long, 
+					$diasporaVersion, $whois, $userRating, $xdver, $masterVersion, 
+					$registrationsOpen, $totalUsers, $activeUsersHalfyear, $activeUsersMonthly, 
+					$localPosts, $podName, $domain);	
 	
 	if (DEBUG) {
 		echo "<br />Score out of 20: ".$score."<br />";
-		echo "Success <br />";
+		echo "Success <br /><hr><br />";
 	}
 	
 } // end while	
