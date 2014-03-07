@@ -15,7 +15,7 @@ require_once 'config.php';
 
 define("DB_DRIVER","pgsql"); //requires pdo-pgsql
 // define("DB_DRIVER","mysql"); // requires pdo-mysql
-define("DB_NAME",$pguser);
+define("DB_NAME",$pgdb);
 define("DB_HOST","localhost");
 define("DB_USER",$pguser);
 define("DB_PASSWORD",$pgpass);
@@ -581,11 +581,11 @@ $diasporaVersion		= "";
 $whois 					= ""; 
 $userRating 			= ""; 
 $xdver 					= ""; 
-$registrationsOpen		= ""; 
-$totalUsers 			= ""; 
-$activeUsersHalfyear 	= "";
-$activeUsersMonthly 	= ""; 
-$localPosts 			= ""; 
+$registrationsOpen		= 0; 
+$totalUsers 			= 0; 
+$activeUsersHalfyear 	= 0;
+$activeUsersMonthly 	= 0; 
+$localPosts 			= 0; 
 $podName 				= ""; 
 
 $masterVersion = Pull::getMasterVersion();
@@ -612,11 +612,17 @@ foreach ($result->fetchAll() as $row) {
 	Pull::getRatings($adminRating, $userRating, $domain, $dbh);
 	
 	// Get Header from Pod
-	if (!$header = Pull::getCurlResult("https://".$domain."/statistics.json")) {
-		// No https connection possible, try http instead
-		$header = Pull::getCurlResult("http://".$domain."/statistics.json");
+	Pull::getCurlResultAndInfo("https://".$domain."/statistics.json", $header, $info);
+	if ($info['http_code'] == 0 || $info['http_code'] == '404') {
+		Pull::getCurlResultAndInfo("http://".$domain."/statistics.json", $header, $info);
+		if ($info['http_code'] == 0 || $info['http_code'] == '404') {
+			// No http connection either. Decreasing point
+			$header = null;
+			if (DEBUG) {
+				echo "No connection to Pod possible. Deleting header<br />";
+			}
+		}
 	} else {
-		// Got https connection. Pod seems to be secure
 		$podSecure = "true";
 	}
 	
