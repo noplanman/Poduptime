@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL); 
+ 
 /** 
  * Copyright (c) 2011, David Morley. 
  * This file is licensed under the Affero General Public License version 3 or later. 
@@ -7,23 +7,24 @@ error_reporting(E_ALL);
  */
 
 require_once "Net/GeoIP.php";
+require_once 'config.php';
 
+// The options for the cUrl Requests
 define("CURL_POST", 0);
 define("CURL_HEADER", 1);
 define("CURL_CONNECTTIMEOUT", 5);
 define("CURL_RETURNTRANSFER", 1);
 define("CURL_NOBODY", 0);
 
-define("DB_DRIVER","pgsql"); //requires pdo-pgsql
-// define("DB_DRIVER","mysql"); // requires pdo-mysql
-define("DB_NAME","poduptime");
-define("DB_HOST","localhost");
-define("DB_USER","poduptime");
-define("DB_PASSWORD","poduptimetest");
-
 define("DEBUG", true);
 define("VERBOSE_CURL", false);
 
+/**
+ * Class collecting functions for pulling data from Pods
+ * @author J. Brunswicker
+ * @version 1.0
+ *
+ */
 class Pull {
 	
 	/**
@@ -82,6 +83,10 @@ class Pull {
 	 */
 	public static function getDatabaseConnection() {
 		$dsn = DB_DRIVER.":dbname=".DB_NAME.";host=".DB_HOST;
+		
+		if (DB_DRIVER == 'mysql') {
+			$dsn .= ";charset=UTF8";
+		}
 				
 		try {
 			$connection = new PDO($dsn, DB_USER, DB_PASSWORD);
@@ -359,6 +364,16 @@ class Pull {
 	 	}
 	}
 	
+	/**
+	 * Gets data from pingdom.com
+	 * @param string $pingdomUrl
+	 * @param string $responsetime
+	 * @param string $months
+	 * @param string $uptime
+	 * @param string $live
+	 * @param string $score
+	 * @deprecated
+	 */
 	private static function getPingdomData($pingdomUrl, &$responsetime, &$months, &$uptime, &$live, &$score) {
 		// Pod is monitored via pingdom
 		$thismonth = "/".date("Y")."/".date("m");
@@ -377,8 +392,6 @@ class Pull {
 		
 			preg_match_all('/<option(.*?)/s',$implodemonths,$matchdates);
 			$months = isset($matchdates[0])?count($matchdates[0]):0;
-			//echo $matchdates[0];
-			//uptime %
 		
 			preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)%</',$pingdom,$matchper);
 			$uptime = isset($matchper[1][0])?preg_replace("/,/", ".", $matchper[1][0]):0;
@@ -409,6 +422,14 @@ class Pull {
 		
 	}
 	
+	/**
+	 * Gets data from the uptimerobot
+	 * @param string $pingdomUrl
+	 * @param string $responsetime
+	 * @param string $months
+	 * @param string $uptime
+	 * @param string $live
+	 */
 	private static function getUptimerobotData($pingdomUrl, &$responsetime, &$months, &$uptime, &$live) {
 		//do uptimerobot API instead
 		$uptimerobot = Pull::getCurlResult($pingdomUrl);
@@ -452,7 +473,7 @@ class Pull {
 			if (strpos($pingdomUrl, "pingdom.com")) {
 				Pull::getPingdomData($pingdomUrl, $responsetime, $months, $uptime, $live, $score);
 			} else {
-				Pull::getUptimerobotData($pingdomUrl, $responsetime, $months, $uptime, $live);
+				Pull::getUptimerobotData("http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$pingdomUrl, $responsetime, $months, $uptime, $live);
 			}
 		} else {
 			echo "No PingdomURL provided<br />";
@@ -464,11 +485,18 @@ class Pull {
 		$sql = "UPDATE pods SET Hgitdate=".$connection->quote($gitdate).", Hencoding=".$connection->quote($encoding).", secure=".$connection->quote($secure).", hidden=".$connection->quote($hidden).", Hruntime=".$connection->quote($runtime).", ";
 		$sql .= "Hgitref=".$connection->quote($gitrev).", ip=".$connection->quote($ipnum).", ipv6=".$connection->quote($ipv6).", monthsmonitored=".$months.", uptimelast7=".$connection->quote($uptime).", status=".$connection->quote($live).", ";
 		$sql .= "dateLaststats=".$connection->quote($pingdomdate).", dateUpdated=".$connection->quote($timenow).", responsetimelast7=".$connection->quote($responsetime).", score=".$connection->quote($score).", ";
-		$sql .= "adminrating=".$connection->quote($adminRating).", country=".$connection->quote($country).", city=".$connection->quote($city).", state=".$connection->quote($state).", lat=".$connection->quote($lat).", long=".$connection->quote($long).", ";
-		$sql .= "postalcode='', connection=".$connection->quote($diasporaVersion).", whois=".$connection->quote($whois).", userrating=".$connection->quote($userRating).", longversion=".$connection->quote($xdver).", ";
+		$sql .= "adminrating=".$connection->quote($adminRating).", country=".$connection->quote($country).", city=".$connection->quote($city).", state=".$connection->quote($state).", lat=".$connection->quote($lat).", ";
+		$sql .= "connection=".$connection->quote($diasporaVersion).", whois=".$connection->quote($whois).", userrating=".$connection->quote($userRating).", longversion=".$connection->quote($xdver).", ";
 		$sql .= "shortversion=".$connection->quote($diasporaVersion).", masterversion=".$connection->quote($masterVersion).", signup=".$connection->quote($registrationsOpen).", total_users=".$connection->quote($totalUsers).", ";
 		$sql .= "active_users_halfyear=".$connection->quote($activeUsersHalfyear).", active_users_monthly=".$connection->quote($activeUsersMonthly).", local_posts=".$connection->quote($localPosts).", ";
-		$sql .= "name=".$connection->quote($podName)." ";
+		$sql .= "name=".$connection->quote($podName).", ";
+		
+		if (DB_NAME == 'mysql') {
+			$sql .= "`long`=".$connection->quote($long)." ";
+		} else {
+			$sql .= "long=".$connection->quote($long)." ";
+		}
+		
 		$sql .= "WHERE ";
 		$sql .= "domain=".$connection->quote($domain);
 		

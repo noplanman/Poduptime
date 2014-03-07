@@ -18,4 +18,14 @@ $adminkey = '';
 $chimpkey = '';
 //apikey for public api calls
 $apikey= '';
+
+
+// Database connection
+define("DB_DRIVER","pgsql"); //requires pdo-pgsql
+// define("DB_DRIVER","mysql"); // requires pdo-mysql
+define("DB_NAME","dbname");
+define("DB_HOST","localhost");
+define("DB_USER","dbuser");
+define("DB_PASSWORD","dbpassword");
+
 ?>
