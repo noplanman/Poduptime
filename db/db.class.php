@@ -6,7 +6,7 @@
  * See the COPYRIGHT file.
  */
 
-require "config.inc.php";
+require_once "config.inc.php";
 
 /**
  * Connects to database and returns the PDO Object or false
@@ -17,18 +17,10 @@ require "config.inc.php";
 class DB {
 	
 	/**
-	 * Constuctor.
-	 * @return Ambigous <boolean, PDO>
-	 */
-	function __construct() {
-		return DB::connectDB();
-	}
-	
-	/**
 	 * Connects to the DB
 	 * @return PDO|boolean
 	 */
-	private static function connectDB() { 
+	public static function connectDB() { 
 		$dsn = DB_DRIVER.":dbname=".DB_NAME.";host=".DB_HOST;
 	
 		if (DB_DRIVER == 'mysql') {
