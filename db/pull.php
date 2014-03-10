@@ -1,5 +1,5 @@
 <?php
- 
+ error_reporting(E_ALL);
 /** 
  * Copyright (c) 2011, David Morley. 
  * This file is licensed under the Affero General Public License version 3 or later. 
@@ -7,7 +7,7 @@
  */
 
 
-require_once 'config.php';
+require_once 'config.inc.php';
 require_once 'pull.class.php';
 
 if (DEBUG) {
@@ -71,7 +71,7 @@ foreach ($result->fetchAll() as $row) {
 	Pull::getRatings($adminRating, $userRating, $domain, $dbh);
 	
 	// Get Header from Pod
-	Pull::getHeaderFromPod($domain, $podSecure);
+	$header = Pull::getHeaderFromPod($domain, $podSecure);
 	
 	if (DEBUG) {
 		if ($podSecure == "true") {
@@ -108,10 +108,7 @@ foreach ($result->fetchAll() as $row) {
 	}
 	
 	
-	if (DEBUG) {
-		echo "Hidden: ".$hidden."<br />";
-	}
-	
+
 	// Get IPv6 if present
 	$ip6num = Pull::getIPv6($domain);
 	if ($ip6num == '') {
@@ -119,30 +116,34 @@ foreach ($result->fetchAll() as $row) {
 	} else {
 		$podHasIPv6 = "yes";
 	}
-	
+
 	//Get IPv4 if present
 	$ipnum = Pull::getIPv4($domain);
-	
+
 	// Try to get the position of the Pod via GeoIP
 	Pull::getGeoIPData($ipnum, $whois, $country, $city, $lat, $long);
-	
+
 	// Pull the uptimedata
 	$robotData = Pull::getRobotData($row['pingdomurl'], $datecreated, $responsetime, $months, $uptime, $live, $score);
-	
+
 	if ($robotData) {
 		// All data is present.
 		// Cap the score
 		Pull::capScore($score);
-		
+
 		// Check if the Pod should be hidden or not
 		if ($score > 5) {
 			$hidden = "no";
 		} else {
 			$hidden = "yes";
 		}
-		
-		// Update Databse entry
-		Pull::writeData($dbh, $gitdate, $encoding, $podSecure, $hidden, $runtime, $gitrev, $ipnum, 
+
+        if (DEBUG) {
+            echo "Hidden: ".$hidden."<br />";
+        }
+
+		// Update Database entry
+		Pull::writeData($dbh, $gitdate, $encoding, $podSecure, $hidden, $runtime, $gitrev, $ipnum,
 						$ip6num, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, 
 						$score, $adminRating, $country, $city, $state, $lat, $long, 
 						$diasporaVersion, $whois, $userRating, $xdver, $masterVersion, 
