@@ -1,13 +1,16 @@
 <?php
- include('config.php');
-if (!$_POST['username']){
-  echo "no username given";
- die;
+require_once 'config.inc.php';
+
+if (!$_POST['username']) {
+    echo "no username given";
+    die;
 }
+
 if (!$_POST['userurl']){
-  echo "no userurl given";
- die;
+    echo "no userurl given";
+    die;
 }
+
 if (!$_POST['domain']){
   echo "no pod domain given";
  die;
