@@ -1,5 +1,6 @@
 <?php
 require_once 'config.inc.php';
+require_once 'db.class.php';
 
 if (!$_POST['username']) {
     echo "no username given";
