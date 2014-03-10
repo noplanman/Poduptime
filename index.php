@@ -1,4 +1,12 @@
-<?php error_reporting(E_ALL); ?>
+<?php
+/**
+ * Copyright (c) 2011, David Morley.
+ * This file is licensed under the Affero General Public License version 3 or later.
+ * See the COPYRIGHT file.
+ */
+
+error_reporting(E_ALL);
+?>
 <!doctype html>
 <html>
 <head>

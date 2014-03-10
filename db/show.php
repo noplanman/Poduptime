@@ -1,5 +1,11 @@
-<meta charset="utf-8"> 
-<!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
+<?php
+/**
+ * Copyright (c) 2011, David Morley.
+ * This file is licensed under the Affero General Public License version 3 or later.
+ * See the COPYRIGHT file.
+ */
+?>
+
 <table id="myTable" class="tablesorter" style="width: 98%">
 <thead>
 <tr>

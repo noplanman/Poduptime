@@ -1,5 +1,11 @@
 <?php
 /**
+ * Copyright (c) 2014, Johannes Brunswicker
+ * This file is licensed under the Affero General Public License version 3 or later.
+ * See the COPYRIGHT file.
+ */
+
+/**
  * Class collecting functions for pulling data from Pods
  * @author J. Brunswicker
  * @version 1.0
@@ -316,12 +322,12 @@ class Pull {
 
 	/**
 	 * Tries ti get a GeoIP based Location
-	 * @param unknown $ipnum
-	 * @param unknown $whois
-	 * @param unknown $country
-	 * @param unknown $city
-	 * @param unknown $lat
-	 * @param unknown $long
+	 * @param string $ipnum
+	 * @param string $whois
+	 * @param string $country
+	 * @param string $city
+	 * @param string $lat
+	 * @param string $long
 	 */
 	public static function getGeoIPData($ipnum, &$whois, &$country, &$city, &$lat, &$long) {
 		$geoip = Net_GeoIP::getInstance("GeoLiteCity.dat");
@@ -508,39 +514,39 @@ class Pull {
 	/**
 	 * Writes the Data into the Database
 	 * @param PDO $connection
-	 * @param unknown $gitdate
-	 * @param unknown $encoding
-	 * @param unknown $secure
-	 * @param unknown $hidden
-	 * @param unknown $runtime
-	 * @param unknown $gitrev
-	 * @param unknown $ipnum
-	 * @param unknown $ipv6
-	 * @param unknown $months
-	 * @param unknown $uptime
-	 * @param unknown $live
-	 * @param unknown $pingdomdate
-	 * @param unknown $timenow
-	 * @param unknown $responsetime
-	 * @param unknown $score
-	 * @param unknown $adminRating
-	 * @param unknown $country
-	 * @param unknown $city
-	 * @param unknown $state
-	 * @param unknown $lat
-	 * @param unknown $long
-	 * @param unknown $diasporaVersion
-	 * @param unknown $whois
-	 * @param unknown $userRating
-	 * @param unknown $xdver
-	 * @param unknown $masterVersion
-	 * @param unknown $registrationsOpen
-	 * @param unknown $totalUsers
-	 * @param unknown $activeUsersHalfyear
-	 * @param unknown $activeUsersMonthly
-	 * @param unknown $localPosts
-	 * @param unknown $podName
-	 * @param unknown $domain
+	 * @param string $gitdate
+	 * @param string $encoding
+	 * @param string $secure
+	 * @param string $hidden
+	 * @param string $runtime
+	 * @param string $gitrev
+	 * @param string $ipnum
+	 * @param string $ipv6
+	 * @param string $months
+	 * @param string $uptime
+	 * @param string $live
+	 * @param string $pingdomdate
+	 * @param string $timenow
+	 * @param string $responsetime
+	 * @param string $score
+	 * @param string $adminRating
+	 * @param string $country
+	 * @param string $city
+	 * @param string $state
+	 * @param string $lat
+	 * @param string $long
+	 * @param string $diasporaVersion
+	 * @param string $whois
+	 * @param string $userRating
+	 * @param string $xdver
+	 * @param string $masterVersion
+	 * @param string $registrationsOpen
+	 * @param string $totalUsers
+	 * @param string $activeUsersHalfyear
+	 * @param string $activeUsersMonthly
+	 * @param string $localPosts
+	 * @param string $podName
+	 * @param string $domain
 	 */
 	public static function writeData(PDO $connection, $gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminRating, $country, $city, $state, $lat, $long, $diasporaVersion, $whois, $userRating, $xdver, $masterVersion, $registrationsOpen, $totalUsers, $activeUsersHalfyear, $activeUsersMonthly, $localPosts, $podName, $domain) {
 

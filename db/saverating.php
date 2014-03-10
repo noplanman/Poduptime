@@ -1,4 +1,10 @@
 <?php
+/**
+ * Copyright (c) 2011, David Morley.
+ * This file is licensed under the Affero General Public License version 3 or later.
+ * See the COPYRIGHT file.
+ */
+
 require_once 'config.inc.php';
 require_once 'db.class.php';
 
