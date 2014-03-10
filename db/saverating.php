@@ -34,10 +34,12 @@ if (!$dbConnection) {
 $sql = "INSERT INTO rating_comments (domain, comment, rating, username, userurl)"
     . " VALUES(".$dbConnection->quote($_POST['domain']).", ".$dbConnection->quote($_POST['comment']).", ".$dbConnection->quote($_POST['rating']). ","
     . " ".$dbConnection->quote($_POST['username']).", ".$dbConnection->quote($_POST['userurl']).")";
+
+$result = $dbConnection->query($sql);
+
 if (!$result) {
     die("Error in SQL query: " . $dbConnection->errorInfo()[2]);
 }
-
 
 $subject = "New rating added to poduptime ";
 $message = "Pod:" . $_POST["domain"] . "\n\n";
@@ -45,5 +47,4 @@ $headers = "From: ".$_POST["email"]."\r\n";
 @mail( ADMIN_EMAIL, $subject, $message, $headers );
 
 echo "Comment posted!";
-
 ?>
