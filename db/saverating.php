@@ -26,7 +26,7 @@ if (!$_POST['rating']){
 
 $dbConnection = DB::connectDB();
 
-if (!$dbh) {
+if (!$dbConnection) {
     die("Error in connection: " . $dbConnection->errorInfo()[2]);
 }
 
@@ -34,7 +34,7 @@ $sql = "INSERT INTO rating_comments (domain, comment, rating, username, userurl)
     . " VALUES(".$dbConnection->quote($_POST['domain']).", ".$dbConnection->quote($_POST['comment']).", ".$dbConnection->quote($_POST['rating']). ","
     . " ".$dbConnection->quote($_POST['username']).", ".$dbConnection->quote($_POST['userurl']).")";
 if (!$result) {
-    die("Error in SQL query: " . pg_last_error());
+    die("Error in SQL query: " . $dbConnection->errorInfo()[2]);
 }
 
 
