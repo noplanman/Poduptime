@@ -121,11 +121,6 @@ $gitdate = trim($xgitdate[1]);
 preg_match('/X-Git-Revision: (.*?)\n/',$outputssl,$xgitrev);
 $gitrev = trim($xgitrev[1]);
 if ($debug) {echo "GitRevssl: ".$gitrev."<br>";}
-//preg_match('/X-Diaspora-Version: (.*?)\n/',$outputssl,$xdver);
-//$dverr = split("-",trim($xdver[1]));
-//$dver = $dverr[0];
-if ($debug) {echo "Version code: ".$dver."<br>";}
-if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$outputssl,$xruntime);
 $runtime = isset($xruntime[1])?trim($xruntime[1]):null;
 preg_match('/Server: (.*?)\n/',$outputssl,$xserver);
@@ -137,8 +132,10 @@ preg_match_all("/{(.*?)}/", $outputssl, $jsonssl_array);
 $jsonssl = json_decode($jsonssl_array[0][0]);
 if ($jsonssl->registrations_open === true) {$registrations_open=1;}
 $xdver = isset($jsonssl->version)?$jsonssl->version:0;
-$dverr = split("-",trim($xdver[1]));
+$dverr = split("-",trim($xdver));
 $dver = $dverr[0];
+if ($debug) {echo "Version code: ".$dver."<br>";}
+if (!$dver) {$score = $score-2;}
 $name = isset($jsonssl->name)?$jsonssl->name:"null";
 $total_users = isset($jsonssl->total_users)?$jsonssl->total_users:0;
 $active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active_users_halfyear:0;
@@ -153,11 +150,6 @@ preg_match('/X-Git-Update: (.*?)\n/',$output,$xgitdate);
 $gitdate = isset($xgitdate[1])?trim($xgitdate[1]):null;
 preg_match('/X-Git-Revision: (.*?)\n/',$output,$xgitrev);
 $gitrev = isset($xgitrev[1])?trim($xgitrev[1]):null;
-//preg_match('/X-Diaspora-Version: (.*?)\n/',$output,$xdver);
-//$dverr = split("-",trim($xdver[1]));
-//$dver = $dverr[0];
-if ($debug) {echo "Version code: ".$dverr[1]."<br>";}
-if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$output,$xruntime);
 $runtime = isset($xruntime[1])?trim($xruntime[1]):null;
 preg_match('/Server: (.*?)\n/',$output,$xserver);
@@ -168,8 +160,10 @@ preg_match_all("/{(.*?)}/", $output, $jsonssl_array);
 $jsonssl = json_decode($jsonssl_array[0][0]);
 if ($jsonssl->registrations_open === true) {$registrations_open=1;}
 $xdver = isset($jsonssl->version)?$jsonssl->version:0;
-$dverr = split("-",trim($xdver[1]));
+$dverr = split("-",trim($xdver));
 $dver = $dverr[0];
+if ($debug) {echo "Version code: ".$dver."<br>";}
+if (!$dver) {$score = $score-2;}
 $name = isset($jsonssl->name)?$jsonssl->name:"null";
 $total_users = isset($jsonssl->total_users)?$jsonssl->total_users:0;
 $active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active_users_halfyear:0;
@@ -303,7 +297,7 @@ state=$19, lat=$20, long=$21, postalcode='', connection=$22, whois=$23, userrati
 masterversion=$27, signup=$28, total_users=$29, active_users_halfyear=$30, active_users_monthly=$31, local_posts=$32, name=$33
 WHERE 
 domain=$34";
-     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver[1], $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain));
+     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain));
      if (!$result) {
          die("Error in SQL query3: " . pg_last_error());
      }
