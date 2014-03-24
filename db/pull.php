@@ -121,9 +121,9 @@ $gitdate = trim($xgitdate[1]);
 preg_match('/X-Git-Revision: (.*?)\n/',$outputssl,$xgitrev);
 $gitrev = trim($xgitrev[1]);
 if ($debug) {echo "GitRevssl: ".$gitrev."<br>";}
-preg_match('/X-Diaspora-Version: (.*?)\n/',$outputssl,$xdver);
-$dverr = split("-",trim($xdver[1]));
-$dver = $dverr[0];
+//preg_match('/X-Diaspora-Version: (.*?)\n/',$outputssl,$xdver);
+//$dverr = split("-",trim($xdver[1]));
+//$dver = $dverr[0];
 if ($debug) {echo "Version code: ".$dver."<br>";}
 if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$outputssl,$xruntime);
@@ -136,12 +136,15 @@ if ($xencoding) {$encoding = trim($xencoding[1]);} else {$encoding = null;}
 preg_match_all("/{(.*?)}/", $outputssl, $jsonssl_array);
 $jsonssl = json_decode($jsonssl_array[0][0]);
 if ($jsonssl->registrations_open === true) {$registrations_open=1;}
+$xdver = isset($jsonssl->version)?$jsonssl->version:0;
+$dverr = split("-",trim($xdver[1]));
+$dver = $dverr[0];
 $name = isset($jsonssl->name)?$jsonssl->name:"null";
 $total_users = isset($jsonssl->total_users)?$jsonssl->total_users:0;
 $active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active_users_halfyear:0;
 $active_users_monthly = isset($jsonssl->active_users_monthly)?$jsonssl->active_users_monthly:0;
 $local_posts = isset($jsonssl->local_posts)?$jsonssl->local_posts:0;
-} elseif (stristr($output, 'Set-Cookie: _diaspora_session=')) {
+} elseif (stristr($output, 'registrations_open')) {
 "not";$secure="false";
 //$hidden="no";
 $score = $score +1;
@@ -150,9 +153,9 @@ preg_match('/X-Git-Update: (.*?)\n/',$output,$xgitdate);
 $gitdate = isset($xgitdate[1])?trim($xgitdate[1]):null;
 preg_match('/X-Git-Revision: (.*?)\n/',$output,$xgitrev);
 $gitrev = isset($xgitrev[1])?trim($xgitrev[1]):null;
-preg_match('/X-Diaspora-Version: (.*?)\n/',$output,$xdver);
-$dverr = split("-",trim($xdver[1]));
-$dver = $dverr[0];
+//preg_match('/X-Diaspora-Version: (.*?)\n/',$output,$xdver);
+//$dverr = split("-",trim($xdver[1]));
+//$dver = $dverr[0];
 if ($debug) {echo "Version code: ".$dverr[1]."<br>";}
 if (!$dver) {$score = $score-2;}
 preg_match('/X-Runtime: (.*?)\n/',$output,$xruntime);
@@ -164,6 +167,9 @@ $encoding = isset($xencoding[1])?trim($xencoding[1]):null;
 preg_match_all("/{(.*?)}/", $output, $jsonssl_array);
 $jsonssl = json_decode($jsonssl_array[0][0]);
 if ($jsonssl->registrations_open === true) {$registrations_open=1;}
+$xdver = isset($jsonssl->version)?$jsonssl->version:0;
+$dverr = split("-",trim($xdver[1]));
+$dver = $dverr[0];
 $name = isset($jsonssl->name)?$jsonssl->name:"null";
 $total_users = isset($jsonssl->total_users)?$jsonssl->total_users:0;
 $active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active_users_halfyear:0;
