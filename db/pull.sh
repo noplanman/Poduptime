@@ -16,7 +16,7 @@ if [ ! -s /tmp/index.google ];then
 exit;
 else
 	echo "Pulling in new pod data";
-	cd /var/www/podup/db
+	cd /var/www/poduptime/db
 	php5 pull.php debug=1
  	touch last.data
 	php5 backup.php

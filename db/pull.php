@@ -6,7 +6,7 @@ $debug = 1;//isset($_GET['debug'])?1:0;
  include('config.php');
 //get master code version
         $mv = curl_init();
-        curl_setopt($mv, CURLOPT_URL, "https://raw.github.com/diaspora/diaspora/master/config/defaults.yml");
+        curl_setopt($mv, CURLOPT_URL, "https://raw.githubusercontent.com/diaspora/diaspora/master/config/defaults.yml");
         curl_setopt($mv, CURLOPT_POST, 0);
         curl_setopt($mv, CURLOPT_HEADER, 0);
         curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
@@ -201,23 +201,23 @@ $ipv6="no";
 $ipv6="yes";
 }
 //curl ip
-require_once "Net/GeoIP.php";
-$geoip = Net_GeoIP::getInstance("GeoLiteCity.dat");
+//require_once "Net/GeoIP.php";
+//$geoip = Net_GeoIP::getInstance("GeoLiteCity.dat");
 try {
-    $location = $geoip->lookupLocation($ipnum);
+    $location = geoip_record_by_name($ipnum); //$geoip->lookupLocation($ipnum);
 if ($debug) {echo "GEOIP: ".$location."<br>";}
 } catch (Exception $e) {
     // Handle exception
 }
-$ipdata = "Country: ".$location->countryName."\n";
-$whois = "Country: ".$location->countryName."\n Lat:".$location->latitude." Long:".$location->longitude;
-$country=$location->countryName;
+$ipdata = "Country: ".$location["country_name"]."\n";
+$whois = "Country: ".$location["country_name"]."\n Lat:".$location["latitude"]." Long:".$location["longitude"];
+$country=$location["country_name"];
 $city=  isset($location->city)?iconv("UTF-8", "UTF-8//IGNORE", $location->city):null;
 $state="";
 $months=0;
 $uptime=0;
-$lat=$location->latitude;
-$long=$location->longitude;
+$lat=$location["latitude"];
+$long=$location["longitude"];
 $connection="";
 $pingdomdate = date('Y-m-d H:i:s');
 if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {

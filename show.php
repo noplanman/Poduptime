@@ -1,6 +1,6 @@
 <meta charset="utf-8"> 
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
-<table id="myTable" class="tablesorter" width="98%">
+<table id="myTable" class="tablesorter zebra-striped" width="98%">
 <thead>
 <tr>
 <th width="220px">Diaspora Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
@@ -9,8 +9,8 @@
 <th>Signups<a class="tipsy" title="Open to public or Closed/Invite only.">?</a></th>
 <th>Users<a class="tipsy" title="Number of total users on this pod.">?</a></th>
 <th>Posts<a class="tipsy" title="Number of total posts on this pod.">?</a></th>
-<th>Months Online<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
-<th>User Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
+<th>Months<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
+<th>Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
 <th>Location<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
 </tr>
 </thead>
@@ -49,8 +49,7 @@ $verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $
 
 
 $tip.="\n This pod {$row["name"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. "; 
-$tip.="Code base is {$row["shortversion"]} and the current github base is {$row["masterversion"]}. ";
-$tip.="This pod is {$verdiff} versions behind the current code. This pods IP {$row["ip"]} ". ($row["ipv6"] == "yes" ? "has" : "does not have") ." IPv6 and is located in {$row["country"]}. On a score of -20 to +20 this pod is a {$row["score"]} right now, all data is checked every hour. Pod " . ($row["signup"] == "1" ? "does" : "does not") . " allow new users.";
+$tip.="On a score of -20 to +20 this pod is a {$row["score"]} right now";
 
      echo "<tr><td><div title='$tip' class='tipsy'><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $method . $row["domain"] . "</a></div></td>";
 "</div></td>";
@@ -89,6 +88,8 @@ echo "✪";
  }
  pg_free_result($result);       
  pg_close($dbh);
+$country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
+//echo $country_code;
 ?>
 </tbody>
 </table>

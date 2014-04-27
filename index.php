@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Diaspora Pod uptime - Find your new social home</title>
+<!doctype html><html><head><meta charset="utf-8"><title>Diaspora Pod Uptime Status - Find your new social home on a hosted pod</title>
 <meta name="keywords" content="diaspora, podupti.me, diasp, diasporg, diasp.org, facebook, open source social, open source facebook, open source social network" />
 <meta name="description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!" />
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.min.js"></script> 
@@ -21,46 +21,31 @@ include("vendor/mobiledetect/Mobile_Detect.php");
 $detect = new Mobile_Detect();
 if ($detect->isMobile()) {echo '<link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/mobile.css" /><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">';} 
 ?>
-<script type="text/javascript">
-(function() {
-var s = document.createElement('SCRIPT'), s1 = document.getElementsByTagName('SCRIPT')[0];
-s.type = 'text/javascript';
-s.async = true;
-s.src = 'http://widgets.digg.com/buttons.js';
-s1.parentNode.insertBefore(s, s1);
-})();
-</script></head>
+</head>
 <body>
   <header>
     <div class="page-header">
       <div class="row">
         <div class="span6">
           <h2 id="title">
-          DIASPORA* POD UPTIME
+          Diaspora Hosted Pods
           </h2>
         </div>
       <div class="span3" style="margin-top:8px;">
-<!-- AddThis Button BEGIN -->
-<div class="addthis_toolbox addthis_default_style ">
-<a class="addthis_button_preferred_1"></a>
-<a class="addthis_button_preferred_2"></a>
-<a class="addthis_button_preferred_3"></a>
-<a class="addthis_button_preferred_4"></a>
-<a class="addthis_button_compact"></a>
-<a class="addthis_counter addthis_bubble_style"></a>
-</div>
-<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=davidmmorley"></script>
-<!-- AddThis Button END -->
       </div>
       <div class="span4" style="margin-top:8px;">
-      <a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="http://podupti.me"></a>
+<a href="http://flattr.com/thing/170048/Diaspora-Pod-Live-Uptime-watch" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
       </div>
       <div class="span2" style="margin-top:8px;">
-<a onClick="map();">Show Map View</a>
+<a onClick="map();">Map View</a>
       </div>
       <div class="span2" style="margin-top:8px;">
-<a onClick="nomap();">Show Table View</a>
+<a onClick="nomap();">Table View</a>
       </div>
+      <div class="span2" style="margin-top:8px;">
+<a href="https://diasporafoundation.org/">More Info</a>
+      </div>
+
     </div>
   </div>
 </div>
@@ -69,11 +54,11 @@ s1.parentNode.insertBefore(s, s1);
     <div class="sidebar"> 
       <div class="adsense2">
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- podsky -->
+<!-- podup3 -->
 <ins class="adsbygoogle"
-     style="display:inline-block;width:120px;height:600px"
+     style="display:inline-block;width:160px;height:600px"
      data-ad-client="ca-pub-3662181805557062"
-     data-ad-slot="2647650630"></ins>
+     data-ad-slot="3844961434"></ins>
 <script>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
@@ -109,35 +94,6 @@ is mostly because of selfsigned or openca certs, if you need a free ssl cert get
         <br>
       </div>
 				
-<!-- Piwik -->
-<script type="text/javascript"> 
-  var _paq = _paq || [];
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u=(("https:" == document.location.protocol) ? "https" : "http") + "://podupti.me/s//";
-    _paq.push(['setTrackerUrl', u+'piwik.php']);
-    _paq.push(['setSiteId', 1]);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript';
-    g.defer=true; g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-  })();
-
-</script>
-<noscript><p><img src="http://podupti.me/s/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
-<!-- End Piwik Code -->
-
-						
-      <script type="text/javascript">
-      /* <![CDATA[ */
-          (function() {
-              var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
-              s.type = 'text/javascript';
-              s.async = true;
-              s.src = 'http://api.flattr.com/js/0.6/load.js?mode=auto';
-              t.parentNode.insertBefore(s, t);
-          })();
-      /* ]]> */
-      </script>
     </div>
   </div>
 </body>
