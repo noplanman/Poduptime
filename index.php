@@ -19,7 +19,7 @@ $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
 $lastfile = 'db/last.data';
 include("vendor/mobiledetect/Mobile_Detect.php");
 $detect = new Mobile_Detect();
-if ($detect->isMobile()) {echo '<link rel="stylesheet" href="http://c807316.r16.cf2.rackcdn.com/mobile.css" /><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">';} 
+if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />';} 
 ?>
 </head>
 <body>

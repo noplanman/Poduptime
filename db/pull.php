@@ -1,6 +1,6 @@
 <?php
-$debug = 1;//isset($_GET['debug'])?1:0;
-//if ($_GET['debug'] == 1) {$debug =1;}
+$debug = isset($_GET['debug'])?1:0;
+$debug=1;
 //$debug = isset($argv[1])?1:0;
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
  include('config.php');
@@ -88,11 +88,16 @@ unset($active_users_halfyear);
 unset($active_users_monthly);
 unset($local_posts);
 unset($registrations_open);
+unset($dver);
+unset($dverr);
+unset($xdver);
         $chss = curl_init();
+
         curl_setopt($chss, CURLOPT_URL, "https://".$domain."/statistics.json"); 
         curl_setopt($chss, CURLOPT_POST, 0);
         curl_setopt($chss, CURLOPT_HEADER, 1);
         curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($chss, CURLOPT_TIMEOUT, 5);
         curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($chss, CURLOPT_NOBODY, 0);
         $outputssl = curl_exec($chss);      
@@ -103,6 +108,7 @@ unset($registrations_open);
         curl_setopt($ch, CURLOPT_POST, 0);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_NOBODY, 0);
         $output = curl_exec($ch);
@@ -134,7 +140,7 @@ if ($jsonssl->registrations_open === true) {$registrations_open=1;}
 $xdver = isset($jsonssl->version)?$jsonssl->version:0;
 $dverr = split("-",trim($xdver));
 $dver = $dverr[0];
-if ($debug) {echo "Version code: ".$dver."<br>";}
+if ($debug) {echo "(s)Version code: ".$dver."<br>";}
 if (!$dver) {$score = $score-2;}
 $name = isset($jsonssl->name)?$jsonssl->name:"null";
 $total_users = isset($jsonssl->total_users)?$jsonssl->total_users:0;
@@ -172,6 +178,8 @@ $local_posts = isset($jsonssl->local_posts)?$jsonssl->local_posts:0;
 } else {
 $secure="false";
 $score = $score - 1;
+$dver =0;
+$dverr=0;
 //$hidden="yes";
 //no diaspora cookie on either, lets set this one as hidden and notify someone its not really a pod
 //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
@@ -200,24 +208,26 @@ $ipv6="no";
 } else {
 $ipv6="yes";
 }
-//curl ip
-//require_once "Net/GeoIP.php";
-//$geoip = Net_GeoIP::getInstance("GeoLiteCity.dat");
-try {
-    $location = geoip_record_by_name($ipnum); //$geoip->lookupLocation($ipnum);
-if ($debug) {echo "GEOIP: ".$location."<br>";}
-} catch (Exception $e) {
-    // Handle exception
-}
+    $location = geoip_record_by_name($ipnum);
+if ($location) {
 $ipdata = "Country: ".$location["country_name"]."\n";
 $whois = "Country: ".$location["country_name"]."\n Lat:".$location["latitude"]." Long:".$location["longitude"];
-$country=$location["country_name"];
+$country=$location["country_code"];
 $city=  isset($location->city)?iconv("UTF-8", "UTF-8//IGNORE", $location->city):null;
 $state="";
 $months=0;
 $uptime=0;
 $lat=$location["latitude"];
 $long=$location["longitude"];
+//if lat and long are just a generic country with no detail lets make some tail up or openmap just stacks them all on top another
+if (strlen($lat) < 4) {
+$lat = $lat + (rand(1, 15) / 10);
+}
+if (strlen($long) < 4) {
+$long = $long + (rand(1, 15) / 10);
+}
+}
+echo $ipnum;
 $connection="";
 $pingdomdate = date('Y-m-d H:i:s');
 if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {

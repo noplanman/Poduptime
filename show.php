@@ -51,11 +51,11 @@ $verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $
 $tip.="\n This pod {$row["name"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. "; 
 $tip.="On a score of -20 to +20 this pod is a {$row["score"]} right now";
 
-     echo "<tr><td><div title='$tip' class='tipsy'><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $method . $row["domain"] . "</a></div></td>";
+     echo "<tr><td><div title='$tip' class='tipsy'><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $row["domain"] . "</a></div></td>";
 "</div></td>";
 
 if (stristr($row["shortversion"],'head')) 
-{$version=".dev code";$pre = "This pod runs pre release 
+{$version=".dev";$pre = "This pod runs pre release 
 development code";} elseif (!$row["shortversion"]) 
 {$version="0";$pre = "This pod runs 
 unknown code";} 

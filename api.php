@@ -28,7 +28,7 @@ echo <<<EOF
     <title>{$method}{$row['domain']}</title>
     <link href="{$method}{$row['domain']}"/>
     <id>urn:{$row['domain']}</id>
-    <summary>Location {$row['city']}, {$row['state']}<![CDATA[<br/>]]>Status {$row['status']}<![CDATA[<br/>]]>Uptime last 7 days {$row['uptimelast7']}<![CDATA[<br/>]]>Response Time {$row['responsetimelast7']}<![CDATA[<br/>]]>Last Git Update {$row['hgitdate']}<![CDATA[<br/>]]>Listed for {$row['monthsmonitored']} months<![CDATA[<br/>]]>Pingdom URL <![CDATA[<A href="{$row['pingdomurl']}">{$row['pingdomurl']}</a>]]></summary>
+    <summary>Location {$row['country']}</summary>
     <georss:point>{$row['lat']} {$row['long']}</georss:point>
     <georss:featureName>{$row['domain']}</georss:featureName>
   </entry>

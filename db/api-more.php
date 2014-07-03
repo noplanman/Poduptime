@@ -19,6 +19,8 @@
      echo "Response Time: " . $row["responsetimelast7"] . "<br>";
      echo "User Rating: ". $row["userrating"] . "<br>";
      echo "Server Location: ". $row["country"] . "<br>";
+     echo "Latitude: ". $row["lat"] . "<br>";
+     echo "Longitude: ". $row["long"] . "<br>";
  }
  pg_free_result($result);       
  pg_close($dbh);
