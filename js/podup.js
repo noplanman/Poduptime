@@ -10,6 +10,7 @@ function map() {
   map.addLayer(new OpenLayers.Layer.OSM());
   map.addControl(new OpenLayers.Control.LayerSwitcher());
   var layer = new OpenLayers.Layer.GeoRSS("Diaspora Pods", "/api.php?key=4r45tg&format=georss");
+  //map.popupSize(2,2);
   map.addLayer(layer);
   map.zoomTo(2);
 }
