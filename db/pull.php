@@ -289,6 +289,7 @@ $score=$score-2;
         $up2 = substr ($uptimerobot, strlen($json_encap) - 1, strlen ($uptimerobot) - strlen($json_encap)); 
 	$uptr = json_decode($up2);
 $responsetime = 'n/a';
+$uptimerobotstat = $uptr->stat;
 $uptime = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
 $diff = abs(strtotime(date('Y-m-d H:i:s')) - strtotime($dateadded));
 $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
@@ -298,6 +299,10 @@ if ($uptr->monitors->monitor{'0'}->status == 8) {$live = "Seems Down";}
 if ($uptr->monitors->monitor{'0'}->status == 9) {$live = "Down";}
 
 $pingdomdate =  date('Y-m-d H:i:s');
+if ($uptimerobotstat == "fail") {
+$score=$score-2;
+}
+
 }
 //sql it
      $timenow = date('Y-m-d H:i:s');
