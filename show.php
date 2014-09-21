@@ -7,7 +7,8 @@
 <th>Version<a class="tipsy" title="Version of Diaspora this pod runs">?</a></th>
 <th>Uptime<a class="tipsy" title="Percent of the time the pod is online for <?php echo date("F") ?>.">?</a></th>
 <th>Signups<a class="tipsy" title="Open to public or Closed/Invite only.">?</a></th>
-<th>Users<a class="tipsy" title="Number of total users on this pod.">?</a></th>
+<th>Total Users<a class="tipsy" title="Number of total users on this pod.">?</a></th>
+<th>Active Users<a class="tipsy" title="Number of users active last 6 months on this pod.">?</a></th>
 <th>Posts<a class="tipsy" title="Number of total posts on this pod.">?</a></th>
 <th>Months<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
 <th>Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
@@ -51,7 +52,7 @@ $verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $
 $tip.="\n This pod {$row["name"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. "; 
 $tip.="On a score of -20 to +20 this pod is a {$row["score"]} right now";
 
-     echo "<tr><td><div title='$tip' class='tipsy'><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $row["domain"] . "</a></div></td>";
+     echo "<tr><td><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $row["domain"] . " <div title='$tip' class='tipsy' style='display: inline-block'>?</div></a></td>";
 "</div></td>";
 
 if (stristr($row["shortversion"],'head')) 
@@ -67,6 +68,7 @@ if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "")
 if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $signup . "</td>";
      echo "<td>" . $row["total_users"] . "</td>";
+     echo "<td>" . $row["active_users_halfyear"] . "</td>";
      echo "<td>" . $row["local_posts"] . "</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row["pingdomurl"];}
      echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a target='new' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";

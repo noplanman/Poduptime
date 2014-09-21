@@ -178,7 +178,7 @@ $local_posts = isset($jsonssl->local_posts)?$jsonssl->local_posts:0;
 } else {
 $secure="false";
 $score = $score - 1;
-$dver =0;
+$dver =".connect error";
 $dverr=0;
 //$hidden="yes";
 //no diaspora cookie on either, lets set this one as hidden and notify someone its not really a pod

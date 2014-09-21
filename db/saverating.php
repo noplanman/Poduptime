@@ -32,7 +32,7 @@ if (!$_POST['rating']){
      }
      $to = $adminemail;
      $subject = "New rating added to poduptime ";
-     $message = "Pod:" . $_POST["domain"] . "\n\n";
+     $message = "Pod:" . $_POST["domain"] . $_POST['domain'] . $_POST['username'] . $_POST['userurl'] . $_POST['comment'] . $_POST['rating'] . "\n\n";
      $headers = "From: ".$_POST["email"]."\r\n";
      @mail( $to, $subject, $message, $headers );    
 

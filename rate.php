@@ -9,6 +9,7 @@
     $('#commentform').show('slow'); $('#ratings').hide('slow');
   });
 $('#submitrating').click(function() {
+
 <?php
 echo "var domain = \"{$_GET['domain']}\";";
 ?>
@@ -17,6 +18,7 @@ $.ajax({
    url: "db/saverating.php",
    data: "username="+$('#username').val()+"&userurl="+$('#userurl').val()+"&comment="+$('#comment').val()+"&rating="+$('#rating').val()+"&domain="+domain,
    success: function(msg){
+          $('#submitrating').unbind('click');
           if (msg == 1) {
 	 $("#commentform").replaceWith("<h3>Your comment was saved, Thank You!</h3>");
    } else {$('#errortext').html(msg);$('#error').slideDown(633).delay(2500).slideUp(633);} 
