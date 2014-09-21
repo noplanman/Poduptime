@@ -10,9 +10,11 @@
 <th>Total Users<a class="tipsy" title="Number of total users on this pod.">?</a></th>
 <th>Active Users<a class="tipsy" title="Number of users active last 6 months on this pod.">?</a></th>
 <th>Posts<a class="tipsy" title="Number of total posts on this pod.">?</a></th>
+<th>Comments<a class="tipsy" title="Number of total comments on this pod.">?</a></th>
 <th>Months<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
 <th>Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
 <th>Location<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
+<th>Services<a class="tipsy" title="External Social Networks this pod can post to">?</a></th>
 </tr>
 </thead>
 <tbody>
@@ -70,6 +72,7 @@ if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $row["total_users"] . "</td>";
      echo "<td>" . $row["active_users_halfyear"] . "</td>";
      echo "<td>" . $row["local_posts"] . "</td>";
+     echo "<td>" . $row["comment_counts"] . "</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row["pingdomurl"];}
      echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a target='new' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";
 if ($row["userrating"] >6) {$userratingclass="green";} elseif ($row["userrating"] <7) {$userratingclass="yellow";} elseif ($row["userrating"] <3) {$userratingclass="red";}
@@ -85,8 +88,13 @@ echo "✪";
 }
 
      echo "</div></a></td>";
-     echo "<td class='tipsy' title='".$row["whois"]." '>" . $row["country"] . "</td></tr>\n";
-
+     echo "<td class='tipsy' title='".$row["whois"]." '>" . $row["country"] . "</td>\n";
+     echo "<td class='' title=''>";
+     if ($row["service_facebook"] == true) {echo "<div id='facebook' class='smlogo'></div>";}
+     if ($row["service_twitter"] == true) {echo "<div id='twitter' class='smlogo'></div>";}
+     if ($row["service_tumblr"] == true) {echo "<div id='tumblr' class='smlogo'></div>";}
+     if ($row["service_wordpress"] == true) {echo "<div id='wordpress' class='smlogo'></div>";}
+     echo "</td></tr>\n";
  }
  pg_free_result($result);       
  pg_close($dbh);

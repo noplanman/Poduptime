@@ -35,6 +35,11 @@ CREATE TABLE pods (
  uptimelast7 numeric(5,2),
  status text,
  responsetimelast7 text,
+ service_facebook booleen,
+ service_twitter booleen,
+ service_tumblr booleen,
+ service_wordpress booleen,
+ comment_counts int,
  dateUpdated timestamp DEFAULT current_timestamp,
  dateLaststats timestamp DEFAULT current_timestamp,
  dateCreated timestamp DEFAULT current_timestamp

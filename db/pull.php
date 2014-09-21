@@ -88,6 +88,11 @@ unset($active_users_halfyear);
 unset($active_users_monthly);
 unset($local_posts);
 unset($registrations_open);
+unset($comment_counts);
+unset($service_facebook);
+unset($service_twitter);
+unset($service_tumblr);
+unset($service_wordpess);
 unset($dver);
 unset($dverr);
 unset($xdver);
@@ -147,6 +152,11 @@ $total_users = isset($jsonssl->total_users)?$jsonssl->total_users:0;
 $active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active_users_halfyear:0;
 $active_users_monthly = isset($jsonssl->active_users_monthly)?$jsonssl->active_users_monthly:0;
 $local_posts = isset($jsonssl->local_posts)?$jsonssl->local_posts:0;
+$comment_counts = isset($jsonssl->local_comments)?$jsonssl->local_comments:0;
+$service_facebook = isset($jsonssl->facebook)?$jsonssl->facebook:false;
+$service_twitter = isset($jsonssl->twitter)?$jsonssl->twitter:false;
+$service_tumblr = isset($jsonssl->tumblr)?$jsonssl->tumblr:false;
+$service_wordpress = isset($jsonssl->wordpress)?$jsonssl->wordpress:false;
 } elseif (stristr($output, 'registrations_open')) {
 "not";$secure="false";
 //$hidden="no";
@@ -175,6 +185,11 @@ $total_users = isset($jsonssl->total_users)?$jsonssl->total_users:0;
 $active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active_users_halfyear:0;
 $active_users_monthly = isset($jsonssl->active_users_monthly)?$jsonssl->active_users_monthly:0;
 $local_posts = isset($jsonssl->local_posts)?$jsonssl->local_posts:0;
+$comment_counts = isset($jsonssl->local_comments)?$jsonssl->local_comments:0;
+$service_facebook = isset($jsonssl->facebook)?$jsonssl->facebook:false;
+$service_twitter = isset($jsonssl->twitter)?$jsonssl->twitter:false;
+$service_tumblr = isset($jsonssl->tumblr)?$jsonssl->tumblr:false;
+$service_wordpress = isset($jsonssl->wordpress)?$jsonssl->wordpress:false;
 } else {
 $secure="false";
 $score = $score - 1;
@@ -309,10 +324,11 @@ $score=$score-2;
      $sql = "UPDATE pods SET Hgitdate=$1, Hencoding=$2, secure=$3, hidden=$4, Hruntime=$5, Hgitref=$6, ip=$7, ipv6=$8, monthsmonitored=$9, 
 uptimelast7=$10, status=$11, dateLaststats=$12, dateUpdated=$13, responsetimelast7=$14, score=$15, adminrating=$16, country=$17, city=$18, 
 state=$19, lat=$20, long=$21, postalcode='', connection=$22, whois=$23, userrating=$24, longversion=$25, shortversion=$26, 
-masterversion=$27, signup=$28, total_users=$29, active_users_halfyear=$30, active_users_monthly=$31, local_posts=$32, name=$33
+masterversion=$27, signup=$28, total_users=$29, active_users_halfyear=$30, active_users_monthly=$31, local_posts=$32, name=$33, 
+comment_counts=$35, service_facebook=$36, service_tumblr=$37, service_twitter=$38, service_wordpress=$39
 WHERE 
 domain=$34";
-     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain));
+     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress));
      if (!$result) {
          die("Error in SQL query3: " . pg_last_error());
      }
