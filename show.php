@@ -90,10 +90,10 @@ echo "✪";
      echo "</div></a></td>";
      echo "<td class='tipsy' title='".$row["whois"]." '>" . $row["country"] . "</td>\n";
      echo "<td class='' title=''>";
-     if ($row["service_facebook"] == true) {echo "<div id='facebook' class='smlogo'></div>";}
-     if ($row["service_twitter"] == true) {echo "<div id='twitter' class='smlogo'></div>";}
-     if ($row["service_tumblr"] == true) {echo "<div id='tumblr' class='smlogo'></div>";}
-     if ($row["service_wordpress"] == true) {echo "<div id='wordpress' class='smlogo'></div>";}
+     if ($row["service_facebook"] == "t") {echo "<div id='facebook' class='smlogo'></div>";}
+     if ($row["service_twitter"] == "t") {echo "<div id='twitter' class='smlogo'></div>";}
+     if ($row["service_tumblr"] == "t") {echo "<div id='tumblr' class='smlogo'></div>";}
+     if ($row["service_wordpress"] == "t") {echo "<div id='wordpress' class='smlogo'></div>";}
      echo "</td></tr>\n";
  }
  pg_free_result($result);       

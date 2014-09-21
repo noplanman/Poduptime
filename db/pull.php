@@ -153,10 +153,11 @@ $active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active
 $active_users_monthly = isset($jsonssl->active_users_monthly)?$jsonssl->active_users_monthly:0;
 $local_posts = isset($jsonssl->local_posts)?$jsonssl->local_posts:0;
 $comment_counts = isset($jsonssl->local_comments)?$jsonssl->local_comments:0;
-$service_facebook = isset($jsonssl->facebook)?$jsonssl->facebook:false;
-$service_twitter = isset($jsonssl->twitter)?$jsonssl->twitter:false;
-$service_tumblr = isset($jsonssl->tumblr)?$jsonssl->tumblr:false;
-$service_wordpress = isset($jsonssl->wordpress)?$jsonssl->wordpress:false;
+$service_facebook = !empty($jsonssl->facebook)?$jsonssl->facebook:'false';
+$service_twitter = !empty($jsonssl->twitter)?$jsonssl->twitter:'false';
+$service_tumblr = !empty($jsonssl->tumblr)?$jsonssl->tumblr:'false';
+$service_wordpress = !empty($jsonssl->wordpress)?$jsonssl->wordpress:'false';
+echo $service_wordpress . "fdfsdf";
 } elseif (stristr($output, 'registrations_open')) {
 "not";$secure="false";
 //$hidden="no";
@@ -186,10 +187,10 @@ $active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active
 $active_users_monthly = isset($jsonssl->active_users_monthly)?$jsonssl->active_users_monthly:0;
 $local_posts = isset($jsonssl->local_posts)?$jsonssl->local_posts:0;
 $comment_counts = isset($jsonssl->local_comments)?$jsonssl->local_comments:0;
-$service_facebook = isset($jsonssl->facebook)?$jsonssl->facebook:false;
-$service_twitter = isset($jsonssl->twitter)?$jsonssl->twitter:false;
-$service_tumblr = isset($jsonssl->tumblr)?$jsonssl->tumblr:false;
-$service_wordpress = isset($jsonssl->wordpress)?$jsonssl->wordpress:false;
+$service_facebook = !empty($jsonssl->facebook)?$jsonssl->facebook:'false';
+$service_twitter = !empty($jsonssl->twitter)?$jsonssl->twitter:'false';
+$service_tumblr = !empty($jsonssl->tumblr)?$jsonssl->tumblr:'false';
+$service_wordpress = !empty($jsonssl->wordpress)?$jsonssl->wordpress:'false';
 } else {
 $secure="false";
 $score = $score - 1;
