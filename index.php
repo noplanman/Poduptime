@@ -26,14 +26,14 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
   <header>
     <div class="page-header">
       <div class="row">
-        <div class="span6">
+        <div class="span5">
           <h2 id="title">
           Diaspora Hosted Pods
           </h2>
         </div>
-      <div class="span3" style="margin-top:8px;">
+      <div class="span" style="margin-top:8px;">
       </div>
-      <div class="span4" style="margin-top:8px;">
+      <div class="span2" style="margin-top:8px;">
 <a href="http://flattr.com/thing/170048/Diaspora-Pod-Live-Uptime-watch" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
       </div>
       <div class="span2" style="margin-top:8px;">
@@ -51,20 +51,6 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
 </div>
   </header>
   <div class="container-fluid">
-    <div class="sidebar"> 
-      <div class="adsense2">
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- podup3 -->
-<ins class="adsbygoogle"
-     style="display:inline-block;width:160px;height:600px"
-     data-ad-client="ca-pub-3662181805557062"
-     data-ad-slot="3844961434"></ins>
-<script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-      </div>
-      <a href="https://market.android.com/details?id=appinventor.ai_david_morley.DiasporaPoduptime"><img src="http://c807316.r16.cf2.rackcdn.com/android-dude128.png"></a>
-    </div>
     <div class="content">
     <div id="map" style="width:80%;height:500px;position:absolute;display:none"></div>
       <div id="results">

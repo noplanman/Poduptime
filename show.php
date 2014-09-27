@@ -27,9 +27,9 @@ $tt=0;
  }  
  $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
  if ($hidden == "true") {
- $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY Hgitdate DESC, uptimelast7 DESC";
+ $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY active_users_halfyear DESC NULLS LAST, uptimelast7 DESC NULLS LAST";
  } else {
- $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' ORDER BY Hgitdate DESC, uptimelast7 DESC";
+ $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' ORDER BY active_users_halfyear DESC NULLS LAST, uptimelast7 DESC NULLS LAST";
  }
  $result = pg_query($dbh, $sql);
  if (!$result) {
@@ -95,6 +95,21 @@ echo "✪";
      if ($row["service_tumblr"] == "t") {echo "<div id='tumblr' class='smlogo'></div>";}
      if ($row["service_wordpress"] == "t") {echo "<div id='wordpress' class='smlogo'></div>";}
      echo "</td></tr>\n";
+if ($tt == 5) {
+echo <<<EOF
+<td colspan='12' style='padding-left:200px;'>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- podup2015 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:728px;height:90px"
+     data-ad-client="ca-pub-3662181805557062"
+     data-ad-slot="2218925437"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</td>
+EOF;
+}
  }
  pg_free_result($result);       
  pg_close($dbh);
