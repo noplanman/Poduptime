@@ -70,7 +70,7 @@ if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "")
 if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $signup . "</td>";
      echo "<td>" . $row["total_users"] . "</td>";
-     echo "<td>" . $row["active_users_halfyear"] . "</td>";
+     echo "<td class='tipsy' title='active six months: "  . $row["active_users_halfyear"] .  ", active one month: "  . $row["active_users_monthly"] . "'>" . $row["active_users_halfyear"] . "</td>";
      echo "<td>" . $row["local_posts"] . "</td>";
      echo "<td>" . $row["comment_counts"] . "</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row["pingdomurl"];}

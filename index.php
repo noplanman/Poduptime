@@ -31,7 +31,10 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
           Diaspora Hosted Pods
           </h2>
         </div>
-      <div class="span" style="margin-top:8px;">
+      <div class="span2" style="margin-top:8px;">
+<div class="cb-tip-button" data-content-location="http://podupti.me" data-href="//www.coinbase.com/tip_buttons/show_tip" data-to-user-id="528d8ff6f8f028e269000067"></div>
+<script>!function(d,s,id) {var js,cjs=d.getElementsByTagName(s)[0],e=d.getElementById(id);if(e){return;}js=d.createElement(s);js.id=id;js.src="https://www.coinbase.com/assets/tips.js";cjs.parentNode.insertBefore(js,cjs);}(document, 'script', 'coinbase-tips');</script>
+
       </div>
       <div class="span2" style="margin-top:8px;">
 <a href="http://flattr.com/thing/170048/Diaspora-Pod-Live-Uptime-watch" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>

@@ -1,6 +1,6 @@
 <?php
 include('config.php');
-$keep = (60 * 60 * 12) * 3; 
+$keep = (60 * 60 * 6) * 1; 
 $dump_date = date("Ymd_Hs");
 $file_name = $backup_dir . "/dump_" . $dump_date . ".sql";
 system("export PGPASSWORD=$pgpass && $pg_dump_dir/pg_dump --username=$pguser $pgdb >> $file_name");
