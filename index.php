@@ -70,7 +70,7 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
   <div class="container-fluid"><div id="map" style="width:80%;height:500px;position:absolute;display:none"></div>
     <div class="content">
       <div id="results">
-	<a href='https://diasp.org/users/sign_up' class='btn danger large'>Confused and just want to sign up?? Click Here</a><br>
+	<a href='random.php' class='btn danger large'>Confused and just want to sign up?? Click Here</a><br>
         <?php if ($hidden == "true") {echo "<a href='http://podupti.me' class='btn danger large'>NOTICE: These pods are Hidden and have problems, click here to go to working pods</a>";} include("show.php"); ?>
       </div>
       <div id="add">
