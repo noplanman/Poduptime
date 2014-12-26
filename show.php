@@ -1,4 +1,28 @@
-<meta charset="utf-8"> 
+<?php
+$tt=0;
+ include('db/config.php');
+ $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
+ if (!$dbh) {
+     die("Error in connection: " . pg_last_error());
+ }  
+ $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
+ if ($hidden == "true") {
+ $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY active_users_halfyear DESC NULLS LAST, uptimelast7 DESC NULLS LAST";
+ } else {
+ $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' ORDER BY active_users_halfyear DESC NULLS LAST, uptimelast7 DESC NULLS LAST";
+ }
+ $result = pg_query($dbh, $sql);
+ if (!$result) {
+     die("Error in SQL query: " . pg_last_error());
+ }   
+ $numrows = pg_num_rows($result);
+echo "<meta property='og:title' content='"; 
+echo $numrows;
+echo " #Diaspora Pods listed, Come see the privacy aware social network.' />";
+echo $numrows;
+?>
+ pods tracked right now. Click column names to sort and find a pod. Show as: <a onClick="map();">Map</a> <a onClick="nomap();">Table</a>
+<meta charset="utf-8">
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
 <table id="myTable" class="tablesorter zebra-striped" width="98%">
 <thead>
@@ -19,23 +43,6 @@
 </thead>
 <tbody>
 <?php
-$tt=0;
- include('db/config.php');
- $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
- if (!$dbh) {
-     die("Error in connection: " . pg_last_error());
- }  
- $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
- if ($hidden == "true") {
- $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY active_users_halfyear DESC NULLS LAST, uptimelast7 DESC NULLS LAST";
- } else {
- $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' ORDER BY active_users_halfyear DESC NULLS LAST, uptimelast7 DESC NULLS LAST";
- }
- $result = pg_query($dbh, $sql);
- if (!$result) {
-     die("Error in SQL query: " . pg_last_error());
- }   
- $numrows = pg_num_rows($result);
  while ($row = pg_fetch_array($result)) {
 $tt=$tt+1;
 if ($row["secure"] == "true") {

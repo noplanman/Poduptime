@@ -13,7 +13,8 @@
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <link rel="stylesheet" href="css/newstyle.css" />
 <link rel="stylesheet" href="css/facebox.css" />
-
+<meta property="og:url" content="http://podupti.me" />
+<meta property="og:site_name" content="Diaspora Pods" />
 <?php 
 $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
 $lastfile = 'db/last.data';
@@ -21,6 +22,18 @@ include("vendor/mobiledetect/Mobile_Detect.php");
 $detect = new Mobile_Detect();
 if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />';} 
 ?>
+<script type="text/javascript">
+/* <![CDATA[ */
+    (function() {
+        var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = 'http://api.flattr.com/js/0.6/load.js?mode=auto';
+        t.parentNode.insertBefore(s, t);
+    })();
+/* ]]> */</script>
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "3209f0be-147e-49fc-ac1b-2cf6740e9449", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
 </head>
 <body>
   <header>
@@ -28,35 +41,36 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
       <div class="row">
         <div class="span5">
           <h2 id="title">
-          Diaspora Hosted Pods
+          Diaspora Pods
           </h2>
         </div>
       <div class="span2" style="margin-top:8px;">
+<span class='st_facebook_hcount' displayText='Facebook' st_summary='test'></span>
+      </div>
+<div class="span2" style="margin-top:8px;">
+
+<span class='st_twitter_hcount' displayText='Tweet' text='test'></span>
+      </div>
+<div class="span2" style="margin-top:8px;">
+
+<span class='st_plusone_hcount' displayText='Google +1'></span>
+      </div>
+      <div class="span2" style="margin-top:8px;">
+<a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="http://podupti.me"></a>
+	</div>
+	<div class="span2" style="margin-top:8px;">
 <div class="cb-tip-button" data-content-location="http://podupti.me" data-href="//www.coinbase.com/tip_buttons/show_tip" data-to-user-id="528d8ff6f8f028e269000067"></div>
 <script>!function(d,s,id) {var js,cjs=d.getElementsByTagName(s)[0],e=d.getElementById(id);if(e){return;}js=d.createElement(s);js.id=id;js.src="https://www.coinbase.com/assets/tips.js";cjs.parentNode.insertBefore(js,cjs);}(document, 'script', 'coinbase-tips');</script>
-
-      </div>
-      <div class="span2" style="margin-top:8px;">
-<a href="http://flattr.com/thing/170048/Diaspora-Pod-Live-Uptime-watch" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
-      </div>
-      <div class="span2" style="margin-top:8px;">
-<a onClick="map();">Map View</a>
-      </div>
-      <div class="span2" style="margin-top:8px;">
-<a onClick="nomap();">Table View</a>
-      </div>
-      <div class="span2" style="margin-top:8px;">
-<a href="https://diasporafoundation.org/">More Info</a>
-      </div>
+</div>
 
     </div>
   </div>
 </div>
   </header>
-  <div class="container-fluid">
+  <div class="container-fluid"><div id="map" style="width:80%;height:500px;position:absolute;display:none"></div>
     <div class="content">
-    <div id="map" style="width:80%;height:500px;position:absolute;display:none"></div>
       <div id="results">
+	<a href='https://diasp.org/users/sign_up' class='btn danger large'>Confused and just want to sign up?? Click Here</a><br>
         <?php if ($hidden == "true") {echo "<a href='http://podupti.me' class='btn danger large'>NOTICE: These pods are Hidden and have problems, click here to go to working pods</a>";} include("show.php"); ?>
       </div>
       <div id="add">
@@ -66,6 +80,7 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
 	Data last refreshed at: <?php echo date("F d Y H:i:s.", filemtime($lastfile)) ?> Pacific Time<br>
         Poduptime is run by <a href="https://diasp.org/u/davidmorley" target=_new>David Morley</a> and is open source on <a href="https://github.com/diasporg/Poduptime">GitHub</a> Feel free to contribute with pull requests or bug reports!<br>
         Some pods are <a href="http://podupti.me/?hidden=true">Hidden</a> since they have too many issues, see the <a href="https://github.com/diasporg/Poduptime/wiki">Wiki</a> for more.<br><br>
+	<a href="https://diasporafoundation.org/">More about Diaspora</a>
 	</div>
       <div id="howto" style="display:none; margin-left:50px">
         <br>
