@@ -79,12 +79,14 @@ if ($valid=="1") {
          die("Error in SQL query: " . pg_last_error());
      }
      $to = $adminemail;
-     $subject = "New pod added to poduptime ";
-     $message = "http://podupti.me\n\n Pingdom Url:" . $_POST["url"] . "\n\n Pod:" . $_POST["domain"] . "\n\n";
-     $headers = "From: ".$_POST["email"]."\r\nReply-To: ".$_POST["email"]."\r\n";
+     $cc = $_POST["email"];
+     $subject = "New pod added to podupti.me ";
+     $message.= "http://podupti.me\n\n Stats Url: http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=" . $_POST["url"] . "\n\n Pod: http://podupti.me/db/pull.php?debug=1&domain=" . $_POST["domain"] . "\n\n";
+     $message.= "Your pod will not show right away, needs to pass a few checks, Give it a few hours!";
+     $headers = "From: ".$_POST["email"]."\r\nReply-To: ".$_POST["email"]."\r\nCc: " . $_POST["email"] . "\r\n";
      @mail( $to, $subject, $message, $headers );    
 
-     echo "Data successfully inserted! Your pod will be reviewed and live on the list soon! You will get a support ticket, no need to do anything if your pod is listed in the next few hours.";
+     echo "Data successfully inserted! Your pod will be reviewed and live on the list in a few hours!";
     
      pg_free_result($result);
     
