@@ -67,11 +67,22 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
   </div>
 </div>
   </header>
-  <div class="container-fluid"><div id="map" style="width:80%;height:500px;position:absolute;display:none"></div>
+  <div class="container-fluid">
     <div class="content">
       <div id="results">
 	<a href='random.php' class='btn danger large'>Confused and just want to sign up?? Click Here</a><br>
-        <?php if ($hidden == "true") {echo "<a href='http://podupti.me' class='btn danger large'>NOTICE: These pods are Hidden and have problems, click here to go to working pods</a>";} include("show.php"); ?>
+        <?php 
+	if ($hidden == "true") {echo "<a href='http://podupti.me' class='btn danger large'>NOTICE: These pods are Hidden and have problems, click here to go to working pods</a>";} 
+        $advancedview = isset($_GET['advancedview'])?$_GET['advancedview']:null;
+	$mapview = isset($_GET['mapview'])?$_GET['mapview']:null;
+	if ($advancedview) {
+	include("showfull.php");
+	} elseif ($mapview) {
+	include("showmap.php");
+        } else {
+        include("show.php");
+	} 
+	?>
       </div>
       <div id="add">
         Pod Host? <u style="cursor: pointer; cursor: hand;">Click here</u> to add your listing.<br>
