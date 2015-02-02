@@ -85,7 +85,7 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
 	?>
       </div>
       <div id="add">
-        Pod Host? <u style="cursor: pointer; cursor: hand;">Click here</u> to add your listing.<br>
+        Pod Host? <u style="cursor: pointer; cursor: hand;">Click here</u> to add/edit your listing.<br>
 	</div>
 	<div id="info">
 	Data last refreshed at: <?php echo date("F d Y H:i:s.", filemtime($lastfile)) ?> Pacific Time<br>
@@ -104,6 +104,8 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
         Your Email:<input type="text" name="email" class="xlarge span4" placeholder="user@domain.com"><br>
         <input type="submit" value="submit">
         </form>
+	Need to edit somehing?<br>
+	<form action="db/gettoken.php" method="post">Pod Domainname:<input type="text" name="domain">Registered Email:<input type="text" name="email"><input type=submit value="send"></form>
         <br>Is your pod missing? If the server can not get a diaspora session its on the hidden list <a href="http://podupti.me/?hidden=true">Show</a>. This
 is mostly because of selfsigned or openca certs, if you need a free ssl cert get one from startssl.com.
         <br>

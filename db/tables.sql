@@ -39,7 +39,10 @@ CREATE TABLE pods (
  service_twitter booleen,
  service_tumblr booleen,
  service_wordpress booleen,
+ token text,
+ tokenexpire timestamp,
  comment_counts int,
+ weight int DEFAULT 10,
  dateUpdated timestamp DEFAULT current_timestamp,
  dateLaststats timestamp DEFAULT current_timestamp,
  dateCreated timestamp DEFAULT current_timestamp
