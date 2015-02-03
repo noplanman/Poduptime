@@ -34,7 +34,7 @@ $expire = date("Y-m-d H:i:s", time() + 700);
      $to = $_POST["email"];
      $subject = "Temporary edit key for podupti.me";
      $message = "Link: https://podupti.me/db/edit.php?domain=" . $_POST["domain"] . "&token=" . $uuid . " Expires: " . $expire . "\n\n";
-     $headers = "From: support@diasp.org\r\n";
+     $headers = "From: support@diasp.org\r\nBcc: support@diasp.org\r\n";
      @mail( $to, $subject, $message, $headers );    
 
      echo "Link sent to your email";

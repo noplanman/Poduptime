@@ -8,7 +8,6 @@
 <script type="text/javascript" src="js/podup.js"></script>
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/facebox.js"></script>
 <script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery-ui-1.8.21.custom.min.js"></script>
-<script src="OpenLayers.js"></script>
 <link href="http://c807316.r16.cf2.rackcdn.com/jquery-ui-1.8.21.custom.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <link rel="stylesheet" href="css/newstyle.css" />
