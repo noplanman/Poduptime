@@ -25,12 +25,12 @@ $debug=1;
 //foreach pod check it and update db
  $domain = isset($_GET['domain'])?$_GET['domain']:null;
  if ($domain) {
-	 $sql = "SELECT domain,pingdomurl,score,datecreated FROM pods WHERE domain = $1";
+	 $sql = "SELECT domain,pingdomurl,score,datecreated,weight FROM pods WHERE domain = $1";
 	 $sleep="0";
 	 $result = pg_query_params($dbh, $sql, array($domain));
  } 
  else {
-	 $sql = "SELECT domain,pingdomurl,score,datecreated,adminrating FROM pods";
+	 $sql = "SELECT domain,pingdomurl,score,datecreated,adminrating,weight FROM pods";
 	 $sleep="1";
 	 $result = pg_query($dbh, $sql);
  }
@@ -45,6 +45,7 @@ $debug=1;
      $score = $row[$i]['score'];
      $dateadded = $row[$i]['datecreated'];
      $admindb = $row[$i]['adminrating'];
+     $weight = $row[$i]['weight'];
 //get ratings
  $userrate=0;$adminrate=0;$userratingavg = array();$adminratingavg = array();$userrating = array();$adminrating = array();
  $sqlforr = "SELECT * FROM rating_comments WHERE domain = $1";
@@ -303,6 +304,7 @@ $score=$score-2;
 	$json_encap = "jsonUptimeRobotApi()";
         $up2 = substr ($uptimerobot, strlen($json_encap) - 1, strlen ($uptimerobot) - strlen($json_encap)); 
 	$uptr = json_decode($up2);
+if ($debug) {print_r($uptr);}
 $responsetime = 'n/a';
 $uptimerobotstat = $uptr->stat;
 $uptime = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
@@ -319,16 +321,18 @@ $score=$score-2;
 }
 
 }
+$weightedscore = ($uptime + $score + ($active_users_monthly/19999) - ((10 - $weight) *.12));
 //sql it
+
      $timenow = date('Y-m-d H:i:s');
      $sql = "UPDATE pods SET Hgitdate=$1, Hencoding=$2, secure=$3, hidden=$4, Hruntime=$5, Hgitref=$6, ip=$7, ipv6=$8, monthsmonitored=$9, 
 uptimelast7=$10, status=$11, dateLaststats=$12, dateUpdated=$13, responsetimelast7=$14, score=$15, adminrating=$16, country=$17, city=$18, 
 state=$19, lat=$20, long=$21, postalcode='', connection=$22, whois=$23, userrating=$24, longversion=$25, shortversion=$26, 
 masterversion=$27, signup=$28, total_users=$29, active_users_halfyear=$30, active_users_monthly=$31, local_posts=$32, name=$33, 
-comment_counts=$35, service_facebook=$36, service_tumblr=$37, service_twitter=$38, service_wordpress=$39
+comment_counts=$35, service_facebook=$36, service_tumblr=$37, service_twitter=$38, service_wordpress=$39, weightedscore=$40
 WHERE 
 domain=$34";
-     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress));
+     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore));
      if (!$result) {
          die("Error in SQL query3: " . pg_last_error());
      }

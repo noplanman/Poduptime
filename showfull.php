@@ -7,9 +7,9 @@ $tt=0;
  }  
  $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
  if ($hidden == "true") {
- $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY active_users_halfyear DESC NULLS LAST, uptimelast7 DESC NULLS LAST";
+ $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY weightedscore DESC";
  } else {
- $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' ORDER BY active_users_halfyear DESC NULLS LAST, uptimelast7 DESC NULLS LAST";
+ $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' ORDER BY weightedscore DESC";
  }
  $result = pg_query($dbh, $sql);
  if (!$result) {

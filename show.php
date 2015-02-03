@@ -1,15 +1,16 @@
 <?php
 $tt=0;
  include('db/config.php');
+ $country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
  $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
  if (!$dbh) {
      die("Error in connection: " . pg_last_error());
  }  
  $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
  if ($hidden == "true") {
- $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY active_users_halfyear DESC NULLS LAST, uptimelast7 DESC NULLS LAST";
+ $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY weightedscore DESC";
  } else {
- $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' AND signup = 1 ORDER BY active_users_halfyear DESC NULLS LAST, uptimelast7 DESC NULLS LAST";
+ $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' AND signup = 1 ORDER BY weightedscore DESC";
  }
  $result = pg_query($dbh, $sql);
  if (!$result) {
@@ -61,14 +62,18 @@ $tip.="On a score of -20 to +20 this pod is a {$row["score"]} right now";
 
      echo "<td>" . $row["uptimelast7"] . "%</td>";
      echo "<td class='tipsy' title='active six months: "  . $row["active_users_halfyear"] .  ", active one month: "  . $row["active_users_monthly"] . "'>" . $row["active_users_halfyear"] . "</td>";
+	if ($country_code == $row["country"]) {
+     echo "<td class='tipsy green' title='".$row["whois"]." '><b>" . $row["country"] . "</b></td>\n";
+	} else {
      echo "<td class='tipsy' title='".$row["whois"]." '>" . $row["country"] . "</td>\n";
+	}
      echo "<td class='' title=''>";
      if ($row["service_facebook"] == "t") {echo "<div id='facebook' class='smlogo'></div>";}
      if ($row["service_twitter"] == "t") {echo "<div id='twitter' class='smlogo'></div>";}
      if ($row["service_tumblr"] == "t") {echo "<div id='tumblr' class='smlogo'></div>";}
      if ($row["service_wordpress"] == "t") {echo "<div id='wordpress' class='smlogo'></div>";}
      echo "</td></tr>\n";
-if ($tt == 5) {
+if ($tt == 4) {
 echo <<<EOF
 <td colspan='12' style='padding-left:200px;'>
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -86,8 +91,6 @@ EOF;
  }
  pg_free_result($result);       
  pg_close($dbh);
-$country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
-//echo $country_code;
 ?>
 </tbody>
 </table>
