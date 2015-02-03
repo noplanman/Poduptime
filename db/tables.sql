@@ -3,7 +3,7 @@ CREATE TABLE pods (
  domain text UNIQUE NOT NULL,
  name text,
  score int DEFAULT 10,
- weightedscore int DEFAULT 10,
+ weightedscore numeric(5,2) DEFAULT 10,
  adminrating decimal DEFAULT 10,
  userrating decimal DEFAULT 10,
  whois text,
