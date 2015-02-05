@@ -69,7 +69,6 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
   <div class="container-fluid">
     <div class="content">
       <div id="results">
-	<a href='random.php' class='btn danger large'>Confused and just want to sign up?? Click Here</a><br>
         <?php 
 	$advancedview = isset($_GET['advancedview'])?$_GET['advancedview']:null;
         $mapview = isset($_GET['mapview'])?$_GET['mapview']:null;
@@ -79,6 +78,7 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
 	} elseif ($mapview) {
 	include("showmap.php");
         } else {
+	echo "<a href='random.php' class='btn danger large'>Confused and just want to sign up?? Click Here</a><br>";
         include("show.php");
 	} 
 	?>
