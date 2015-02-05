@@ -24,7 +24,7 @@ echo $numrows;
 ?>
  pods that are open for signup now.  
 Click column names to sort and find a pod.  
-Show as: <a href="?mapview=true">Map</a> <a href="/">Simple Table</a>  <a href="?advancedview=true">Advanced Table</a>
+Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a href="?advancedview=true">Advanced Table</a>
 <meta charset="utf-8">
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
 <table id="myTable" class="tablesorter zebra-striped" width="98%">
@@ -75,7 +75,7 @@ $tip.="On a score of -20 to +20 this pod is a {$row["score"]} right now";
      echo "</td></tr>\n";
 if ($tt == 4) {
 echo <<<EOF
-<td colspan='12' style='padding-left:200px;'>
+<td colspan='12'>
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- podup2015 -->
 <ins class="adsbygoogle"

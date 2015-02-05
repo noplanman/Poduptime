@@ -71,10 +71,10 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
       <div id="results">
 	<a href='random.php' class='btn danger large'>Confused and just want to sign up?? Click Here</a><br>
         <?php 
-	if ($hidden == "true") {echo "<a href='http://podupti.me' class='btn danger large'>NOTICE: These pods are Hidden and have problems, click here to go to working pods</a>";} 
-        $advancedview = isset($_GET['advancedview'])?$_GET['advancedview']:null;
-	$mapview = isset($_GET['mapview'])?$_GET['mapview']:null;
+	$advancedview = isset($_GET['advancedview'])?$_GET['advancedview']:null;
+        $mapview = isset($_GET['mapview'])?$_GET['mapview']:null;
 	if ($advancedview) {
+	echo "<a href='http://podupti.me' class='btn danger large'>NOTICE: This view shows all pods in all states, some offline, click here to go to list of pods open for signup</a><br>";
 	include("showfull.php");
 	} elseif ($mapview) {
 	include("showmap.php");
@@ -89,7 +89,7 @@ if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />'
 	<div id="info">
 	Data last refreshed at: <?php echo date("F d Y H:i:s.", filemtime($lastfile)) ?> Pacific Time<br>
         Poduptime is run by <a href="https://diasp.org/u/davidmorley" target=_new>David Morley</a> and is open source on <a href="https://github.com/diasporg/Poduptime">GitHub</a> Feel free to contribute with pull requests or bug reports!<br>
-        Some pods are <a href="http://podupti.me/?hidden=true">Hidden</a> since they have too many issues, see the <a href="https://github.com/diasporg/Poduptime/wiki">Wiki</a> for more.<br><br>
+        Questions on how this works? <a href="https://github.com/diasporg/Poduptime/wiki">Wiki</a><br>
 	<a href="https://diasporafoundation.org/">More about Diaspora</a>
 	</div>
       <div id="howto" style="display:none; margin-left:50px">

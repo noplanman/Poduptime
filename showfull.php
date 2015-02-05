@@ -9,7 +9,7 @@ $tt=0;
  if ($hidden == "true") {
  $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY weightedscore DESC";
  } else {
- $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' ORDER BY weightedscore DESC";
+ $sql = "SELECT * FROM pods ORDER BY weightedscore DESC";
  }
  $result = pg_query($dbh, $sql);
  if (!$result) {
@@ -21,9 +21,14 @@ echo $numrows;
 echo " #Diaspora Pods listed, Come see the privacy aware social network.' />";
 echo $numrows;
 ?>
+<style>
+.content {
+    width: 99%;
+}
+</style>
  pods that are open for signup now.
 Click column names to sort and find a pod.
-Show as: <a href="?mapview=true">Map</a> <a href="/">Simple Table</a>  <a href="?advancedview=true">Advanced Table</a>
+Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a href="?advancedview=true">Advanced Table</a>
 <meta charset="utf-8">
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
 <table id="myTable" class="tablesorter zebra-striped" width="98%">
@@ -32,14 +37,17 @@ Show as: <a href="?mapview=true">Map</a> <a href="/">Simple Table</a>  <a href="
 <th width="220px">Diaspora Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
 <th>Version<a class="tipsy" title="Version of Diaspora this pod runs">?</a></th>
 <th>Uptime<a class="tipsy" title="Percent of the time the pod is online for <?php echo date("F") ?>.">?</a></th>
+<th>Responsetime</th>
 <th>Signups</th>
 <th>Total Users<a class="tipsy" title="Number of total users on this pod.">?</a></th>
-<th>Active Users<a class="tipsy" title="Number of users active last 6 months on this pod.">?</a></th>
+<th>Active Last 6<a class="tipsy" title="Number of users active last 6 months on this pod.">?</a></th>
+<th>Active Last 1<a class="tipsy" title="Number of users active last 1 month on this pod.">?</a></th>
 <th>Posts<a class="tipsy" title="Number of total posts on this pod.">?</a></th>
 <th>Comments<a class="tipsy" title="Number of total comments on this pod.">?</a></th>
 <th>Months<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
 <th>Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
-<th>Location<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
+<th>Score<a class="tipsy" title="System Score on a -20 to +20 scale">?</a></th>
+<th>Country<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
 <th>Services<a class="tipsy" title="External Social Networks this pod can post to">?</a></th>
 </tr>
 </thead>
@@ -76,10 +84,12 @@ else
 if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "") {$classver = "green";} elseif ($verdiff > 6) {$classver = "red";} else {$classver = "black";}
      echo "<td class='$classver'><div title='{$pre} codename: {$row["longversion"]} master version is: {$row["masterversion"]}' class='tipsy'>{$version}</div></td>";
      echo "<td>" . $row["uptimelast7"] . "%</td>";
+     echo "<td>" . $row["responsetimelast7"] . "</td>";
 if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $signup . "</td>";
      echo "<td>" . $row["total_users"] . "</td>";
-     echo "<td class='tipsy' title='active six months: "  . $row["active_users_halfyear"] .  ", active one month: "  . $row["active_users_monthly"] . "'>" . $row["active_users_halfyear"] . "</td>";
+     echo "<td>" . $row["active_users_halfyear"] . "</td>";
+     echo "<td>" . $row["active_users_monthly"] . "</td>";
      echo "<td>" . $row["local_posts"] . "</td>";
      echo "<td>" . $row["comment_counts"] . "</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row["pingdomurl"];}
@@ -97,7 +107,8 @@ echo "✪";
 }
 
      echo "</div></a></td>";
-     echo "<td class='tipsy' title='".$row["whois"]." '>" . $row["country"] . "</td>\n";
+     echo "<td>" . $row["score"] . "</td>\n";
+     echo "<td>" . $row["country"] . "</td>\n";
      echo "<td class='' title=''>";
      if ($row["service_facebook"] == "t") {echo "<div id='facebook' class='smlogo'></div>";}
      if ($row["service_twitter"] == "t") {echo "<div id='twitter' class='smlogo'></div>";}
@@ -106,7 +117,7 @@ echo "✪";
      echo "</td></tr>\n";
 if ($tt == 5) {
 echo <<<EOF
-<td colspan='12' style='padding-left:200px;'>
+<td colspan='12'>
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- podup2015 -->
 <ins class="adsbygoogle"
