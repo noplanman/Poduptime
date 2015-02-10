@@ -42,7 +42,6 @@ EOF;
 echo "</feed>";
 
 }
-
 elseif ($_GET['format'] == "json") {
  $sql = "SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,hgitdate,hgitref,pingdomurl,pingdomlast,monthsmonitored,uptimelast7,responsetimelast7,hruntime,hencoding,dateCreated,dateUpdated,dateLaststats,hidden FROM pods";
  $result = pg_query($dbh, $sql);
@@ -60,6 +59,7 @@ elseif ($_GET['format'] == "json") {
  } else {
      print json_encode($obj);
  }
+
 } else {
  $i=0;
  $sql = "SELECT * FROM pods WHERE hidden <> 'yes' ORDER BY uptimelast7 DESC";
@@ -78,8 +78,6 @@ elseif ($_GET['format'] == "json") {
 $i++;
  }
 }
-
-
  pg_free_result($result);       
  pg_close($dbh);
 ?>

@@ -27,7 +27,7 @@ Click column names to sort and find a pod.
 Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a href="?advancedview=true">Advanced Table</a>
 <meta charset="utf-8">
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
-<table id="myTable" class="tablesorter zebra-striped" width="98%">
+<table id="myTable" class="tablesorter zebra-striped" width="750px">
 <thead>
 <tr>
 <th width="220px">Diaspora Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
@@ -52,11 +52,8 @@ $class="red";
 $tip="This pod does not offer SSL";
 } 
 $verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $row["shortversion"]);
-
-
 $tip.="\n This pod {$row["name"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. "; 
 $tip.="On a score of -20 to +20 this pod is a {$row["score"]} right now";
-
      echo "<tr><td><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $row["domain"] . " <div title='$tip' class='tipsy' style='display: inline-block'>?</div></a></td>";
 "</div></td>";
 

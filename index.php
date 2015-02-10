@@ -17,10 +17,8 @@
 <?php 
 $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
 $lastfile = 'db/last.data';
-include("vendor/mobiledetect/Mobile_Detect.php");
-$detect = new Mobile_Detect();
-if ($detect->isMobile()) {echo '<link rel="stylesheet" href="css/mobile.css" />';} 
 ?>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
 <script type="text/javascript">
 /* <![CDATA[ */
     (function() {

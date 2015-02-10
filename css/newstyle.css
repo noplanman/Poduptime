@@ -1,32 +1,30 @@
-  .tipsy-inner { padding: 5px 8px 4px 8px; background-color: #0069D6; color: white; max-width: 200px; text-align: center; }
-  .tipsy-inner { border-radius: 3px; -moz-border-radius:3px; -webkit-border-radius:3px; }
-  .tipsy-arrow { position: absolute; background: url('../images/tipsy.gif') no-repeat top left; width: 9px; height: 5px; }
-  .tipsy-n .tipsy-arrow { top: 0; left: 50%; margin-left: -4px; }
-    .tipsy-nw .tipsy-arrow { top: 0; left: 10px; }
-    .tipsy-ne .tipsy-arrow { top: 0; right: 10px; }
-  .tipsy-s .tipsy-arrow { bottom: 0; left: 50%; margin-left: -4px; background-position: bottom left; }
-    .tipsy-sw .tipsy-arrow { bottom: 0; left: 10px; background-position: bottom left; }
-    .tipsy-se .tipsy-arrow { bottom: 0; right: 10px; background-position: bottom left; }
-  .tipsy-e .tipsy-arrow { top: 50%; margin-top: -4px; right: 0; width: 5px; height: 9px; background-position: top right; }
-  .tipsy-w .tipsy-arrow { top: 50%; margin-top: -4px; left: 0; width: 5px; height: 9px; }
+.tipsy-inner { padding: 5px 8px 4px 8px; background-color: #0069D6; color: white; max-width: 200px; text-align: center; }
+.tipsy-inner { border-radius: 3px; -moz-border-radius:3px; -webkit-border-radius:3px; }
+.tipsy-arrow { position: absolute; background: url('../images/tipsy.gif') no-repeat top left; width: 9px; height: 5px; }
+.tipsy-n .tipsy-arrow { top: 0; left: 50%; margin-left: -4px; }
+.tipsy-nw .tipsy-arrow { top: 0; left: 10px; }
+.tipsy-ne .tipsy-arrow { top: 0; right: 10px; }
+.tipsy-s .tipsy-arrow { bottom: 0; left: 50%; margin-left: -4px; background-position: bottom left; }
+.tipsy-sw .tipsy-arrow { bottom: 0; left: 10px; background-position: bottom left; }
+.tipsy-se .tipsy-arrow { bottom: 0; right: 10px; background-position: bottom left; }
+.tipsy-e .tipsy-arrow { top: 50%; margin-top: -4px; right: 0; width: 5px; height: 9px; background-position: top right; }
+.tipsy-w .tipsy-arrow { top: 50%; margin-top: -4px; left: 0; width: 5px; height: 9px; }
 .db-wrapper {
-    vertical-align: top;
+vertical-align: top;
 }
-
 .rating {
 font-size:9px;
 }
 .content {
-    margin-left: 2px !important;
-    width: 750px;
+margin-left: 2px !important;
+width: 99%;
 }
 .smlogo {
-    width: 16px;
-    height: 16px;
-    background: url(../img/smlogo.png) 0 0;
-    display: inline-block;
+width: 16px;
+height: 16px;
+background: url('//podupti.me/img/smlogo.png') 0 0;
+display: inline-block;
 }
-
 #twitter {
 background-position: 0 -776px;
 }
@@ -40,3 +38,17 @@ background-position: 0 -792px;
 background-position: 0 -656px;
 position: absolute;
 }
+#map { height: 580px; }
+.mycluster {
+width: 35px;
+height: 35px;
+background-color: blue;
+text-align: left;
+font-size: 17px;
+background: url("//cdn.leafletjs.com/leaflet-0.7.3/images/marker-icon-2x.png") repeat-y right bottom;
+background-size: 25px 37px;
+}
+.icon {
+color: red;
+}
+
