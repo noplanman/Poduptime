@@ -18,6 +18,10 @@ $domain = $_POST['domain'];
  if (!$result) {
      die("Error in SQL query: " . pg_last_error());
  }
+$rows = pg_num_rows($result);
+if ($rows <= 0) {
+echo "domain not found";die;
+}
  while ($row = pg_fetch_array($result)) {
 if ($row["email"] <> $_POST['email']) {
 echo "email not a match";die;

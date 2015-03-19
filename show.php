@@ -27,7 +27,7 @@ Click column names to sort and find a pod.
 Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a href="?advancedview=true">Advanced Table</a>
 <meta charset="utf-8">
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
-<table id="myTable" class="tablesorter zebra-striped" width="750px">
+<table id="myTable" class="tablesorter zebra-striped" style="width:750px; !important">
 <thead>
 <tr>
 <th width="220px">Diaspora Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
