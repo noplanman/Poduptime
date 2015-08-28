@@ -20,8 +20,8 @@ function nomap() {
   $('#add').show();
 }
 $(document).ready(function(){
-$.facebox.settings.closeImage = 'http://c807316.r16.cf2.rackcdn.com/closelabel.png'
-$.facebox.settings.loadingImage = 'http://c807316.r16.cf2.rackcdn.com/loading.gif'
+$.facebox.settings.closeImage = 'images/closelabel.png'
+$.facebox.settings.loadingImage = 'images/loading.gif'
   $('a[rel*=facebox]').facebox()
   $('.tipsy').tipsy();
   $('#add').click(function() {

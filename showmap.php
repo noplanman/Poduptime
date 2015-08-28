@@ -9,9 +9,9 @@ foreach ($csv as $cords) {
   }
 }
 ?>
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-<script type="text/javascript" src="Leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="css/leaflet.css" />
+<script src="js/leaflet.js"></script>
+<script type="text/javascript" src="js/leaflet.markercluster.js"></script>
 <div id="map"></div>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <script type="text/javascript">

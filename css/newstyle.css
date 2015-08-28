@@ -45,7 +45,7 @@ height: 35px;
 background-color: blue;
 text-align: left;
 font-size: 17px;
-background: url("//cdn.leafletjs.com/leaflet-0.7.3/images/marker-icon-2x.png") repeat-y right bottom;
+background: url("js/images/marker-icon-2x.png") repeat-y right bottom;
 background-size: 25px 37px;
 }
 .icon {

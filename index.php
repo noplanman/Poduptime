@@ -1,14 +1,14 @@
 <!doctype html><html><head><meta charset="utf-8"><title>Diaspora Pod Uptime Status - Find your new social home on a hosted pod</title>
 <meta name="keywords" content="diaspora, podupti.me, diasp, diasporg, diasp.org, facebook, open source social, open source facebook, open source social network" />
 <meta name="description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!" />
-<script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.min.js"></script> 
-<script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.tablesorter.min.js"></script> 
-<script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.loading.1.6.4.min.js"></script> 
-<script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery.tipsy.js"></script>
+<script type="text/javascript" src="js/jquery-1.6.4.min.js"></script> 
+<script type="text/javascript" src="js/jquery.tablesorter.min.js"></script> 
+<script type="text/javascript" src="js/jquery.loading.1.6.4.min.js"></script> 
+<script type="text/javascript" src="js/jquery.tipsy.js"></script>
 <script type="text/javascript" src="js/podup.js"></script>
-<script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/facebox.js"></script>
-<script type="text/javascript" src="http://c807316.r16.cf2.rackcdn.com/jquery-ui-1.8.21.custom.min.js"></script>
-<link href="http://c807316.r16.cf2.rackcdn.com/jquery-ui-1.8.21.custom.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="js/facebox.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.21.custom.min.js"></script>
+<link href="css/jquery-ui-1.8.21.custom.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <link rel="stylesheet" href="css/newstyle.css" />
 <link rel="stylesheet" href="css/facebox.css" />
@@ -25,11 +25,11 @@ $lastfile = 'db/last.data';
         var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
         s.type = 'text/javascript';
         s.async = true;
-        s.src = 'http://api.flattr.com/js/0.6/load.js?mode=auto';
+        s.src = '//api.flattr.com/js/0.6/load.js?mode=auto';
         t.parentNode.insertBefore(s, t);
     })();
 /* ]]> */</script>
-<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript" src="//ws.sharethis.com/button/buttons.js"></script>
 <script type="text/javascript">stLight.options({publisher: "3209f0be-147e-49fc-ac1b-2cf6740e9449", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
 </head>
 <body>
@@ -56,8 +56,6 @@ $lastfile = 'db/last.data';
 <a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="http://podupti.me"></a>
 	</div>
 	<div class="span2" style="margin-top:8px;">
-<div class="cb-tip-button" data-content-location="http://podupti.me" data-href="//www.coinbase.com/tip_buttons/show_tip" data-to-user-id="528d8ff6f8f028e269000067"></div>
-<script>!function(d,s,id) {var js,cjs=d.getElementsByTagName(s)[0],e=d.getElementById(id);if(e){return;}js=d.createElement(s);js.id=id;js.src="https://www.coinbase.com/assets/tips.js";cjs.parentNode.insertBefore(js,cjs);}(document, 'script', 'coinbase-tips');</script>
 </div>
 
     </div>
