@@ -17,6 +17,9 @@
 <?php 
 $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
 $lastfile = 'db/last.data';
+$advancedview = isset($_GET['advancedview'])?$_GET['advancedview']:null;
+$mapview = isset($_GET['mapview'])?$_GET['mapview']:null;
+$cleanup = isset($_GET['cleanup'])?$_GET['cleanup']:null;
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
 <script type="text/javascript">
@@ -64,15 +67,47 @@ $lastfile = 'db/last.data';
   </header>
   <div class="container-fluid">
     <div class="content">
+<?php
+if ($advancedview) {
+echo <<<EOF
+      <div id="adadv">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- poduptimenew -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:300px;height:250px"
+     data-ad-client="ca-pub-3662181805557062"
+     data-ad-slot="3969028081"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+      </div>
+EOF;
+} elseif ($cleanup) {echo "";
+} else {
+echo <<<EOF
+      <div id="ad">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- poduptimenew -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:300px;height:250px"
+     data-ad-client="ca-pub-3662181805557062"
+     data-ad-slot="3969028081"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+      </div>
+EOF;
+}
+?>
       <div id="results">
         <?php 
-	$advancedview = isset($_GET['advancedview'])?$_GET['advancedview']:null;
-        $mapview = isset($_GET['mapview'])?$_GET['mapview']:null;
 	if ($advancedview) {
 	echo "<a href='http://podupti.me' class='btn danger large'>NOTICE: This view shows all pods in all states, some offline, click here to go to list of pods open for signup</a><br>";
 	include("showfull.php");
 	} elseif ($mapview) {
 	include("showmap.php");
+        } elseif ($cleanup) {
+        include("cleanup.php");
         } else {
 	echo "<a href='random.php' class='btn danger large'>Confused and just want to sign up?? Click Here</a><br>";
         include("show.php");

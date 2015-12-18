@@ -19,6 +19,17 @@ font-size:9px;
 margin-left: 2px !important;
 width: 99%;
 }
+#results {
+width: 750px;
+}
+#ad {
+margin: 55px 0 0 800px;
+position: fixed;
+}
+#adadv {
+margin: 55px 0 0 1300px;
+position: fixed;
+}
 .smlogo {
 width: 16px;
 height: 16px;

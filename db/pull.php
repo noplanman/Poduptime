@@ -224,7 +224,9 @@ $ipv6="no";
 } else {
 $ipv6="yes";
 }
+if ($debug) {echo "IP: ".$ipnum."<br>";}
     $location = geoip_record_by_name($ipnum);
+if ($debug) {echo "Location: "; var_dump($location); echo "<br>";}
 if ($location) {
 $ipdata = "Country: ".$location["country_name"]."\n";
 $whois = "Country: ".$location["country_name"]."\n Lat:".$location["latitude"]." Long:".$location["longitude"];
