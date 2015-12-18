@@ -5,7 +5,7 @@ $tt=0;
  if (!$dbh) {
      die("Error in connection: " . pg_last_error());
  }  
- $sql = "SELECT * FROM pods WHERE hidden <> 'no' AND score < -15 ORDER BY weightedscore DESC";
+ $sql = "SELECT * FROM pods WHERE hidden <> 'no' AND score < -15 ORDER BY weightedscore";
  $result = pg_query($dbh, $sql);
  if (!$result) {
      die("Error in SQL query: " . pg_last_error());

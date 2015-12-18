@@ -32,7 +32,7 @@ echo "admin key fail";die;
      if ($row["email"]) {
      $to = $row["email"];
      $subject = "Pod deleted from poduptime ";
-     $message = "Pod " . $_GET["domain"] . " Was deleted as it was dead on the list. Feel free to add back at any time. \n\n";
+     $message = "Pod " . $_POST["domain"] . " was deleted from podupti.me as it was dead on the list. Feel free to add back at any time. \n\n";
      $headers = "From: support@diasp.org\r\nCc:support@diasp.org,". $row["email"] ."\r\n";
      @mail( $to, $subject, $message, $headers );
      }
