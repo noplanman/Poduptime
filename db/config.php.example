@@ -12,7 +12,7 @@ $pgpass='';
 $pgdb='';
 //admin email for forms
 $adminemail = '';
-//admin key for admin ratings
+//admin key for deleting pods, set this as a cookie on your own
 $adminkey = '';
 //mailchimp key
 $chimpkey = '';
