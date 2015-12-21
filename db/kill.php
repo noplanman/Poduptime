@@ -8,6 +8,11 @@ if (!$_POST['adminkey']){
   echo "no token given";
  die;
 }
+if (!$_POST['action']){
+  echo "no action selected";
+ die;
+}
+
 $domain = $_POST['domain'];
  $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
      if (!$dbh) {
@@ -23,7 +28,7 @@ if ($adminkey <> $_POST['adminkey']) {
 echo "admin key fail";die;
 }
 //save and exit
-
+if ($_POST['action'] == "delete") {
      $sql = "DELETE from pods WHERE domain = $1";
      $result = pg_query_params($dbh, $sql, array($domain));
      if (!$result) {
@@ -38,6 +43,17 @@ echo "admin key fail";die;
      }
      pg_free_result($result);
      pg_close($dbh);
+} elseif ($_POST['action'] == "warn") {
+     if ($row["email"]) {
+     $to = $row["email"];
+     $subject = "Pod removal warning from poduptime ";
+     $message = "Pod " . $_POST["domain"] . " is on the list to be deleted now because:  " . $_POST["comments"] . ". \n\n Please let me know if you need help fixing before it is removed. \n\n";
+     $headers = "From: support@diasp.org\r\nCc:support@diasp.org,". $row["email"] ."\r\n";
+     @mail( $to, $subject, $message, $headers );
+     }
+
+}
+
      header( 'Location: https://podupti.me/?cleanup=true' ) ;
 
 }

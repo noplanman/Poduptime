@@ -110,7 +110,9 @@ echo "✪";
 <input name="comments" size=10>
 <input name="domain" value="<?php echo $row["domain"] ?>" type="hidden">
 <input name="adminkey" value="<?php echo $_COOKIE["adminkey"] ?>" type="hidden">
-<input type="submit" value="Delete">
+<input name="action" type="radio" value="warn">warn
+<input name="action" type="radio" value="delete">delete
+<input type="submit" value="Process">
 </form>
 </td>
 <?php

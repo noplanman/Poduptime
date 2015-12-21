@@ -307,6 +307,7 @@ $score=$score-2;
         $up2 = substr ($uptimerobot, strlen($json_encap) - 1, strlen ($uptimerobot) - strlen($json_encap)); 
 	$uptr = json_decode($up2);
 if ($debug) {print_r($uptr);}
+if (!$uptr) {$score=$score-2;}
 $responsetime = 'n/a';
 $uptimerobotstat = $uptr->stat;
 $uptime = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
