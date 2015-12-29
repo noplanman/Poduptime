@@ -56,7 +56,7 @@ if ($_GET['weight'] > 10) {
 //form     
 echo "Authorized to edit <b>" . $domain . "</b> until " .$row["tokenexpire"] . "<br>";
 echo "<form action='' method='get'><input type=hidden name=oldemail value=" . $row["email"] . "><input type=hidden name=save value=" . $_GET['token'] . "><input type=hidden name=token value=" . $_GET['token'] . "><input type=hidden name=domain value=" . $_GET['domain'] . ">";
-echo "Stats <input type=text size=50 name=pingdomurl value=" .$row["pingdomurl"] . ">full URL if pingdom, just API key if Uptimerobot<br>"; 
+echo "Stats Key <input type=text size=50 name=pingdomurl value=" .$row["pingdomurl"] . ">Uptimerobot API key for this monitor<br>"; 
 echo "Email <input type=text size=20 name=email value=" .$row["email"] . "><br>";
 
 echo "Weight <input type=text size=2 name=weight value=" .$row["weight"] . "> This lets you weight your pod lower on the list if you have too much trafic coming in, 10 is the norm use lower to move down the list.<br>";
