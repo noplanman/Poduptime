@@ -44,30 +44,30 @@ echo "API key already exists";die;
      //curl the header of pod with and without https
 
         $chss = curl_init();
-        curl_setopt($chss, CURLOPT_URL, "https://".$_POST['domain']."/users/sign_in");
+        curl_setopt($chss, CURLOPT_URL, "https://".$_POST['domain']."/nodeinfo/1.0");
         curl_setopt($chss, CURLOPT_POST, 1);
-        curl_setopt($chss, CURLOPT_HEADER, 1);
+        curl_setopt($chss, CURLOPT_HEADER, 0);
         curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($chss, CURLOPT_NOBODY, 1);
+        curl_setopt($chss, CURLOPT_NOBODY, 0);
         $outputssl = curl_exec($chss);
         curl_close($chss);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://".$_POST['domain']."/users/sign_in");
+        curl_setopt($ch, CURLOPT_URL, "http://".$_POST['domain']."/nodeinfo/1.0");
         curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_NOBODY, 1);
+        curl_setopt($ch, CURLOPT_NOBODY, 0);
         $output = curl_exec($ch);
         curl_close($ch);
 
-if (stristr($outputssl, 'Set-Cookie: _diaspora_session=')) {
+if (stristr($outputssl, 'nodeName')) {
   echo "Your pod has ssl and is valid<br>";
   $valid=1;
 }
-if (stristr($output, 'Set-Cookie: _diaspora_session=')) {
+if (stristr($output, 'nodeName')) {
   echo "Your pod does not have ssl but is a valid pod<br>";
   $valid=1;
 }

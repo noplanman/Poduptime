@@ -2,6 +2,7 @@ CREATE TABLE pods (
  id serial8 UNIQUE PRIMARY KEY,
  domain text UNIQUE NOT NULL,
  name text,
+ softwarename text,
  score int DEFAULT 10,
  weightedscore numeric(5,2) DEFAULT 10,
  adminrating decimal DEFAULT 10,
@@ -44,6 +45,7 @@ CREATE TABLE pods (
  tokenexpire timestamp,
  comment_counts int,
  weight int DEFAULT 10,
+ xmpp booleen,
  dateUpdated timestamp DEFAULT current_timestamp,
  dateLaststats timestamp DEFAULT current_timestamp,
  dateCreated timestamp DEFAULT current_timestamp

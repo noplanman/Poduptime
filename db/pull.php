@@ -97,11 +97,12 @@ unset($service_wordpess);
 unset($dver);
 unset($dverr);
 unset($xdver);
+unset($xmppchat);
+unset($softwarename);
         $chss = curl_init();
-
-        curl_setopt($chss, CURLOPT_URL, "https://".$domain."/statistics.json"); 
+        curl_setopt($chss, CURLOPT_URL, "https://".$domain."/nodeinfo/1.0"); 
         curl_setopt($chss, CURLOPT_POST, 0);
-        curl_setopt($chss, CURLOPT_HEADER, 1);
+        curl_setopt($chss, CURLOPT_HEADER, 0);
         curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 35);
         curl_setopt($chss, CURLOPT_TIMEOUT, 35);
         curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
@@ -110,9 +111,9 @@ unset($xdver);
         curl_close($chss);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://".$domain."/statistics.json");
+        curl_setopt($ch, CURLOPT_URL, "http://".$domain."/nodeinfo/1.0");
         curl_setopt($ch, CURLOPT_POST, 0);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 35);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 35);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -120,83 +121,38 @@ unset($xdver);
         $output = curl_exec($ch);
         curl_close($ch);
 if ($debug) {print $output;}
-if ($debug) {print $outputssl;}
-if (stristr($outputssl, 'registrations_open')) {
-//parse header data
-$secure="true";
+if ($debug) {var_dump($outputssl);}
+if ($outputssl) {$secure="true";$outputresults=$outputssl;} elseif ($output) {$secure="false";$outputresults=$output;}
+if (stristr($outputresults, 'openRegistrations')) {
+$score = $score +1;
 if ($debug) {echo "Secure: ".$secure."<br>";}
-//$hidden="no";
-$score = $score +1;
-preg_match('/X-Git-Update: (.*?)\n/',$outputssl,$xgitdate);
-$gitdate = trim($xgitdate[1]);
-//$gitdate = strtotime($gitdate);
-preg_match('/X-Git-Revision: (.*?)\n/',$outputssl,$xgitrev);
-$gitrev = trim($xgitrev[1]);
-if ($debug) {echo "GitRevssl: ".$gitrev."<br>";}
-preg_match('/X-Runtime: (.*?)\n/',$outputssl,$xruntime);
-$runtime = isset($xruntime[1])?trim($xruntime[1]):null;
-preg_match('/Server: (.*?)\n/',$outputssl,$xserver);
-$server = isset($xserver[1])?trim($xserver[1]):null;
-preg_match('/Content-Encoding: (.*?)\n/',$outputssl,$xencoding);
-if ($xencoding) {$encoding = trim($xencoding[1]);} else {$encoding = null;}
-//get new json
-preg_match_all("/{(.*?)}/", $outputssl, $jsonssl_array);
-$jsonssl = json_decode($jsonssl_array[0][0]);
-if ($jsonssl->registrations_open === true) {$registrations_open=1;}
-$xdver = isset($jsonssl->version)?$jsonssl->version:0;
+//get new json from nodeinfo
+$jsonssl = json_decode($outputresults);
+var_dump($jsonssl);
+if ($jsonssl->openRegistrations === true) {$registrations_open=1;}
+$xdver = isset($jsonssl->software->version)?$jsonssl->software->version:0;
 $dverr = split("-",trim($xdver));
 $dver = $dverr[0];
-if ($debug) {echo "(s)Version code: ".$dver."<br>";}
+if ($debug) {echo " <br> Version code: ".$dver."<br>";}
 if (!$dver) {$score = $score-2;}
-$name = isset($jsonssl->name)?$jsonssl->name:"null";
-$total_users = isset($jsonssl->total_users)?$jsonssl->total_users:0;
-$active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active_users_halfyear:0;
-$active_users_monthly = isset($jsonssl->active_users_monthly)?$jsonssl->active_users_monthly:0;
-$local_posts = isset($jsonssl->local_posts)?$jsonssl->local_posts:0;
-$comment_counts = isset($jsonssl->local_comments)?$jsonssl->local_comments:0;
-$service_facebook = !empty($jsonssl->facebook)?$jsonssl->facebook:'false';
-$service_twitter = !empty($jsonssl->twitter)?$jsonssl->twitter:'false';
-$service_tumblr = !empty($jsonssl->tumblr)?$jsonssl->tumblr:'false';
-$service_wordpress = !empty($jsonssl->wordpress)?$jsonssl->wordpress:'false';
-} elseif (stristr($output, 'registrations_open')) {
-"not";$secure="false";
-//$hidden="no";
-$score = $score +1;
-//parse header data
-preg_match('/X-Git-Update: (.*?)\n/',$output,$xgitdate);
-$gitdate = isset($xgitdate[1])?trim($xgitdate[1]):null;
-preg_match('/X-Git-Revision: (.*?)\n/',$output,$xgitrev);
-$gitrev = isset($xgitrev[1])?trim($xgitrev[1]):null;
-preg_match('/X-Runtime: (.*?)\n/',$output,$xruntime);
-$runtime = isset($xruntime[1])?trim($xruntime[1]):null;
-preg_match('/Server: (.*?)\n/',$output,$xserver);
-$server = isset($xserver[1])?trim($xserver[1]):null;
-preg_match('/Content-Encoding: (.*?)\n/',$output,$xencoding);
-$encoding = isset($xencoding[1])?trim($xencoding[1]):null;
-preg_match_all("/{(.*?)}/", $output, $jsonssl_array);
-$jsonssl = json_decode($jsonssl_array[0][0]);
-if ($jsonssl->registrations_open === true) {$registrations_open=1;}
-$xdver = isset($jsonssl->version)?$jsonssl->version:0;
-$dverr = split("-",trim($xdver));
-$dver = $dverr[0];
-if ($debug) {echo "Version code: ".$dver."<br>";}
-if (!$dver) {$score = $score-2;}
-$name = isset($jsonssl->name)?$jsonssl->name:"null";
-$total_users = isset($jsonssl->total_users)?$jsonssl->total_users:0;
-$active_users_halfyear = isset($jsonssl->active_users_halfyear)?$jsonssl->active_users_halfyear:0;
-$active_users_monthly = isset($jsonssl->active_users_monthly)?$jsonssl->active_users_monthly:0;
-$local_posts = isset($jsonssl->local_posts)?$jsonssl->local_posts:0;
-$comment_counts = isset($jsonssl->local_comments)?$jsonssl->local_comments:0;
-$service_facebook = !empty($jsonssl->facebook)?$jsonssl->facebook:'false';
-$service_twitter = !empty($jsonssl->twitter)?$jsonssl->twitter:'false';
-$service_tumblr = !empty($jsonssl->tumblr)?$jsonssl->tumblr:'false';
-$service_wordpress = !empty($jsonssl->wordpress)?$jsonssl->wordpress:'false';
+$softwarename = isset($jsonssl->software->name)?$jsonssl->software->name:"null";
+$name = isset($jsonssl->metadata->nodeName)?$jsonssl->metadata->nodeName:"null";
+$total_users = isset($jsonssl->usage->users->total)?$jsonssl->usage->users->total:0;
+$active_users_halfyear = isset($jsonssl->usage->users->activeHalfyear)?$jsonssl->usage->users->activeHalfyear:0;
+$active_users_monthly = isset($jsonssl->usage->users->activeMonth)?$jsonssl->usage->users->activeMonth:0;
+$local_posts = isset($jsonssl->usage->localPosts)?$jsonssl->usage->localPosts:0;
+$comment_counts = isset($jsonssl->usage->localComments)?$jsonssl->usage->localComments:0;
+if (array_search('facebook', $jsonssl->services->outbound) !== false) {$service_facebook='true';} else {$service_facebook='false';}
+if (array_search('twitter', $jsonssl->services->outbound) !== false) {$service_twitter='true';} else {$service_twitter='false';}
+if (array_search('tumblr', $jsonssl->services->outbound) !== false) {$service_tumblr='true';} else {$service_tumblr='false';}
+if (array_search('wordpress', $jsonssl->services->outbound) !== false) {$service_wordpress='true';} else {$service_wordpress='false';}
+if ($jsonssl->metadata->xmppChat === true) {$xmpp = 'true';} else {$xmpp = 'false';}
+
 } else {
 $secure="false";
 $score = $score - 1;
 $dver =".connect error";
 $dverr=0;
-//$hidden="yes";
 //no diaspora cookie on either, lets set this one as hidden and notify someone its not really a pod
 //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
 }
@@ -332,10 +288,10 @@ $weightedscore = ($uptime + $score + ($active_users_monthly/19999) - ((10 - $wei
 uptimelast7=$10, status=$11, dateLaststats=$12, dateUpdated=$13, responsetimelast7=$14, score=$15, adminrating=$16, country=$17, city=$18, 
 state=$19, lat=$20, long=$21, postalcode='', connection=$22, whois=$23, userrating=$24, longversion=$25, shortversion=$26, 
 masterversion=$27, signup=$28, total_users=$29, active_users_halfyear=$30, active_users_monthly=$31, local_posts=$32, name=$33, 
-comment_counts=$35, service_facebook=$36, service_tumblr=$37, service_twitter=$38, service_wordpress=$39, weightedscore=$40
+comment_counts=$35, service_facebook=$36, service_tumblr=$37, service_twitter=$38, service_wordpress=$39, weightedscore=$40, xmpp=$41, softwarename=$42
 WHERE 
 domain=$34";
-     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore));
+     $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $xmpp, $softwarename));
      if (!$result) {
          die("Error in SQL query3: " . pg_last_error());
      }

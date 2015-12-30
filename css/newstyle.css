@@ -49,6 +49,11 @@ background-position: 0 -792px;
 background-position: 0 -656px;
 position: absolute;
 }
+#xmpp {
+background-position: 0 -656px;
+display: inline-block;
+}
+
 #map { height: 580px; }
 .mycluster {
 width: 35px;

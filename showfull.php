@@ -18,7 +18,7 @@ $tt=0;
  $numrows = pg_num_rows($result);
 echo "<meta property='og:title' content='"; 
 echo $numrows;
-echo " #Diaspora Pods listed, Come see the privacy aware social network.' />";
+echo " federated Pods listed, Come see the privacy aware social networks.' />";
 echo $numrows;
 ?>
 <style>
@@ -34,10 +34,10 @@ Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a hre
 <table id="myTable" class="tablesorter zebra-striped" width="98%">
 <thead>
 <tr>
-<th width="220px">Diaspora Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
-<th>Version<a class="tipsy" title="Version of Diaspora this pod runs">?</a></th>
+<th width="220px">Federated Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
+<th>Version<a class="tipsy" title="Version of software this pod runs">?</a></th>
 <th>Uptime<a class="tipsy" title="Percent of the time the pod is online for <?php echo date("F") ?>.">?</a></th>
-<th>Responsetime</th>
+<th>IPv6</th>
 <th>Signups</th>
 <th>Total Users<a class="tipsy" title="Number of total users on this pod.">?</a></th>
 <th>Active Last 6<a class="tipsy" title="Number of users active last 6 months on this pod.">?</a></th>
@@ -68,8 +68,8 @@ $tip="This pod does not offer SSL";
 $verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $row["shortversion"]);
 
 
-$tip.="\n This pod {$row["name"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. "; 
-$tip.="On a score of -20 to +20 this pod is a {$row["score"]} right now";
+$tip.="\n This {$row["softwarename"]} pod {$row["name"]} has been watched for {$row["monthsmonitored"]} months with an uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. "; 
+$tip.="On a scale of -20 to +20 this pod is a {$row["score"]} right now";
 
      echo "<tr><td><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $row["domain"] . " <div title='$tip' class='tipsy' style='display: inline-block'>?</div></a></td>";
 "</div></td>";
@@ -84,7 +84,7 @@ else
 if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "") {$classver = "green";} elseif ($verdiff > 6) {$classver = "red";} else {$classver = "black";}
      echo "<td class='$classver'><div title='{$pre} codename: {$row["longversion"]} master version is: {$row["masterversion"]}' class='tipsy'>{$version}</div></td>";
      echo "<td>" . $row["uptimelast7"] . "%</td>";
-     echo "<td>" . $row["responsetimelast7"] . "</td>";
+     echo "<td>" . $row["ipv6"] . "</td>";
 if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $signup . "</td>";
      echo "<td>" . $row["total_users"] . "</td>";
@@ -114,6 +114,7 @@ echo "✪";
      if ($row["service_twitter"] == "t") {echo "<div id='twitter' class='smlogo'></div>";}
      if ($row["service_tumblr"] == "t") {echo "<div id='tumblr' class='smlogo'></div>";}
      if ($row["service_wordpress"] == "t") {echo "<div id='wordpress' class='smlogo'></div>";}
+     if ($row["xmpp"] == "t") {echo "<div id='xmpp'><img src='/images/icon-xmpp.png' width='16px' height='16px' title='XMPP chat server' alt='XMPP chat server'></div>";}
      echo "</td></tr>\n";
 if ($tt == 5) {
 echo <<<EOF

@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Diaspora Pod Uptime Status - Find your new social home on a hosted pod</title>
+<!doctype html><html><head><meta charset="utf-8"><title>Federated Pod Uptime Status - Find your new social home on a hosted pod</title>
 <meta name="keywords" content="diaspora, podupti.me, diasp, diasporg, diasp.org, facebook, open source social, open source facebook, open source social network" />
 <meta name="description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!" />
 <script type="text/javascript" src="js/jquery-1.6.4.min.js"></script> 
@@ -41,7 +41,7 @@ $cleanup = isset($_GET['cleanup'])?$_GET['cleanup']:null;
       <div class="row">
         <div class="span5">
           <h2 id="title">
-          Diaspora Pods
+          Federated Social Pods
           </h2>
         </div>
       <div class="span2" style="margin-top:8px;">
@@ -121,7 +121,7 @@ EOF;
 	Data last refreshed at: <?php echo date("F d Y H:i:s.", filemtime($lastfile)) ?> Pacific Time<br>
         Poduptime is run by <a href="https://diasp.org/u/davidmorley" target=_new>David Morley</a> and is open source on <a href="https://github.com/diasporg/Poduptime">GitHub</a> Feel free to contribute with pull requests or bug reports!<br>
         Questions on how this works? <a href="https://github.com/diasporg/Poduptime/wiki">Wiki</a><br>
-	<a href="https://diasporafoundation.org/">More about Diaspora</a>
+	<a href="https://diasporafoundation.org/">More about Diaspora</a><br><a href="http://friendica.com/">More about Friendica</a><br><a href="http://hubzilla.org/">More about Hubzilla(redmatrix)</a>
 	</div>
       <div id="howto" style="display:none; margin-left:50px">
         <br>
