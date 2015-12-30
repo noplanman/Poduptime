@@ -135,7 +135,7 @@ EOF;
         <input type="submit" value="submit">
         </form>
 	Need to edit something?<br>
-	<form action="https://podupti.me/db/gettoken.php" method="post">Pod Domainname:<input type="text" name="domain">Registered Email:<input type="text" name="email"><input type=submit value="send"></form>
+	<form action="https://podupti.me/db/gettoken.php" method="post">Pod Domainname:<input type="text" name="domain">Registered Email:<input type="text" name="email" placeholder="Ok to leave blank if you forgot"><input type=submit value="send"></form>
         <br>Is your pod missing? If the server can not get a diaspora session its on the hidden list <a href="http://podupti.me/?hidden=true">Show</a>. This
 is mostly because of selfsigned or openca certs, if you need a free ssl cert get one from startssl.com.
         <br>

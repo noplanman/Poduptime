@@ -1,19 +1,16 @@
 <?php
-require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
- 
-class WebTest extends PHPUnit_Extensions_SeleniumTestCase
+class CodeCoverageTest extends PHPUnit_Extensions_Selenium2TestCase
 {
-    protected function setUp()
+    protected $coverageScriptUrl = 'http://localhost/phpunit_coverage.php';
+    public function setUp()
     {
-        $this->setBrowser('*firefox');
-        $this->setBrowserUrl('http://podupti.me/');
+        $this->markTestIncomplete('Would require PHP 5.4 for running .php files on the server');
+        $this->setBrowser(PHPUNIT_TESTSUITE_EXTENSION_SELENIUM2_BROWSER);
+        $this->setBrowserUrl('http://localhost/');
     }
- 
-    public function testTitle()
+    public function testCoverageIsRetrieved()
     {
-        $this->open('http://podupti.me/');
-        $this->assertTitle('Diaspora Pod uptime - Find your new social home');
+        $this->url('example.php');
     }
 }
 ?>
-
