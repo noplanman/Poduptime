@@ -4,7 +4,7 @@ $debug=1;
 //$debug = isset($argv[1])?1:0;
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
  include('config.php');
-//get master code version
+//get master code version for diaspora pods
         $mv = curl_init();
         curl_setopt($mv, CURLOPT_URL, "https://raw.githubusercontent.com/diaspora/diaspora/master/config/defaults.yml");
         curl_setopt($mv, CURLOPT_POST, 0);
@@ -15,8 +15,21 @@ $debug=1;
         $outputmv = curl_exec($mv);
         curl_close($mv);
 	preg_match('/number: "(.*?)"/',$outputmv,$version);
- $masterversion = trim($version[1], '"');
- if ($debug) {echo "Masterversion: ".$masterversion."<br>";} 
+ $dmasterversion = trim($version[1], '"');
+ if ($debug) {echo "Diaspora Masterversion: ".$dmasterversion."<br>";} 
+//get master code version for freindica pods
+        $mv = curl_init();
+        curl_setopt($mv, CURLOPT_URL, "https://raw.githubusercontent.com/friendica/friendica/master/boot.php");
+        curl_setopt($mv, CURLOPT_POST, 0);
+        curl_setopt($mv, CURLOPT_HEADER, 0);
+        curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($mv, CURLOPT_NOBODY, 0);
+        $outputmv = curl_exec($mv);
+        curl_close($mv);
+        preg_match('/FRIENDICA_VERSION\',      \'(.*?)\'/',$outputmv,$version);
+ $fmasterversion = trim($version[1], '"');
+ if ($debug) {echo "Frendica Masterversion: ".$fmasterversion."<br>";}
  $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
  $dbh2 = pg_connect("dbname=$pgdb user=$pguser password=$pgpass"); 
     if (!$dbh) {
@@ -97,7 +110,7 @@ unset($service_wordpess);
 unset($dver);
 unset($dverr);
 unset($xdver);
-unset($xmppchat);
+unset($xmpp);
 unset($softwarename);
         $chss = curl_init();
         curl_setopt($chss, CURLOPT_URL, "https://".$domain."/nodeinfo/1.0"); 
@@ -182,7 +195,7 @@ $ipv6="yes";
 }
 if ($debug) {echo "IP: ".$ipnum."<br>";}
     $location = geoip_record_by_name($ipnum);
-if ($debug) {echo "Location: "; var_dump($location); echo "<br>";}
+if ($debug) {echo " Location: "; var_dump($location); echo "<br>";}
 if ($location) {
 $ipdata = "Country: ".$location["country_name"]."\n";
 $whois = "Country: ".$location["country_name"]."\n Lat:".$location["latitude"]." Long:".$location["longitude"];
@@ -201,7 +214,7 @@ if (strlen($long) < 4) {
 $long = $long + (rand(1, 15) / 10);
 }
 }
-echo $ipnum;
+echo "<br>";
 $connection="";
 $pingdomdate = date('Y-m-d H:i:s');
 if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {
@@ -262,7 +275,7 @@ $score=$score-2;
 	$json_encap = "jsonUptimeRobotApi()";
         $up2 = substr ($uptimerobot, strlen($json_encap) - 1, strlen ($uptimerobot) - strlen($json_encap)); 
 	$uptr = json_decode($up2);
-if ($debug) {print_r($uptr);}
+if ($debug) {print_r($uptr);echo "<br>";}
 if (!$uptr) {$score=$score-2;}
 $responsetime = 'n/a';
 $uptimerobotstat = $uptr->stat;
@@ -280,6 +293,7 @@ $score=$score-2;
 }
 
 }
+if ($softwarename == "diaspora") {$masterversion = $dmasterversion;} elseif ($softwarename == "friendica") {$masterversion = $fmasterversion;}
 $weightedscore = ($uptime + $score + ($active_users_monthly/19999) - ((10 - $weight) *.12));
 //sql it
 
