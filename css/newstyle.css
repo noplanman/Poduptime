@@ -52,7 +52,11 @@ background-position: 0 -656px;
 background-position: 0 -656px;
 display: inline-block;
 }
-
+.morehover {
+display: inline-block;
+font-size: 10px;
+vertical-align: super;
+}
 #map { height: 580px; }
 .mycluster {
 width: 35px;

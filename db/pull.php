@@ -262,7 +262,7 @@ $score=$score-2;
 } else {
 //do uptimerobot API instead
         $ping = curl_init();
-        curl_setopt($ping, CURLOPT_URL, "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row[$i]['pingdomurl']);
+        curl_setopt($ping, CURLOPT_URL, "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=".$row[$i]['pingdomurl']);
         curl_setopt($ping, CURLOPT_POST, 0);
         curl_setopt($ping, CURLOPT_HEADER, 0);
         curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);
@@ -277,7 +277,7 @@ $score=$score-2;
 	$uptr = json_decode($up2);
 if ($debug) {print_r($uptr);echo "<br>";}
 if (!$uptr) {$score=$score-2;}
-$responsetime = 'n/a';
+$responsetime = $uptr->monitors->monitor{'0'}->responsetime{'0'}->value;
 $uptimerobotstat = $uptr->stat;
 $uptime = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
 $diff = abs(strtotime(date('Y-m-d H:i:s')) - strtotime($dateadded));

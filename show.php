@@ -54,7 +54,7 @@ $tip="This pod does not offer SSL";
 $verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $row["shortversion"]);
 $tip.="\n This {$row["softwarename"]} pod {$row["name"]} has been watched for {$row["monthsmonitored"]} months and with an uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. "; 
 $tip.="On a scale of -20 to +20 this pod is a {$row["score"]} right now";
-     echo "<tr><td><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $row["domain"] . " <div title='$tip' class='tipsy' style='display: inline-block'>?</div></a></td>";
+     echo "<tr><td><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $row["domain"] . "</a> <div title='$tip' class='tipsy morehover'> ?</div></td>";
 "</div></td>";
 
      echo "<td>" . $row["uptimelast7"] . "%</td>";
