@@ -45,7 +45,7 @@ echo "API key already exists";die;
 
         $chss = curl_init();
         curl_setopt($chss, CURLOPT_URL, "https://".$_POST['domain']."/nodeinfo/1.0");
-        curl_setopt($chss, CURLOPT_POST, 1);
+        curl_setopt($chss, CURLOPT_POST, 0);
         curl_setopt($chss, CURLOPT_HEADER, 0);
         curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
@@ -55,7 +55,7 @@ echo "API key already exists";die;
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://".$_POST['domain']."/nodeinfo/1.0");
-        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POST, 0);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
