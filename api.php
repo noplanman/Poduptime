@@ -22,8 +22,9 @@ EOF;
  }
  $numrows = pg_num_rows($result);
 while ($row = pg_fetch_array($result)) {
+$pod_name = htmlentities($row["name"], ENT_QUOTES);
 $tip="";
-$tip.="\n This pod {$row["name"]} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. ";
+$tip.="\n This pod {$pod_name} has been watched for {$row["monthsmonitored"]} months and its average ping time is {$row["responsetimelast7"]} with uptime of {$row["uptimelast7"]}% this month and was last checked on {$row["dateupdated"]}. ";
 $tip.="On a score of -20 to +20 this pod is a {$row["score"]} right now";
 if ($row["secure"] == "true") {$method = "https://";} else {$method = "http://";}
 echo <<<EOF
