@@ -52,7 +52,7 @@ $expire = date("Y-m-d H:i:s", time() + 1700);
          die("Error in SQL query: " . pg_last_error());
      }
      $to = "support@diasp.org";
-     $subject = "Temporary edit key for podupti.me";
+     $subject = "FORWARD REQUEST: Temporary edit key for podupti.me";
      $message = "User trying to edit pod without email address. Email found: " . $row["email"] . " Link: https://podupti.me/db/edit.php?domain=" . $_POST["domain"] . "&token=" . $uuid . " Expires: " . $expire . "\n\n";
      $headers = "From: support@diasp.org\r\nBcc: support@diasp.org\r\n";
      @mail( $to, $subject, $message, $headers );

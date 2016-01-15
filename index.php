@@ -109,7 +109,7 @@ EOF;
         } elseif ($cleanup) {
         include("cleanup.php");
         } else {
-	echo "<a href='random.php' class='btn danger large'>Confused and just want to sign up?? Click Here</a><br>";
+	echo "<a href='random.php' class='btn danger large'>Confused and just want to sign up?? Click Here and we will pick one for you</a><br>";
         include("show.php");
 	} 
 	?>

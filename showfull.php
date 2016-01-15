@@ -38,6 +38,7 @@ Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a hre
 <th>Version<a class="tipsy" title="Version of software this pod runs">?</a></th>
 <th>Uptime<a class="tipsy" title="Percent of the time the pod is online for <?php echo date("F") ?>.">?</a></th>
 <th>IPv6</th>
+<th>Response Time</th>
 <th>Signups</th>
 <th>Total Users<a class="tipsy" title="Number of total users on this pod.">?</a></th>
 <th>Active Last 6<a class="tipsy" title="Number of users active last 6 months on this pod.">?</a></th>
@@ -85,6 +86,7 @@ if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "")
      echo "<td class='$classver'><div title='{$pre} codename: {$row["longversion"]} master version is: {$row["masterversion"]}' class='tipsy'>{$version}</div></td>";
      echo "<td>" . $row["uptimelast7"] . "%</td>";
      echo "<td>" . $row["ipv6"] . "</td>";
+     echo "<td>" . $row["responsetimelast7"] . "</td>";
 if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $signup . "</td>";
      echo "<td>" . $row["total_users"] . "</td>";
@@ -92,7 +94,7 @@ if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $row["active_users_monthly"] . "</td>";
      echo "<td>" . $row["local_posts"] . "</td>";
      echo "<td>" . $row["comment_counts"] . "</td>";
-if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row["pingdomurl"];}
+if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "/db/showuptimerobot.php?domain=".$row["domain"];}
      echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a target='new' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";
 if ($row["userrating"] >6) {$userratingclass="green";} elseif ($row["userrating"] <7) {$userratingclass="yellow";} elseif ($row["userrating"] <3) {$userratingclass="red";}
      echo "<td><a rel=\"facebox\" href=\"rate.php?domain=".$row["domain"]."\"><div class='tipsy rating ".$userratingclass."' title='User rating is ".$row["userrating"]."/10 Auto Score is: " .$row["score"]. "/20'>";
