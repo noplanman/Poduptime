@@ -37,9 +37,10 @@ $numrows = pg_num_rows($result);
      if ($row["service_tumblr"] == "t") {$feat.= "<div id=\'tumblr\' class=\'smlogo\'></div>";}
      if ($row["service_wordpress"] == "t") {$feat.= "<div id=\'wordpress\' class=\'smlogo\'></div>";}
 unset($signup);if ($row["signup"] == 1) {$signup = "yes";} else {$signup= "no";}
+     $pod_name = htmlentities($row["name"], ENT_QUOTES);
 echo <<<EOF
-{ "type": "Feature", "id":"1", "properties": 
-{ "html":"{$row["name"]}<br><a href=\'http://{$row["domain"]}\'>Visit</a> {$row["domain"]}<br> Open Signup: {$signup}<br> Users: {$row["active_users_halfyear"]}<br> Uptime: {$row["uptimelast7"]}%<br> Services:{$feat}" }, "geometry": { "type": "Point", "coordinates": [{$row["long"]},{$row["lat"]} ] } },
+{ "type": "Feature", "id":"1", "properties":
+{ "html":"{$pod_name}<br><a href=\'http://{$row["domain"]}\'>Visit</a>{$row["domain"]}<br> Open Signup: {$signup}<br> Users: {$row["active_users_halfyear"]}<br> Uptime: {$row["uptimelast7"]}%<br> Services:{$feat}" }, "geometry": { "type": "Point", "coordinates": [{$row["long"]},{$row["lat"]} ] } },
 EOF;
 }
 ?>
