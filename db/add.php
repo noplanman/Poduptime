@@ -75,7 +75,7 @@ if (stristr($output, 'nodeName')) {
 }
 
 if ($valid=="1") {    
-     $sql = "INSERT INTO pods (domain, pingdomurl, email) VALUES($1, $2, $3)";$log->lwrite($sql);
+     $sql = "INSERT INTO pods (domain, pingdomurl, email) VALUES($1, $2, $3)";
      $result = pg_query_params($dbh, $sql, array($_POST['domain'], $_POST['url'], $_POST['email']));
      if (!$result) {
          die("Error in SQL query: " . pg_last_error());
