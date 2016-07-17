@@ -12,8 +12,10 @@
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <link rel="stylesheet" href="css/newstyle.css" />
 <link rel="stylesheet" href="css/facebox.css" />
-<meta property="og:url" content="http://podupti.me" />
-<meta property="og:site_name" content="Diaspora Pods" />
+<meta property="og:url" content="https://podupti.me" />
+<meta property="og:title" content="Diaspora Pod Finder" />
+<meta property="og:type"          content="website" />
+<meta property="og:description"   content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!" />
 <?php 
 $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
 $lastfile = 'db/last.data';
@@ -22,20 +24,17 @@ $mapview = isset($_GET['mapview'])?$_GET['mapview']:null;
 $cleanup = isset($_GET['cleanup'])?$_GET['cleanup']:null;
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-<script type="text/javascript">
-/* <![CDATA[ */
-    (function() {
-        var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
-        s.type = 'text/javascript';
-        s.async = true;
-        s.src = '//api.flattr.com/js/0.6/load.js?mode=auto';
-        t.parentNode.insertBefore(s, t);
-    })();
-/* ]]> */</script>
-<script type="text/javascript" src="//ws.sharethis.com/button/buttons.js"></script>
-<script type="text/javascript">stLight.options({publisher: "3209f0be-147e-49fc-ac1b-2cf6740e9449", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+
 </head>
 <body>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.7&appId=559196844215273";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
   <header>
     <div class="page-header">
       <div class="row">
@@ -45,20 +44,14 @@ $cleanup = isset($_GET['cleanup'])?$_GET['cleanup']:null;
           </h2>
         </div>
       <div class="span2" style="margin-top:8px;">
-<span class='st_facebook_hcount' displayText='Facebook' st_summary='test'></span>
+<div class="fb-share-button" data-href="https://podupti.me" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fpodupti.me%2F&amp;src=sdkpreparse">Share</a></div>
       </div>
-<div class="span2" style="margin-top:8px;">
-
-<span class='st_twitter_hcount' displayText='Tweet' text='test'></span>
-      </div>
-<div class="span2" style="margin-top:8px;">
-
-<span class='st_plusone_hcount' displayText='Google +1'></span>
-      </div>
+      
       <div class="span2" style="margin-top:8px;">
-<a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="http://podupti.me"></a>
+<div class="g-plusone" data-size="small" data-href="https://podupti.me"></div>
 	</div>
 	<div class="span2" style="margin-top:8px;">
+<a href="https://twitter.com/intent/tweet?button_hashtag=diaspora" class="twitter-hashtag-button" data-text="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!" data-url="https://podupti.me" data-related="diasporg" data-show-count="false">Tweet #diaspora</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 </div>
 
     </div>
@@ -144,5 +137,6 @@ is mostly because of selfsigned or openca certs, if you need a free ssl cert get
 				
     </div>
   </div>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 </body>
 </html>

@@ -133,8 +133,8 @@ unset($softwarename);
         curl_setopt($ch, CURLOPT_NOBODY, 0);
         $output = curl_exec($ch);
         curl_close($ch);
-if ($debug) {print $output;}
-if ($debug) {var_dump($outputssl);}
+if ($debug) {echo "not-e"; print $output;}
+if ($debug) {echo "e"; var_dump($outputssl);}
 if ($outputssl) {$secure="true";$outputresults=$outputssl;} elseif ($output) {$secure="false";$outputresults=$output;}
 if (stristr($outputresults, 'openRegistrations')) {
 $score = $score +1;
