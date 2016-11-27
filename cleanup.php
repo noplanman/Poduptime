@@ -107,7 +107,7 @@ echo "✪";
      echo "<td>" . $row["country"] . "</td>\n";
 ?>
 <td>
-<form method="post" action="db/kill.php">
+<form method="post" action="db/kill.php"  target="_blank">
 <input name="comments" size=10>
 <input name="domain" value="<?php echo $row["domain"] ?>" type="hidden">
 <input name="adminkey" value="<?php echo $_COOKIE["adminkey"] ?>" type="hidden">

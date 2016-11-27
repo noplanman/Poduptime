@@ -1,22 +1,22 @@
 <?php
 $tt=0;
- include('db/config.php');
- $country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
- $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
- if (!$dbh) {
-     die("Error in connection: " . pg_last_error());
- }  
- $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
- if ($hidden == "true") {
- $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY weightedscore DESC";
- } else {
- $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' AND signup = 1 ORDER BY weightedscore DESC";
- }
- $result = pg_query($dbh, $sql);
- if (!$result) {
-     die("Error in SQL query: " . pg_last_error());
- }   
- $numrows = pg_num_rows($result);
+include('db/config.php');
+$country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
+$dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
+if (!$dbh) {
+  die("Error in connection: " . pg_last_error());
+}  
+$hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
+if ($hidden == "true") {
+  $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY weightedscore DESC";
+} else {
+  $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' AND signup = 1 ORDER BY weightedscore DESC";
+}
+$result = pg_query($dbh, $sql);
+if (!$result) {
+  die("Error in SQL query: " . pg_last_error());
+}   
+$numrows = pg_num_rows($result);
 echo "<meta property='og:title' content='"; 
 echo $numrows;
 echo " Federated Pods listed, Come see the privacy aware social networks.' />";
@@ -78,18 +78,18 @@ echo <<<EOF
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- podup2015 -->
 <ins class="adsbygoogle"
-     style="display:inline-block;width:728px;height:90px"
-     data-ad-client="ca-pub-3662181805557062"
-     data-ad-slot="2218925437"></ins>
+style="display:inline-block;width:728px;height:90px"
+data-ad-client="ca-pub-3662181805557062"
+data-ad-slot="2218925437"></ins>
 <script>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 </td>
 EOF;
 }
- }
- pg_free_result($result);       
- pg_close($dbh);
+}
+pg_free_result($result);       
+pg_close($dbh);
 ?>
 </tbody>
 </table>

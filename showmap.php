@@ -21,23 +21,23 @@ var geoJsonData = {
 <?php
 include('db/config.php');
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-  if (!$dbh) {
-     die("Error in connection: " . pg_last_error());
-  }
+if (!$dbh) {
+  die("Error in connection: " . pg_last_error());
+}
 $sql = "SELECT * FROM pods WHERE hidden <> 'yes'";
 $result = pg_query($dbh, $sql);
-  if (!$result) {
-     die("Error in SQL query: " . pg_last_error());
-  }
+if (!$result) {
+  die("Error in SQL query: " . pg_last_error());
+}
 $numrows = pg_num_rows($result);
-  while ($row = pg_fetch_array($result)) {
-    unset($feat);
-     if ($row["service_facebook"] == "t") {$feat.= "<div id=\'facebook\' class=\'smlogo\'></div>";}
-     if ($row["service_twitter"] == "t") {$feat.= "<div id=\'twitter\' class=\'smlogo\'></div>";}
-     if ($row["service_tumblr"] == "t") {$feat.= "<div id=\'tumblr\' class=\'smlogo\'></div>";}
-     if ($row["service_wordpress"] == "t") {$feat.= "<div id=\'wordpress\' class=\'smlogo\'></div>";}
-unset($signup);if ($row["signup"] == 1) {$signup = "yes";} else {$signup= "no";}
-     $pod_name = htmlentities($row["name"], ENT_QUOTES);
+while ($row = pg_fetch_array($result)) {
+  unset($feat);
+  if ($row["service_facebook"] == "t") {$feat.= "<div id=\'facebook\' class=\'smlogo\'></div>";}
+  if ($row["service_twitter"] == "t") {$feat.= "<div id=\'twitter\' class=\'smlogo\'></div>";}
+  if ($row["service_tumblr"] == "t") {$feat.= "<div id=\'tumblr\' class=\'smlogo\'></div>";}
+  if ($row["service_wordpress"] == "t") {$feat.= "<div id=\'wordpress\' class=\'smlogo\'></div>";}
+  unset($signup);if ($row["signup"] == 1) {$signup = "yes";} else {$signup= "no";}
+  $pod_name = htmlentities($row["name"], ENT_QUOTES);
 echo <<<EOF
 { "type": "Feature", "id":"1", "properties":
 { "html":"{$pod_name}<br><a href=\'http://{$row["domain"]}\'>Visit</a>{$row["domain"]}<br> Open Signup: {$signup}<br> Users: {$row["active_users_halfyear"]}<br> Uptime: {$row["uptimelast7"]}%<br> Services:{$feat}" }, "geometry": { "type": "Point", "coordinates": [{$row["long"]},{$row["lat"]} ] } },

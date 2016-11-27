@@ -1,21 +1,21 @@
 <?php
 $tt=0;
- include('db/config.php');
- $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
- if (!$dbh) {
-     die("Error in connection: " . pg_last_error());
- }  
- $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
- if ($hidden == "true") {
- $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY weightedscore DESC";
- } else {
- $sql = "SELECT * FROM pods ORDER BY weightedscore DESC";
- }
- $result = pg_query($dbh, $sql);
- if (!$result) {
-     die("Error in SQL query: " . pg_last_error());
- }   
- $numrows = pg_num_rows($result);
+include('db/config.php');
+$dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
+if (!$dbh) {
+  die("Error in connection: " . pg_last_error());
+}  
+$hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
+if ($hidden == "true") {
+  $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY weightedscore DESC";
+} else {
+  $sql = "SELECT * FROM pods ORDER BY weightedscore DESC";
+}
+$result = pg_query($dbh, $sql);
+if (!$result) {
+  die("Error in SQL query: " . pg_last_error());
+}   
+$numrows = pg_num_rows($result);
 echo "<meta property='og:title' content='"; 
 echo $numrows;
 echo " federated Pods listed, Come see the privacy aware social networks.' />";
@@ -23,7 +23,7 @@ echo $numrows;
 ?>
 <style>
 .content {
-    width: 99%;
+width: 99%;
 }
 </style>
  pods that are open for signup now.
@@ -57,18 +57,15 @@ Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a hre
  while ($row = pg_fetch_array($result)) {
 $tt=$tt+1;
 if ($row["secure"] == "true") {
-$method = "https://";
-$class="green";
-$tip="This pod uses SSL encryption for traffic.";} 
-
+  $method = "https://";
+  $class="green";
+  $tip="This pod uses SSL encryption for traffic.";} 
 else {
-$method = "http://";
-$class="red";
-$tip="This pod does not offer SSL";
+  $method = "http://";
+  $class="red";
+  $tip="This pod does not offer SSL";
 } 
 $verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $row["shortversion"]);
-
-
 $pod_name = htmlentities($row["name"], ENT_QUOTES);
 $tip.="\n This {$row["softwarename"]} pod {$pod_name} has been watched for {$row["monthsmonitored"]} months with an uptime of {$row["uptimelast7"]}% this month and a response time average today of {$row["responsetimelast7"]}ms was last checked on {$row["dateupdated"]}. ";
 $tip.="On a scale of -20 to +20 this pod is a {$row["score"]} right now";
@@ -96,7 +93,7 @@ if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $row["local_posts"] . "</td>";
      echo "<td>" . $row["comment_counts"] . "</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "/db/showuptimerobot.php?domain=".$row["domain"];}
-     echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a target='new' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";
+     echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a rel='facebox' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";
 if ($row["userrating"] >6) {$userratingclass="green";} elseif ($row["userrating"] <7) {$userratingclass="yellow";} elseif ($row["userrating"] <3) {$userratingclass="red";}
      echo "<td><a rel=\"facebox\" href=\"rate.php?domain=".$row["domain"]."\"><div class='tipsy rating ".$userratingclass."' title='User rating is ".$row["userrating"]."/10 Auto Score is: " .$row["score"]. "/20'>";
 if ($row["userrating"] == 0) {echo "no rating yet";}
@@ -134,9 +131,9 @@ echo <<<EOF
 </td>
 EOF;
 }
- }
- pg_free_result($result);       
- pg_close($dbh);
+}
+pg_free_result($result);       
+pg_close($dbh);
 $country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
 //echo $country_code;
 ?>
