@@ -1,5 +1,6 @@
 Show as: <a href="?mapview=true">Map</a> <a href="/">Simple Table</a>  <a href="?advancedview=true">Advanced Table</a>
 <?php
+//focus map to the users side of the globe
 $country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
 $csv = array_map('str_getcsv', file('db/country_latlon.csv'));
 foreach ($csv as $cords) {
