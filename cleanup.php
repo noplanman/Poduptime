@@ -5,7 +5,7 @@ $tt=0;
  if (!$dbh) {
      die("Error in connection: " . pg_last_error());
  }  
- $sql = "SELECT * FROM pods WHERE hidden <> 'no' AND score < -15 ORDER BY weightedscore";
+ $sql = "SELECT * FROM pods WHERE hidden <> 'no' AND score < 50 ORDER BY weightedscore";
  $result = pg_query($dbh, $sql);
  if (!$result) {
      die("Error in SQL query: " . pg_last_error());
@@ -41,7 +41,7 @@ Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a hre
 <th>Comments<a class="tipsy" title="Number of total comments on this pod.">?</a></th>
 <th>Months<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
 <th>Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
-<th>Score<a class="tipsy" title="System Score on a -20 to +20 scale">?</a></th>
+<th>Score<a class="tipsy" title="System Score on a 100 scale">?</a></th>
 <th>Country<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
 <th>Delete?<a class="tipsy" title="Delete this pod from DB?">?</a></th>
 </tr>

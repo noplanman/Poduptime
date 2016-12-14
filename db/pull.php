@@ -162,18 +162,6 @@ while ($row = pg_fetch_all($result)) {
      }
      $signup = $registrations_open;
      if ($debug) {echo "<br>Signup Open: ".$signup."<br>";}
-     if ($score > 5) {
-       $hidden = "no";
-     } else {
-       $hidden = "yes";
-     }
-     if ($debug) {echo "Hidden: ".$hidden."<br>";}
-     // lets cap the scores or you can go too high or too low to never be effected by them
-     if ($score > 20) {
-       $score = 20;
-     } elseif ($score < -20) {
-       $score = -20;
-     }
      $ip6 = escapeshellcmd('dig +nocmd '.$domain.' aaaa +noall +short');
      $ip = escapeshellcmd('dig +nocmd '.$domain.' a +noall +short');
      $ip6num = exec($ip6);
@@ -281,6 +269,18 @@ while ($row = pg_fetch_all($result)) {
     }
   }
   if ($softwarename == "diaspora") {$masterversion = $dmasterversion;} elseif ($softwarename == "friendica") {$masterversion = $fmasterversion;}
+     if ($score > 20) {
+       $hidden = "no";
+     } else {
+       $hidden = "yes";
+     }
+     if ($debug) {echo "Hidden: ".$hidden."<br>";}
+     // lets cap the scores or you can go too high or too low to never be effected by them
+     if ($score > 100) {
+       $score = 100;
+     } elseif ($score < 0) {
+       $score = 0;
+     }
   $weightedscore = ($uptime + $score + ($active_users_monthly/19999) - ((10 - $weight) *.12));
   //sql it
 
@@ -295,7 +295,7 @@ while ($row = pg_fetch_all($result)) {
   if (!$result) {
     die("Error in SQL query3: " . pg_last_error());
   }
-  if ($debug) {echo "<br>Score out of 20: ".$score."<br>";}
+  if ($debug) {echo "<br>Score out of 100: ".$score."<br>";}
   if (!$debug) {echo "Success";}
   //end foreach
   }

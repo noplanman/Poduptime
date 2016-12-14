@@ -47,7 +47,7 @@ Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a hre
 <th>Comments<a class="tipsy" title="Number of total comments on this pod.">?</a></th>
 <th>Months<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
 <th>Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
-<th>Score<a class="tipsy" title="System Score on a -20 to +20 scale">?</a></th>
+<th>Score<a class="tipsy" title="System Score on a 100 point scale">?</a></th>
 <th>Country<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
 <th>Services<a class="tipsy" title="External Social Networks this pod can post to">?</a></th>
 </tr>
@@ -68,7 +68,7 @@ else {
 $verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $row["shortversion"]);
 $pod_name = htmlentities($row["name"], ENT_QUOTES);
 $tip.="\n This {$row["softwarename"]} pod {$pod_name} has been watched for {$row["monthsmonitored"]} months with an uptime of {$row["uptimelast7"]}% this month and a response time average today of {$row["responsetimelast7"]}ms was last checked on {$row["dateupdated"]}. ";
-$tip.="On a scale of -20 to +20 this pod is a {$row["score"]} right now";
+$tip.="On a scale of 100 this pod is a {$row["score"]} right now";
 
      echo "<tr><td><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $row["domain"] . " <div title='$tip' class='tipsy' style='display: inline-block'>?</div></a></td>";
 "</div></td>";
@@ -107,7 +107,7 @@ echo "✪";
 }
 
      echo "</div></a></td>";
-     echo "<td>" . $row["score"] . "</td>\n";
+     echo "<td>" . $row["score"] . "/100</td>\n";
      echo "<td>" . $row["country"] . "</td>\n";
      echo "<td class='' title=''>";
      if ($row["service_facebook"] == "t") {echo "<div id='facebook' class='smlogo'></div>";}
