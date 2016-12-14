@@ -107,9 +107,9 @@ while ($row = pg_fetch_all($result)) {
      curl_setopt($chss, CURLOPT_URL, "https://".$domain."/nodeinfo/1.0"); 
      curl_setopt($chss, CURLOPT_POST, 0);
      curl_setopt($chss, CURLOPT_HEADER, 0);
-     curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 15);
-     curl_setopt($chss, CURLOPT_TIMEOUT, 15);
-     curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
+     curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 5);
+     curl_setopt($chss, CURLOPT_TIMEOUT, 9);
+     curl_setopt($chss, CURLOPT_RETURNTRANSFER, 5);
      curl_setopt($chss, CURLOPT_NOBODY, 0);
      $outputssl = curl_exec($chss);      
      curl_close($chss);
@@ -118,14 +118,15 @@ while ($row = pg_fetch_all($result)) {
      curl_setopt($ch, CURLOPT_URL, "http://".$domain."/nodeinfo/1.0");
      curl_setopt($ch, CURLOPT_POST, 0);
      curl_setopt($ch, CURLOPT_HEADER, 0);
-     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
-     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
      curl_setopt($ch, CURLOPT_NOBODY, 0);
      $output = curl_exec($ch);
      curl_close($ch);
      if ($debug) {echo "not-e"; print $output;}
      if ($debug) {echo "e"; var_dump($outputssl);}
+     if (!$output && !$outpulssl && !$domain) {continue;echo "no connection to pod";}
      if ($outputssl) {$secure="true";$outputresults=$outputssl;} elseif ($output) {$secure="false";$outputresults=$output;}
      if (stristr($outputresults, 'openRegistrations')) {
        $score = $score +1;

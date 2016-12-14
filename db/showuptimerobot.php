@@ -34,4 +34,5 @@ if ($uptr->monitors[0]->status == 9) {$live = "Down";}
 echo "Status: ".$live;
 pg_free_result($result);
 pg_close($dbh);
+
 ?>

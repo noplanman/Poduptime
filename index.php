@@ -114,7 +114,7 @@ EOF;
 	Data last refreshed at: <?php echo date("F d Y H:i:s.", filemtime($lastfile)) ?> Pacific Time<br>
         Want more stats? <a href="https://the-federation.info/">https://the-federation.info/</a> | <a href="https://diapod.net/active/">https://diapod.net/active/</a><br>
         Poduptime is open source on <a href="https://github.com/diasporg/Poduptime">GitHub</a> Feel free to contribute with pull requests or bug reports!<br>
-        Questions on how this site works? <a href="https://github.com/diasporg/Poduptime/wiki">Wiki</a><br>
+        Questions on how this site works? <a href="https://github.com/diasporg/Poduptime/wiki">Wiki</a> | <a href="https://dia.so/support">Contact</a><br>
 	<a href="https://diasporafoundation.org/">More about Diaspora</a><br><a href="http://friendica.com/">More about Friendica</a><br><a href="http://hubzilla.org/">More about Hubzilla(redmatrix)</a>
 	</div>
       <div id="howto" style="display:none; margin-left:50px">
