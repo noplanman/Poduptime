@@ -42,7 +42,7 @@ Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a hre
 <th>Months<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
 <th>Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
 <th>Score<a class="tipsy" title="System Score on a 100 scale">?</a></th>
-<th>Country<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
+<th>SSL Info<a class="tipsy" title="">?</a></th>
 <th>Delete?<a class="tipsy" title="Delete this pod from DB?">?</a></th>
 </tr>
 </thead>
@@ -104,7 +104,7 @@ echo "✪";
 
      echo "</div></a></td>";
      echo "<td>" . $row["score"] . "</td>\n";
-     echo "<td>" . $row["country"] . "</td>\n";
+     echo "<td><div class='tipsy' title='".$row["sslvalid"]."'>" . $row["sslvalid"] . "</td>\n";
 ?>
 <td>
 <form method="post" action="db/kill.php"  target="_blank">

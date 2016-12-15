@@ -103,15 +103,17 @@ while ($row = pg_fetch_all($result)) {
      unset($xdver);
      unset($xmpp);
      unset($softwarename);
+     unset($outputsslerror);
      $chss = curl_init();
      curl_setopt($chss, CURLOPT_URL, "https://".$domain."/nodeinfo/1.0"); 
      curl_setopt($chss, CURLOPT_POST, 0);
-     curl_setopt($chss, CURLOPT_HEADER, 0);
+     curl_setopt($chss, CURLOPT_HEADER, 1);
      curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 5);
-     curl_setopt($chss, CURLOPT_TIMEOUT, 9);
-     curl_setopt($chss, CURLOPT_RETURNTRANSFER, 5);
+     curl_setopt($chss, CURLOPT_TIMEOUT, 5);
+     curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
      curl_setopt($chss, CURLOPT_NOBODY, 0);
      $outputssl = curl_exec($chss);      
+     $outputsslerror = curl_error($chss);
      curl_close($chss);
 
      $ch = curl_init();
@@ -269,7 +271,7 @@ while ($row = pg_fetch_all($result)) {
     }
   }
   if ($softwarename == "diaspora") {$masterversion = $dmasterversion;} elseif ($softwarename == "friendica") {$masterversion = $fmasterversion;}
-     if ($score > 20) {
+     if ($score > 70) {
        $hidden = "no";
      } else {
        $hidden = "yes";
@@ -289,9 +291,9 @@ while ($row = pg_fetch_all($result)) {
   uptimelast7=$10, status=$11, dateLaststats=$12, dateUpdated=$13, responsetimelast7=$14, score=$15, adminrating=$16, country=$17, city=$18, 
   state=$19, lat=$20, long=$21, postalcode='', connection=$22, whois=$23, userrating=$24, longversion=$25, shortversion=$26, 
   masterversion=$27, signup=$28, total_users=$29, active_users_halfyear=$30, active_users_monthly=$31, local_posts=$32, name=$33, 
-  comment_counts=$35, service_facebook=$36, service_tumblr=$37, service_twitter=$38, service_wordpress=$39, weightedscore=$40, xmpp=$41, softwarename=$42
+  comment_counts=$35, service_facebook=$36, service_tumblr=$37, service_twitter=$38, service_wordpress=$39, weightedscore=$40, xmpp=$41, softwarename=$42, sslvalid=$43
   WHERE domain=$34";
-  $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $xmpp, $softwarename));
+  $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $xmpp, $softwarename, $outputsslerror));
   if (!$result) {
     die("Error in SQL query3: " . pg_last_error());
   }
