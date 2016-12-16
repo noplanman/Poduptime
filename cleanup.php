@@ -108,7 +108,7 @@ echo "✪";
 ?>
 <td>
 <form method="post" action="db/kill.php"  target="_blank">
-<input name="comments" size=10>
+<input name="comments" value="<?php echo $row["sslvalid"] ?>" size=10>
 <input name="domain" value="<?php echo $row["domain"] ?>" type="hidden">
 <input name="adminkey" value="<?php echo $_COOKIE["adminkey"] ?>" type="hidden">
 <input name="action" type="radio" value="warn">warn

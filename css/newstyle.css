@@ -54,7 +54,6 @@ display: inline-block;
 }
 .morehover {
 display: inline-block;
-font-size: 10px;
 vertical-align: super;
 }
 #map { height: 580px; }

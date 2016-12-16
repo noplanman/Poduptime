@@ -23,7 +23,7 @@ $(document).ready(function(){
 $.facebox.settings.closeImage = 'images/closelabel.png'
 $.facebox.settings.loadingImage = 'images/loading.gif'
   $('a[rel*=facebox]').facebox()
-  $('.tipsy').tipsy();
+//  $('.tipsy').tipsy();
   $('#add').click(function() {
     $('#howto').show('slow'); $('#add').hide('slow');$('#results').hide('slow');
   });
@@ -37,4 +37,8 @@ $.facebox.settings.loadingImage = 'images/loading.gif'
     $( this ).text( get_date( $( this ).text() ) );
   });
 });
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 
