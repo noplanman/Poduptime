@@ -6,12 +6,15 @@ $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
   die("Error in connection: " . pg_last_error());
 }  
-$sql = "SELECT * FROM pods WHERE domain = $1";
+$sql = "SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,pingdomurl,monthsmonitored,uptimelast7,responsetimelast7,local_posts,comment_counts,dateCreated,dateUpdated,dateLaststats,hidden FROM pods WHERE domain = $1";
 $result = pg_query_params($dbh, $sql, array($_GET['url']));
 if (!$result) {
   die("Error in SQL query: " . pg_last_error());
 }   
 while ($row = pg_fetch_array($result)) {
+  if ($_GET['format'] == "json") {
+    echo json_encode($row);
+  } else {
   echo "Status: " . $row["status"] . "<br>";
   echo "Last Git Pull: " . $row["hgitdate"] . "<br>";
   echo "Uptime This Month " . $row["uptimelast7"] . "<br>";
@@ -21,6 +24,7 @@ while ($row = pg_fetch_array($result)) {
   echo "Server Location: ". $row["country"] . "<br>";
   echo "Latitude: ". $row["lat"] . "<br>";
   echo "Longitude: ". $row["long"] . "<br>";
+  }
 }
 pg_free_result($result);       
 pg_close($dbh);

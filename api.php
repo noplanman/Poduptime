@@ -45,7 +45,7 @@ EOF;
   echo "</feed>";
 }
 elseif ($_GET['format'] == "json") {
-  $sql = "SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,hgitdate,hgitref,pingdomurl,pingdomlast,monthsmonitored,uptimelast7,responsetimelast7,hruntime,hencoding,local_posts,comment_counts,dateCreated,dateUpdated,dateLaststats,hidden FROM pods";
+  $sql = "SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,pingdomurl,monthsmonitored,uptimelast7,responsetimelast7,local_posts,comment_counts,dateCreated,dateUpdated,dateLaststats,hidden FROM pods";
   $result = pg_query($dbh, $sql);
   if (!$result) {
     die("Error in SQL query: " . pg_last_error());
