@@ -7,9 +7,9 @@ if (!$dbh) {
 }  
 $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
 if ($hidden == "true") {
-  $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY weightedscore DESC";
+  $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY uptimelast7 DESC";
 } else {
-  $sql = "SELECT * FROM pods ORDER BY weightedscore DESC";
+  $sql = "SELECT * FROM pods ORDER BY uptimelast7 DESC";
 }
 $result = pg_query($dbh, $sql);
 if (!$result) {

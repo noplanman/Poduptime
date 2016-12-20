@@ -8,9 +8,9 @@ if (!$dbh) {
 }  
 $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
 if ($hidden == "true") {
-  $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY weightedscore DESC";
+  $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY uptimelast7 DESC";
 } else {
-  $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' AND signup = 1 ORDER BY weightedscore DESC";
+  $sql = "SELECT * FROM pods WHERE adminrating <> -1 AND hidden <> 'yes' AND signup = 1 ORDER BY uptimelast7 DESC";
 }
 $result = pg_query($dbh, $sql);
 if (!$result) {
@@ -22,7 +22,7 @@ echo $numrows;
 echo " Federated Pods listed, Come see the privacy aware social networks.' />";
 ?>
 <div class="hidden-sm-up">Scroll right or rotate device for more</div>
-            <table class="table table-striped table-sm tablesorter table-hover tfont" id="myTable">
+            <table class="table table-striped table-sm tablesorter table-hover" id="myTable">
               <thead class="thead-inverse">
                 <tr>
 <th><a data-toggle='tooltip' data-placement='bottom' title="A pod is a site for you to set up your account.">Pod</a></th>
