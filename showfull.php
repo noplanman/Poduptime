@@ -19,37 +19,28 @@ $numrows = pg_num_rows($result);
 echo "<meta property='og:title' content='"; 
 echo $numrows;
 echo " federated Pods listed, Come see the privacy aware social networks.' />";
-echo $numrows;
 ?>
-<style>
-.content {
-width: 99%;
-}
-</style>
- pods that are open for signup now.
-Click column names to sort and find a pod.
-Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a href="?advancedview=true">Advanced Table</a>
 <meta charset="utf-8">
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
-<table id="myTable" class="tablesorter zebra-striped" width="98%">
-<thead>
+<table id="myTable" class="table table-striped table-sm tablesorter table-hover tfont">
+<thead class="thead-inverse">
 <tr>
-<th width="220px">Federated Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
-<th>Version<a class="tipsy" title="Version of software this pod runs">?</a></th>
-<th>Uptime<a class="tipsy" title="Percent of the time the pod is online for <?php echo date("F") ?>.">?</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="A pod is a site for you to set up your account.">Pod</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="Version of software this pod runs">Version</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="Percent of the time the pod is online for <?php echo date("F") ?>.">Uptime</a></th>
 <th>IPv6</th>
 <th>Response Time</th>
 <th>Signups</th>
-<th>Total Users<a class="tipsy" title="Number of total users on this pod.">?</a></th>
-<th>Active Last 6<a class="tipsy" title="Number of users active last 6 months on this pod.">?</a></th>
-<th>Active Last 1<a class="tipsy" title="Number of users active last 1 month on this pod.">?</a></th>
-<th>Posts<a class="tipsy" title="Number of total posts on this pod.">?</a></th>
-<th>Comments<a class="tipsy" title="Number of total comments on this pod.">?</a></th>
-<th>Months<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
-<th>Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
-<th>Score<a class="tipsy" title="System Score on a 100 point scale">?</a></th>
-<th>Country<a class="tipsy" title="Pod location, based on IP Geolocation">?</a></th>
-<th>Services<a class="tipsy" title="External Social Networks this pod can post to">?</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="Number of total users on this pod.">Users</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="Number of users active last 6 months on this pod.">Active Users 6</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="Number of users active last 1 month on this pod.">Active Users 1</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="Number of total posts on this pod.">Posts</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="Number of total comments on this pod.">Comments</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="How many months has this pod been online? Click number for more history.">Months</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="User rating for this pod.">Rating</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="System Score on a 100 point scale">Score</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="Pod location, based on IP Geolocation">Country</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="External Social Networks this pod can post to">Services</a></th>
 </tr>
 </thead>
 <tbody>
@@ -70,7 +61,7 @@ $pod_name = htmlentities($row["name"], ENT_QUOTES);
 $tip.="\n This {$row["softwarename"]} pod {$pod_name} has been watched for {$row["monthsmonitored"]} months with an uptime of {$row["uptimelast7"]}% this month and a response time average today of {$row["responsetimelast7"]}ms was last checked on {$row["dateupdated"]}. ";
 $tip.="On a scale of 100 this pod is a {$row["score"]} right now";
 
-     echo "<tr><td><a class='$class' target='new' href='". $method . $row["domain"] ."'>" . $row["domain"] . " <div title='$tip' class='tipsy' style='display: inline-block'>?</div></a></td>";
+     echo "<tr><td><a title='$tip' data-toggle='tooltip' data-placement='bottom' class='$class' target='new' href='". $method . $row["domain"] ."'>" . $row["domain"] . "</a></td>";
 "</div></td>";
 
 if (stristr($row["shortversion"],'head')) 
@@ -81,7 +72,7 @@ unknown code";}
 else 
 {$version=$row["shortversion"];$pre="This pod runs production code";}
 if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "") {$classver = "green";} elseif ($verdiff > 6) {$classver = "red";} else {$classver = "black";}
-     echo "<td class='$classver'><div title='{$pre} codename: {$row["longversion"]} master version is: {$row["masterversion"]}' class='tipsy'>{$version}</div></td>";
+     echo "<td class='$classver'><div title='{$pre} codename: {$row["longversion"]} master version is: {$row["masterversion"]}' data-toggle='tooltip' data-placement='bottom'>{$version}</div></td>";
      echo "<td>" . $row["uptimelast7"] . "%</td>";
      echo "<td>" . $row["ipv6"] . "</td>";
      echo "<td>" . $row["responsetimelast7"] . "</td>";
@@ -93,20 +84,11 @@ if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $row["local_posts"] . "</td>";
      echo "<td>" . $row["comment_counts"] . "</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "/db/showuptimerobot.php?domain=".$row["domain"];}
-     echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a rel='facebox' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";
-if ($row["userrating"] >6) {$userratingclass="green";} elseif ($row["userrating"] <7) {$userratingclass="yellow";} elseif ($row["userrating"] <3) {$userratingclass="red";}
-     echo "<td><a rel=\"facebox\" href=\"rate.php?domain=".$row["domain"]."\"><div class='tipsy rating ".$userratingclass."' title='User rating is ".$row["userrating"]."/10 Auto Score is: " .$row["score"]. "/20'>";
-if ($row["userrating"] == 0) {echo "no rating yet";}
-for ($i = 0; $i < $row["userrating"]; $i++) { 
-echo "✪";
-}
-if ($row["adminrating"] >6) {$adminratingclass="green";} elseif ($row["adminrating"] <7) {$adminratingclass="yellow";} elseif ($row["adminrating"] <3) {$adminratingclass="red";}
-     echo "</div><br><div class='tipsy rating ".$adminratingclass."' backendscore='".$row["score"]."' title='Poduptime Approved rating is ".$row["adminrating"]."'>";
-for ($iw = 0; $iw < $row["adminrating"]; $iw++) {
-echo "✪";
-}
+     echo "<td><div title='Last Check ".$row["dateupdated"]."' data-toggle='tooltip' data-placement='bottom'><a rel='facebox' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";
 
-     echo "</div></a></td>";
+     echo "<td><a rel=\"facebox\" href=\"rate.php?domain=".$row["domain"]."\">".$row["userrating"]."/10";
+
+     echo "</a></td>";
      echo "<td>" . $row["score"] . "/100</td>\n";
      echo "<td>" . $row["country"] . "</td>\n";
      echo "<td class='' title=''>";
@@ -116,26 +98,9 @@ echo "✪";
      if ($row["service_wordpress"] == "t") {echo "<div id='wordpress' class='smlogo'></div>";}
      if ($row["xmpp"] == "t") {echo "<div id='xmpp'><img src='/images/icon-xmpp.png' width='16px' height='16px' title='XMPP chat server' alt='XMPP chat server'></div>";}
      echo "</td></tr>\n";
-if ($tt == 5) {
-echo <<<EOF
-<td colspan='12'>
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- podup2015 -->
-<ins class="adsbygoogle"
-     style="display:inline-block;width:728px;height:90px"
-     data-ad-client="ca-pub-3662181805557062"
-     data-ad-slot="2218925437"></ins>
-<script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-</td>
-EOF;
-}
 }
 pg_free_result($result);       
 pg_close($dbh);
-$country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
-//echo $country_code;
 ?>
 </tbody>
 </table>

@@ -1,7 +1,7 @@
 <html><head>
 <style type="text/css">
 #slider { margin: 10px;width:250px;display:inline-block; }
-#rating { height: 30px;width:30px; }
+#rating { height: 35px;width:35px; }
 </style>
 <script>
 $(document).ready(function() {
@@ -69,7 +69,7 @@ Your Name (or Diaspora handle)?<br><input id="username" name="username"><br>
 Your Profile URL?<br><input id="userurl" name="userurl"><br>
 Comment<br><textarea id="comment" name="comment"></textarea><br>
 Rating (1-10 scale, 10 high)<br><div id="slider"></div><input class="disabled" disabled="" id="rating" name="rating" value="10">
-<input class="btn primary" id="submitrating" type="submit" value="Submit your Rating">
+<br><input class="btn primary" id="submitrating" type="submit" value="Submit your Rating">
 <div class="alert-message warning" id="error" style="display:none"><span id="errortext">Some Error</span></div>
 </div>
 EOF;
