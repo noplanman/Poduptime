@@ -26,7 +26,7 @@ $podminedit = isset($_GET['podminedit'])?$_GET['podminedit']:null;
 <body>
     <nav class="navbar navbar-dark navbar-fixed-top bg-primary">
       <button type="button" class="navbar-toggler hidden-sm-up" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation"></button>
-      <a class="navbar-brand" href="#">Podupti.me</a>
+      <a class="navbar-brand" href="#">Poduptime</a>
       <div id="navbar" class="text-muted collapse">
         <nav class="nav navbar-nav float-xs-left">
           <a class="nav-item nav-link" href="/">Simple View</a>

@@ -16,33 +16,25 @@ echo $numrows;
 echo " #Diaspora Pods listed, Come see the privacy aware social network.' />";
 echo $numrows;
 ?>
-<style>
-.content {
-    width: 99%;
-}
-</style>
  pods that are open for signup now.
-Click column names to sort and find a pod.
-Show as: <a href="?mapview=true">Map</a> | <a href="/">Simple Table</a> | <a href="?advancedview=true">Advanced Table</a>
 <meta charset="utf-8">
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
-<table id="myTable" class="tablesorter zebra-striped" width="98%">
+<table id="myTable" class="table table-striped table-sm tablesorter table-hover tfont">
 <thead>
 <tr>
-<th width="220px">Diaspora Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
+<th>Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
 <th>Version<a class="tipsy" title="Version of Diaspora this pod runs">?</a></th>
 <th>Uptime<a class="tipsy" title="Percent of the time the pod is online for <?php echo date("F") ?>.">?</a></th>
-<th>Responsetime</th>
+<th>ms</th>
 <th>Signups</th>
-<th>Total Users<a class="tipsy" title="Number of total users on this pod.">?</a></th>
-<th>Active Last 6<a class="tipsy" title="Number of users active last 6 months on this pod.">?</a></th>
-<th>Active Last 1<a class="tipsy" title="Number of users active last 1 month on this pod.">?</a></th>
+<th>Total<a class="tipsy" title="Number of total users on this pod.">?</a></th>
+<th>Active 6<a class="tipsy" title="Number of users active last 6 months on this pod.">?</a></th>
+<th>Active 1<a class="tipsy" title="Number of users active last 1 month on this pod.">?</a></th>
 <th>Posts<a class="tipsy" title="Number of total posts on this pod.">?</a></th>
-<th>Comments<a class="tipsy" title="Number of total comments on this pod.">?</a></th>
-<th>Months<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
-<th>Rating<a class="tipsy" title="User and Admin rating for this pod.">?</a></th>
-<th>Score<a class="tipsy" title="System Score on a 100 scale">?</a></th>
-<th>SSL Info<a class="tipsy" title="">?</a></th>
+<th>Comm<a class="tipsy" title="Number of total comments on this pod.">?</a></th>
+<th>Month<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
+<th>Sc<a class="tipsy" title="System Score on a 100 scale">?</a></th>
+<th>conn<a class="tipsy" title="">?</a></th>
 <th>Delete?<a class="tipsy" title="Delete this pod from DB?">?</a></th>
 </tr>
 </thead>
@@ -79,7 +71,7 @@ else
 {$version=$row["shortversion"];$pre="This pod runs production code";}
 if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "") {$classver = "green";} elseif ($verdiff > 6) {$classver = "red";} else {$classver = "black";}
      echo "<td class='$classver'><div title='{$pre} codename: {$row["longversion"]} master version is: {$row["masterversion"]}' class='tipsy'>{$version}</div></td>";
-     echo "<td>" . $row["uptimelast7"] . "%</td>";
+     echo "<td>" . $row["uptimelast7"] . "</td>";
      echo "<td>" . $row["responsetimelast7"] . "</td>";
 if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $signup . "</td>";
@@ -90,21 +82,8 @@ if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
      echo "<td>" . $row["comment_counts"] . "</td>";
 if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=".$row["pingdomurl"];}
      echo "<td><div title='Last Check ".$row["dateupdated"]."' class='tipsy'><a target='new' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";
-if ($row["userrating"] >6) {$userratingclass="green";} elseif ($row["userrating"] <7) {$userratingclass="yellow";} elseif ($row["userrating"] <3) {$userratingclass="red";}
-     echo "<td><a rel=\"facebox\" href=\"rate.php?domain=".$row["domain"]."\"><div class='tipsy rating ".$userratingclass."' title='User rating is ".$row["userrating"]."/10 Auto Score is: " .$row["score"]. "/20'>";
-if ($row["userrating"] == 0) {echo "no rating yet";}
-for ($i = 0; $i < $row["userrating"]; $i++) { 
-echo "✪";
-}
-if ($row["adminrating"] >6) {$adminratingclass="green";} elseif ($row["adminrating"] <7) {$adminratingclass="yellow";} elseif ($row["adminrating"] <3) {$adminratingclass="red";}
-     echo "</div><br><div class='tipsy rating ".$adminratingclass."' backendscore='".$row["score"]."' title='Poduptime Approved rating is ".$row["adminrating"]."'>";
-for ($iw = 0; $iw < $row["adminrating"]; $iw++) {
-echo "✪";
-}
-
-     echo "</div></a></td>";
      echo "<td>" . $row["score"] . "</td>\n";
-     echo "<td><div class='tipsy' title='".$row["sslvalid"]."'>" . $row["sslvalid"] . "</td>\n";
+     echo "<td><div class='tipsy' title='".$row["sslvalid"]."'>con info </td>\n";
 ?>
 <td>
 <form method="post" action="db/kill.php"  target="_blank">
@@ -121,8 +100,6 @@ echo "✪";
  }
  pg_free_result($result);       
  pg_close($dbh);
-$country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
-//echo $country_code;
 ?>
 </tbody>
 </table>
