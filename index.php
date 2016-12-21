@@ -3,7 +3,7 @@
 <meta name="description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!" />
 <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="css/newstyle.css" />
-<link rel="stylesheet" href="css/facebox.css" />
+<link rel="stylesheet" href="bower_components/facebox/src/facebox.css" />
 <link rel="stylesheet" href="css/dashboard.css" />
 <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.min.css" />
 <meta property="og:url" content="https://podupti.me" />
@@ -95,7 +95,7 @@ $podminedit = isset($_GET['podminedit'])?$_GET['podminedit']:null;
 <script src="bower_components/tether/dist/js/tether.min.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="js/podup.js"></script>
-<script src="js/facebox.js"></script>
+<script src="bower_components/facebox/src/facebox.js"></script>
 <script src="bower_components/tablesorter/dist/js/jquery.tablesorter.min.js"></script>
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
 </body>
