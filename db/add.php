@@ -1,8 +1,8 @@
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
 <?php
 $valid=0;
-include('config.php');
-include('../logging.php');
+require_once __DIR__ . '/../logging.php';
+
 $log = new Logging();
 $log->lfile($log_dir."/add.php.log");
 if (!$_POST['url']){
@@ -25,6 +25,9 @@ if (strlen($_POST['url']) < 14){
   echo "API key bad needs to be like m58978-80abdb799f6ccf15e3e3787ee";$log->lwrite('api key too short '.$_POST['domain']);
   die;
 }
+
+require_once __DIR__ . '/../config.php';
+
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
   die("Error in connection: " . pg_last_error());

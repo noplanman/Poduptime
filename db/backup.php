@@ -1,5 +1,6 @@
 <?php
-include('config.php');
+require_once __DIR__ . '/../config.php';
+
 $keep = (60 * 60 * 6) * 1; 
 $dump_date = date("Ymd_Hs");
 $file_name = $backup_dir . "/dump_" . $dump_date . ".sql";

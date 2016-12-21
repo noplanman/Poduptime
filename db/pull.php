@@ -3,7 +3,7 @@ $debug = isset($_GET['debug'])?1:0;
 $debug=1;
 //$debug = isset($argv[1])?1:0;
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
-include('config.php');
+require_once __DIR__ . '/../config.php';
 
 //get master code version for diaspora pods
 $mv = curl_init();

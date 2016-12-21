@@ -1,5 +1,4 @@
 <?php
-include('config.php');
 if (!$_GET['domain']){
   echo "no pod domain given";
   die;
@@ -13,6 +12,9 @@ if (strlen($_GET['token']) < 6){
   die;
 }
 $domain = $_GET['domain'];
+
+require_once __DIR__ . '/../config.php';
+
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
   die("Error in connection: " . pg_last_error());

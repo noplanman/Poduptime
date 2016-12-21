@@ -1,11 +1,13 @@
 <?php
-include('config.php');
 $systemTimeZone = system('date +%Z');
 if (!$_POST['domain']){
   echo "no pod domain given";
   die;
 }
 $domain = $_POST['domain'];
+
+require_once __DIR__ . '/../config.php';
+
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
   die("Error in connection: " . pg_last_error());

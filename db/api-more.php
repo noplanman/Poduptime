@@ -1,7 +1,8 @@
 <?php
 //Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file.
 //this is just a single api for a pod for the android app to get data
-include('config.php');
+require_once __DIR__ . '/../config.php';
+
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
   die("Error in connection: " . pg_last_error());

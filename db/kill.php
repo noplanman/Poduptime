@@ -1,5 +1,4 @@
 <?php
-include('config.php');
 if (!$_POST['domain']){
   echo "no pod domain given";
   die;
@@ -12,8 +11,10 @@ if (!$_POST['action']){
   echo "no action selected";
   die;
 }
-
 $domain = $_POST['domain'];
+
+require_once __DIR__ . '/../config.php';
+
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
   die("Error in connection: " . pg_last_error());
