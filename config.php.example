@@ -16,7 +16,5 @@ $pgdb = '';
 $adminemail = '';
 //admin key for deleting pods, set this as a cookie on your own
 $adminkey = '';
-//mailchimp key
-$chimpkey = '';
 //apikey for public api calls
 $apikey= '';
