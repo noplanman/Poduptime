@@ -13,11 +13,12 @@
 <?php 
 $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
 $lastfile = 'db/last.data';
-$advancedview = isset($_GET['advancedview'])?$_GET['advancedview']:null;
-$mapview = isset($_GET['mapview'])?$_GET['mapview']:null;
-$cleanup = isset($_GET['cleanup'])?$_GET['cleanup']:null;
-$podmin = isset($_GET['podmin'])?$_GET['podmin']:null;
-$podminedit = isset($_GET['podminedit'])?$_GET['podminedit']:null;
+$advancedview = isset($_GET['advancedview']);
+$mapview = isset($_GET['mapview']);
+$cleanup = isset($_GET['cleanup']);
+$podmin = isset($_GET['podmin']);
+$podminedit = isset($_GET['podminedit']);
+$simpleview = !($advancedview || $mapview || $cleanup || $podmin || $podminedit);
 ?>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
@@ -29,9 +30,9 @@ $podminedit = isset($_GET['podminedit'])?$_GET['podminedit']:null;
       <a class="navbar-brand" href="#">Poduptime</a>
       <div id="navbar" class="text-muted collapse">
         <nav class="nav navbar-nav float-xs-left">
-          <a class="nav-item nav-link" href="/">Simple View</a>
-          <a class="nav-item nav-link" href="/?advancedview=true">Advanced View</a>
-          <a class="nav-item nav-link" href="/?mapview=true">Map View</a>
+          <a class="nav-item nav-link<?php $simpleview && print(' active'); ?>" href="/">Simple View</a>
+          <a class="nav-item nav-link<?php $advancedview && print(' active'); ?>" href="/?advancedview">Advanced View</a>
+          <a class="nav-item nav-link<?php $mapview && print(' active'); ?>" href="/?mapview">Map View</a>
         </nav>
     </div>
     </nav>
@@ -39,13 +40,13 @@ $podminedit = isset($_GET['podminedit'])?$_GET['podminedit']:null;
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="/">Simple View <span class="sr-only bg-dark">(current)</span></a></li>
-            <li><a href="/?advancedview=true">Advanced View</a></li>
-            <li><a href="/?mapview=true">Map View</a></li>
+            <li<?php $simpleview && print(' class="active"'); ?>><a href="/">Simple View<?php $simpleview && print(' <span class="sr-only bg-dark">(current)</span>'); ?></a></li>
+            <li<?php $advancedview && print(' class="active"'); ?>><a href="/?advancedview">Advanced View<?php $advancedview && print(' <span class="sr-only bg-dark">(current)</span>'); ?></a></li>
+            <li<?php $mapview && print(' class="active"'); ?>><a href="/?mapview">Map View<?php $mapview && print(' <span class="sr-only bg-dark">(current)</span>'); ?></a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="/?podmin=true">Add a pod</a></li>
-            <li><a href="/?podminedit=true">Edit a pod</a></li>
+            <li<?php $podmin && print(' class="active"'); ?>><a href="/?podmin">Add a pod<?php $podmin && print(' <span class="sr-only bg-dark">(current)</span>'); ?></a></li>
+            <li<?php $podminedit && print(' class="active"'); ?>><a href="/?podminedit">Edit a pod<?php $podminedit && print(' <span class="sr-only bg-dark">(current)</span>'); ?></a></li>
             <li><a href="https://diasporafoundation.org/">Host a pod</a></li>
           </ul>
           <ul class="nav nav-sidebar">
