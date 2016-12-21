@@ -4,17 +4,17 @@ require_once __DIR__ . '/config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
-  die("Error in connection: " . pg_last_error());
+  die('Error in connection: ' . pg_last_error());
 }  
 $hidden = isset($_GET['hidden'])?$_GET['hidden']:null;
-if ($hidden == "true") {
+if ($hidden == 'true') {
   $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY uptimelast7 DESC";
 } else {
-  $sql = "SELECT * FROM pods ORDER BY uptimelast7 DESC";
+  $sql = 'SELECT * FROM pods ORDER BY uptimelast7 DESC';
 }
 $result = pg_query($dbh, $sql);
 if (!$result) {
-  die("Error in SQL query: " . pg_last_error());
+  die('Error in SQL query: ' . pg_last_error());
 }   
 $numrows = pg_num_rows($result);
 echo "<meta property='og:title' content='"; 
@@ -28,7 +28,7 @@ echo " federated Pods listed, Come see the privacy aware social networks.' />";
 <tr>
 <th><a data-toggle='tooltip' data-placement='bottom' title="A pod is a site for you to set up your account.">Pod</a></th>
 <th><a data-toggle='tooltip' data-placement='bottom' title="Version of software this pod runs">Version</a></th>
-<th><a data-toggle='tooltip' data-placement='bottom' title="Percent of the time the pod is online for <?php echo date("F") ?>.">Uptime</a></th>
+<th><a data-toggle='tooltip' data-placement='bottom' title="Percent of the time the pod is online for <?php echo date('F') ?>.">Uptime</a></th>
 <th>IPv6</th>
 <th>Response Time</th>
 <th>Signups</th>
@@ -48,50 +48,51 @@ echo " federated Pods listed, Come see the privacy aware social networks.' />";
 <?php
  while ($row = pg_fetch_array($result)) {
 $tt=$tt+1;
-if ($row["secure"] == "true") {
-  $method = "https://";
-  $class="green";
-  $tip="This pod uses SSL encryption for traffic.";} 
+if ($row['secure'] == 'true') {
+  $method = 'https://';
+  $class= 'green';
+  $tip= 'This pod uses SSL encryption for traffic.';}
 else {
-  $method = "http://";
-  $class="red";
-  $tip="This pod does not offer SSL";
+  $method = 'http://';
+  $class= 'red';
+  $tip= 'This pod does not offer SSL';
 } 
-$verdiff =  str_replace(".", "", $row["masterversion"]) - str_replace('.', '', $row["shortversion"]);
-$pod_name = htmlentities($row["name"], ENT_QUOTES);
-$tip.="\n This {$row["softwarename"]} pod {$pod_name} has been watched for {$row["monthsmonitored"]} months with an uptime of {$row["uptimelast7"]}% this month and a response time average today of {$row["responsetimelast7"]}ms was last checked on {$row["dateupdated"]}. ";
-$tip.="On a scale of 100 this pod is a {$row["score"]} right now";
+$verdiff = str_replace('.', '', $row['masterversion']) - str_replace('.', '', $row['shortversion']);
+$pod_name = htmlentities($row['name'], ENT_QUOTES);
+$tip.="\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an uptime of {$row['uptimelast7']}% this month and a response time average today of {$row['responsetimelast7']}ms was last checked on {$row['dateupdated']}. ";
+$tip.="On a scale of 100 this pod is a {$row['score']} right now";
 
-     echo "<tr><td><a title='$tip' data-toggle='tooltip' data-placement='bottom' class='$class' target='new' href='". $method . $row["domain"] ."'>" . $row["domain"] . "</a></td>";
-"</div></td>";
+     echo "<tr><td><a title='$tip' data-toggle='tooltip' data-placement='bottom' class='$class' target='new' href='". $method . $row['domain'] . "'>" . $row['domain'] . '</a></td>';
+'</div></td>';
 
-if (stristr($row["shortversion"],'head')) 
-{$version=".dev";$pre = "This pod runs pre release 
-development code";} elseif (!$row["shortversion"]) 
-{$version="0";$pre = "This pod runs 
-unknown code";} 
+if (stristr($row['shortversion'],'head'))
+{$version = '.dev';$pre = 'This pod runs pre release
+development code';} elseif (!$row['shortversion'])
+{$version = '0';$pre = 'This pod runs
+unknown code';}
 else 
-{$version=$row["shortversion"];$pre="This pod runs production code";}
-if ($row["shortversion"] == $row["masterversion"] && $row["shortversion"] != "") {$classver = "green";} elseif ($verdiff > 6) {$classver = "red";} else {$classver = "black";}
-     echo "<td class='$classver'><div title='{$pre} codename: {$row["longversion"]} master version is: {$row["masterversion"]}' data-toggle='tooltip' data-placement='bottom'>{$version}</div></td>";
-     echo "<td>" . $row["uptimelast7"] . "%</td>";
-     echo "<td>" . $row["ipv6"] . "</td>";
-     echo "<td>" . $row["responsetimelast7"] . "</td>";
-if ($row["signup"] == 1) {$signup="Open";} else {$signup="Closed";}
-     echo "<td>" . $signup . "</td>";
-     echo "<td>" . $row["total_users"] . "</td>";
-     echo "<td>" . $row["active_users_halfyear"] . "</td>";
-     echo "<td>" . $row["active_users_monthly"] . "</td>";
-     echo "<td>" . $row["local_posts"] . "</td>";
-     echo "<td>" . $row["comment_counts"] . "</td>";
-if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} else {$moreurl = "/db/showuptimerobot.php?domain=".$row["domain"];}
-     echo "<td><div title='Last Check ".$row["dateupdated"]."' data-toggle='tooltip' data-placement='bottom'><a rel='facebox' href='".$moreurl."'>" . $row["monthsmonitored"] . "</a></div></td>";
+{$version =$row['shortversion'];$pre = 'This pod runs production code';}
+if ($row['shortversion'] == $row['masterversion'] && $row['shortversion'] != '') {$classver = 'green';} elseif ($verdiff > 6) {$classver = 'red';} else {$classver = 'black';}
+     echo "<td class='$classver'><div title='{$pre} codename: {$row['longversion']} master version is: {$row['masterversion']}' data-toggle='tooltip' data-placement='bottom'>{$version}</div></td>";
+     echo '<td>' . $row['uptimelast7'] . '%</td>';
+     echo '<td>' . $row['ipv6'] . '</td>';
+     echo '<td>' . $row['responsetimelast7'] . '</td>';
+if ($row['signup'] == 1) {$signup = 'Open';} else {$signup = 'Closed';}
+     echo '<td>' . $signup . '</td>';
+     echo '<td>' . $row['total_users'] . '</td>';
+     echo '<td>' . $row['active_users_halfyear'] . '</td>';
+     echo '<td>' . $row['active_users_monthly'] . '</td>';
+     echo '<td>' . $row['local_posts'] . '</td>';
+     echo '<td>' . $row['comment_counts'] . '</td>';
+if (strpos($row['pingdomurl'],
+  'pingdom.com')) {$moreurl = $row['pingdomurl'];} else {$moreurl = '/db/showuptimerobot.php?domain=' . $row['domain'];}
+     echo "<td><div title='Last Check ".$row['dateupdated'] . "' data-toggle='tooltip' data-placement='bottom'><a rel='facebox' href='" . $moreurl . "'>" . $row['monthsmonitored'] . '</a></div></td>';
 
-     echo "<td><a rel=\"facebox\" href=\"rate.php?domain=".$row["domain"]."\">".$row["userrating"]."/10";
+     echo "<td><a rel=\"facebox\" href=\"rate.php?domain=".$row['domain'] . "\">" . $row['userrating'] . '/10';
 
-     echo "</a></td>";
-     echo "<td>" . $row["score"] . "/100</td>\n";
-     echo "<td>" . $row["country"] . "</td>\n";
+     echo '</a></td>';
+     echo '<td>' . $row['score'] . "/100</td>\n";
+     echo '<td>' . $row['country'] . "</td>\n";
      echo "<td class='' title=''>";
      if ($row["service_facebook"] === "t") {echo "<div class='smlogo smlogo-facebook'></div>";}
      if ($row["service_twitter"] === "t") {echo "<div class='smlogo smlogo-twitter'></div>";}

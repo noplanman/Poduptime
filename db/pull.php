@@ -7,7 +7,7 @@ require_once __DIR__ . '/../config.php';
 
 //get master code version for diaspora pods
 $mv = curl_init();
-curl_setopt($mv, CURLOPT_URL, "https://raw.githubusercontent.com/diaspora/diaspora/master/config/defaults.yml");
+curl_setopt($mv, CURLOPT_URL, 'https://raw.githubusercontent.com/diaspora/diaspora/master/config/defaults.yml');
 curl_setopt($mv, CURLOPT_POST, 0);
 curl_setopt($mv, CURLOPT_HEADER, 0);
 curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
@@ -17,11 +17,11 @@ $outputmv = curl_exec($mv);
 curl_close($mv);
 preg_match('/number: "(.*?)"/',$outputmv,$version);
 $dmasterversion = trim($version[1], '"');
-if ($debug) {echo "Diaspora Masterversion: ".$dmasterversion."<br>";} 
+if ($debug) {echo 'Diaspora Masterversion: ' . $dmasterversion . '<br>';}
 
 //get master code version for freindica pods
 $mv = curl_init();
-curl_setopt($mv, CURLOPT_URL, "https://raw.githubusercontent.com/friendica/friendica/master/boot.php");
+curl_setopt($mv, CURLOPT_URL, 'https://raw.githubusercontent.com/friendica/friendica/master/boot.php');
 curl_setopt($mv, CURLOPT_POST, 0);
 curl_setopt($mv, CURLOPT_HEADER, 0);
 curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
@@ -31,25 +31,25 @@ $outputmv = curl_exec($mv);
 curl_close($mv);
 preg_match('/FRIENDICA_VERSION\',      \'(.*?)\'/',$outputmv,$version);
 $fmasterversion = trim($version[1], '"');
-if ($debug) {echo "Frendica Masterversion: ".$fmasterversion."<br>";}
+if ($debug) {echo 'Frendica Masterversion: ' . $fmasterversion . '<br>';}
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh2 = pg_connect("dbname=$pgdb user=$pguser password=$pgpass"); 
 if (!$dbh) {
-  die("Error in connection: " . pg_last_error());
+  die('Error in connection: ' . pg_last_error());
 }
 
 //foreach pod check it and update db
 $domain = isset($_GET['domain'])?$_GET['domain']:null;
 if ($domain) {
   $sql = "SELECT domain,pingdomurl,score,datecreated,weight FROM pods WHERE domain = $1";
-  $sleep="0";
+  $sleep= '0';
   $result = pg_query_params($dbh, $sql, array($domain));
 } else {
-  $sql = "SELECT domain,pingdomurl,score,datecreated,adminrating,weight FROM pods";
-  $sleep="1";
+  $sql = 'SELECT domain,pingdomurl,score,datecreated,adminrating,weight FROM pods';
+  $sleep= '1';
   $result = pg_query($dbh, $sql);
 }
-if (!$result) {die("Error in SQL query1: " . pg_last_error());}
+if (!$result) {die('Error in SQL query1: ' . pg_last_error());}
  
 while ($row = pg_fetch_all($result)) {
   $numrows = pg_num_rows($result);
@@ -64,7 +64,7 @@ while ($row = pg_fetch_all($result)) {
      $sqlforr = "SELECT * FROM rating_comments WHERE domain = $1";
      $ratings = pg_query_params($dbh, $sqlforr, array($domain));
      if (!$ratings) {
-       die("Error in SQL query2: " . pg_last_error());
+       die('Error in SQL query2: ' . pg_last_error());
      }
      $numratings = pg_num_rows($ratings);
      while($myrow = pg_fetch_assoc($ratings)) {
@@ -77,7 +77,7 @@ while ($row = pg_fetch_all($result)) {
 
      if ($userrate > 0) {$userrating = round(array_sum($userratingavg) / $userrate,2);}
      if ($adminrate > 0) {$adminrating = round(array_sum($adminratingavg) / $adminrate,2);}
-     if ($debug) {echo "Domain: ".$domain."<br>";}
+     if ($debug) {echo 'Domain: ' . $domain . '<br>';}
      if (!$userrating) {$userrating=0;}
      if ($userrating > 10) {$userrating=10;}
      if (!$adminrating) {$adminrating=0;}
@@ -105,7 +105,7 @@ while ($row = pg_fetch_all($result)) {
      unset($softwarename);
      unset($outputsslerror);
      $chss = curl_init();
-     curl_setopt($chss, CURLOPT_URL, "https://".$domain."/nodeinfo/1.0"); 
+     curl_setopt($chss, CURLOPT_URL, 'https://' . $domain . '/nodeinfo/1.0');
      curl_setopt($chss, CURLOPT_POST, 0);
      curl_setopt($chss, CURLOPT_HEADER, 0);
      curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 9);
@@ -117,7 +117,7 @@ while ($row = pg_fetch_all($result)) {
      curl_close($chss);
 
      $ch = curl_init();
-     curl_setopt($ch, CURLOPT_URL, "http://".$domain."/nodeinfo/1.0");
+     curl_setopt($ch, CURLOPT_URL, 'http://' . $domain . '/nodeinfo/1.0');
      curl_setopt($ch, CURLOPT_POST, 0);
      curl_setopt($ch, CURLOPT_HEADER, 0);
      curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 9);
@@ -126,24 +126,24 @@ while ($row = pg_fetch_all($result)) {
      curl_setopt($ch, CURLOPT_NOBODY, 0);
      $output = curl_exec($ch);
      curl_close($ch);
-     if ($debug) {echo "not-e"; print $output;}
-     if ($debug) {echo "e"; var_dump($outputssl);}
-     if (!$output && !$outpulssl && !$domain) {continue;echo "no connection to pod";}
-     if ($outputssl) {$secure="true";$outputresults=$outputssl;} elseif ($output) {$secure="false";$outputresults=$output;}
+     if ($debug) {echo 'not-e'; print $output;}
+     if ($debug) {echo 'e'; var_dump($outputssl);}
+     if (!$output && !$outpulssl && !$domain) {continue;echo 'no connection to pod';}
+     if ($outputssl) {$secure = 'true';$outputresults =$outputssl;} elseif ($output) {$secure = 'false';$outputresults =$output;}
      if (stristr($outputresults, 'openRegistrations')) {
        $score = $score +1;
-       if ($debug) {echo "Secure: ".$secure."<br>";}
+       if ($debug) {echo 'Secure: ' . $secure . '<br>';}
        //get new json from nodeinfo
        $jsonssl = json_decode($outputresults);
        var_dump($jsonssl);
        if ($jsonssl->openRegistrations === true) {$registrations_open=1;}
        $xdver = isset($jsonssl->software->version)?$jsonssl->software->version:0;
-       $dverr = explode("-",trim($xdver));
+       $dverr = explode('-',trim($xdver));
        $dver = $dverr[0];
-       if ($debug) {echo " <br> Version code: ".$dver."<br>";}
+       if ($debug) {echo ' <br> Version code: ' . $dver . '<br>';}
        if (!$dver) {$score = $score-2;}
-       $softwarename = isset($jsonssl->software->name)?$jsonssl->software->name:"null";
-       $name = isset($jsonssl->metadata->nodeName)?$jsonssl->metadata->nodeName:"null";
+       $softwarename = isset($jsonssl->software->name)?$jsonssl->software->name: 'null';
+       $name = isset($jsonssl->metadata->nodeName)?$jsonssl->metadata->nodeName: 'null';
        $total_users = isset($jsonssl->usage->users->total)?$jsonssl->usage->users->total:0;
        $active_users_halfyear = isset($jsonssl->usage->users->activeHalfyear)?$jsonssl->usage->users->activeHalfyear:0;
        $active_users_monthly = isset($jsonssl->usage->users->activeMonth)?$jsonssl->usage->users->activeMonth:0;
@@ -155,38 +155,38 @@ while ($row = pg_fetch_all($result)) {
        if (array_search('wordpress', $jsonssl->services->outbound) !== false) {$service_wordpress='true';} else {$service_wordpress='false';}
        if ($jsonssl->metadata->xmppChat === true) {$xmpp = 'true';} else {$xmpp = 'false';}
      } else {
-     $secure="false";
+     $secure= 'false';
      $score = $score - 1;
-     $dver =".connect error";
+     $dver = '.connect error';
      $dverr=0;
      //no diaspora cookie on either, lets set this one as hidden and notify someone its not really a pod
      //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
      }
      $signup = $registrations_open;
-     if ($debug) {echo "<br>Signup Open: ".$signup."<br>";}
+     if ($debug) {echo '<br>Signup Open: ' . $signup . '<br>';}
      $ip6 = escapeshellcmd('dig +nocmd '.$domain.' aaaa +noall +short');
      $ip = escapeshellcmd('dig +nocmd '.$domain.' a +noall +short');
      $ip6num = exec($ip6);
      $ipnum = exec($ip);
-     $test = strpos($ip6num, ":");
+     $test = strpos($ip6num, ':');
      if ($test === false) {
-       $ipv6="no";
+       $ipv6= 'no';
      } else {
-       $ipv6="yes";
+       $ipv6= 'yes';
      }
-     if ($debug) {echo "IP: ".$ipnum."<br>";}
+     if ($debug) {echo 'IP: ' . $ipnum . '<br>';}
      $location = geoip_record_by_name($ipnum);
-     if ($debug) {echo " Location: "; var_dump($location); echo "<br>";}
+     if ($debug) {echo ' Location: '; var_dump($location); echo '<br>';}
      if ($location) {
-       $ipdata = "Country: ".$location["country_name"]."\n";
-       $whois = "Country: ".$location["country_name"]."\n Lat:".$location["latitude"]." Long:".$location["longitude"];
-       $country=$location["country_code"];
-       $city=isset($location->city)?iconv("UTF-8", "UTF-8//IGNORE", $location->city):null;
-       $state="";
+       $ipdata = 'Country: ' . $location['country_name'] . "\n";
+       $whois = 'Country: ' . $location['country_name'] . "\n Lat:" . $location['latitude'] . ' Long:' . $location['longitude'];
+       $country=$location['country_code'];
+       $city=isset($location->city)?iconv('UTF-8', 'UTF-8//IGNORE', $location->city):null;
+       $state= '';
        $months=0;
        $uptime=0;
-       $lat=$location["latitude"];
-       $long=$location["longitude"];
+       $lat=$location['latitude'];
+       $long=$location['longitude'];
        //if lat and long are just a generic country with no detail lets make some tail up or openmap just stacks them all on top another
        if (strlen($lat) < 4) {
          $lat = $lat + (rand(1, 15) / 10);
@@ -195,13 +195,13 @@ while ($row = pg_fetch_all($result)) {
          $long = $long + (rand(1, 15) / 10);
        }
      }
-     echo "<br>";
-     $connection="";
+     echo '<br>';
+     $connection= '';
      $pingdomdate = date('Y-m-d H:i:s');
-     if (strpos($row[$i]['pingdomurl'], "pingdom.com")) {
+     if (strpos($row[$i]['pingdomurl'], 'pingdom.com')) {
      //curl the pingdom page 
         $ping = curl_init();
-        $thismonth = "/".date("Y")."/".date("m");
+        $thismonth = '/' . date('Y') . '/' . date('m');
         curl_setopt($ping, CURLOPT_URL, $row[$i]['pingdomurl'].$thismonth);
 	if ($debug) {echo $row[$i]['pingdomurl'].$thismonth;}
         curl_setopt($ping, CURLOPT_POST, 0);
@@ -214,7 +214,7 @@ while ($row = pg_fetch_all($result)) {
         $pingdom = curl_exec($ping);
 	$info = curl_getinfo($ping);
         curl_close($ping);
-        if ($debug) {echo "<br>Pingdom code: ".$info['http_code']."<br>";}
+        if ($debug) {echo '<br>Pingdom code: ' . $info['http_code'] . '<br>';}
         if ($info['http_code'] == 200) {
           //response time
           preg_match_all('/<h3>Avg. resp. time this month<\/h3>
@@ -222,17 +222,17 @@ while ($row = pg_fetch_all($result)) {
           $responsetime = $matcheach[1][0];
           //months monitored
           preg_match_all('/"historySelect">\s*(.*?)\s*<\/select/is',$pingdom,$matchhistory);
-          $implodemonths = implode(" ", $matchhistory[1]);
+          $implodemonths = implode(' ', $matchhistory[1]);
           preg_match_all('/<option(.*?)/s',$implodemonths,$matchdates);
           $months = isset($matchdates[0])?count($matchdates[0]):0;
           //uptime %
           preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)%</',$pingdom,$matchper);
-          $uptime = isset($matchper[1][0])?preg_replace("/,/", ".", $matchper[1][0]):0;
+          $uptime = isset($matchper[1][0])?preg_replace('/,/', '.', $matchper[1][0]):0;
           $pingdomdate = date('Y-m-d H:i:s');
-          if (strpos($pingdom,"class=\"up\"")) { $live="up"; }
-          elseif (strpos($pingdom,"class=\"down\"")) { $live="down"; }
-          elseif (strpos($pingdom,"class=\"paused\"")) { $live="paused";}
-          else {$live="error";$score=$score-2;}
+          if (strpos($pingdom,"class=\"up\"")) { $live= 'up'; }
+          elseif (strpos($pingdom,"class=\"down\"")) { $live= 'down'; }
+          elseif (strpos($pingdom,"class=\"paused\"")) { $live= 'paused';}
+          else {$live = 'error';$score = $score - 2;}
         } else {
         //pingdom url is <> 200 so stats are gone, lower score
         $score=$score-2;
@@ -240,7 +240,7 @@ while ($row = pg_fetch_all($result)) {
     } else {
     //do uptimerobot API instead
     $ping = curl_init();
-    curl_setopt($ping, CURLOPT_URL, "http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=".$row[$i]['pingdomurl']);
+    curl_setopt($ping, CURLOPT_URL, 'http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=' . $row[$i]['pingdomurl']);
     curl_setopt($ping, CURLOPT_POST, 0);
     curl_setopt($ping, CURLOPT_HEADER, 0);
     curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);
@@ -250,33 +250,33 @@ while ($row = pg_fetch_all($result)) {
     curl_setopt($ping, CURLOPT_FOLLOWLOCATION, true);
     $uptimerobot = curl_exec($ping);
     curl_close($ping);
-    $json_encap = "jsonUptimeRobotApi()";
+    $json_encap = 'jsonUptimeRobotApi()';
     $up2 = substr ($uptimerobot, strlen($json_encap) - 1, strlen ($uptimerobot) - strlen($json_encap)); 
     $uptr = json_decode($up2);
-    if ($debug) {print_r($uptr);echo "<br>";}
+    if ($debug) {print_r($uptr);echo '<br>';}
     if (!$uptr) {$score=$score-2;}
     $responsetime = $uptr->monitors->monitor{'0'}->responsetime{'0'}->value;
     $uptimerobotstat = $uptr->stat;
     $uptime = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
     $diff = abs(strtotime(date('Y-m-d H:i:s')) - strtotime($dateadded));
     $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
-    if ($uptr->monitors->monitor{'0'}->status == 2) {$live = "Up";}
-    if ($uptr->monitors->monitor{'0'}->status == 0) {$live = "Paused";}
-    if ($uptr->monitors->monitor{'0'}->status == 1) {$live = "Not Checked Yet";}
-    if ($uptr->monitors->monitor{'0'}->status == 8) {$live = "Seems Down";}
-    if ($uptr->monitors->monitor{'0'}->status == 9) {$live = "Down";}
+    if ($uptr->monitors->monitor{'0'}->status == 2) {$live = 'Up';}
+    if ($uptr->monitors->monitor{'0'}->status == 0) {$live = 'Paused';}
+    if ($uptr->monitors->monitor{'0'}->status == 1) {$live = 'Not Checked Yet';}
+    if ($uptr->monitors->monitor{'0'}->status == 8) {$live = 'Seems Down';}
+    if ($uptr->monitors->monitor{'0'}->status == 9) {$live = 'Down';}
     $pingdomdate =  date('Y-m-d H:i:s');
-    if ($uptimerobotstat == "fail" || $live <> "Up") {
+    if ($uptimerobotstat == 'fail' || $live <> 'Up') {
       $score=$score-2;
     }
   }
-  if ($softwarename == "diaspora") {$masterversion = $dmasterversion;} elseif ($softwarename == "friendica") {$masterversion = $fmasterversion;}
+  if ($softwarename == 'diaspora') {$masterversion = $dmasterversion;} elseif ($softwarename == 'friendica') {$masterversion = $fmasterversion;}
      if ($score > 70) {
-       $hidden = "no";
+       $hidden = 'no';
      } else {
-       $hidden = "yes";
+       $hidden = 'yes';
      }
-     if ($debug) {echo "Hidden: ".$hidden."<br>";}
+     if ($debug) {echo 'Hidden: ' . $hidden . '<br>';}
      // lets cap the scores or you can go too high or too low to never be effected by them
      if ($score > 100) {
        $score = 100;
@@ -295,10 +295,10 @@ while ($row = pg_fetch_all($result)) {
   WHERE domain=$34";
   $result = pg_query_params($dbh, $sql, array($gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $xmpp, $softwarename, $outputsslerror));
   if (!$result) {
-    die("Error in SQL query3: " . pg_last_error());
+    die('Error in SQL query3: ' . pg_last_error());
   }
-  if ($debug) {echo "<br>Score out of 100: ".$score."<br>";}
-  if (!$debug) {echo "Success";}
+  if ($debug) {echo '<br>Score out of 100: ' . $score . '<br>';}
+  if (!$debug) {echo 'Success';}
   //end foreach
   }
 }     

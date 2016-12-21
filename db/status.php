@@ -1,5 +1,5 @@
 <?php
-$dur = (time() - filemtime("last.data"));
+$dur = (time() - filemtime('last.data'));
 echo $dur;
 if ($dur > 4500) {
   http_response_code(500);

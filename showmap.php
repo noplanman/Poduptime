@@ -1,7 +1,7 @@
 <?php
 //focus map to the users side of the globe
 //Cloudflare country code pull
-$country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
+$country_code = $_SERVER['HTTP_CF_IPCOUNTRY'];
 
 $csv = array_map('str_getcsv', file('db/country_latlon.csv'));
 foreach ($csv as $cords) {
@@ -25,12 +25,12 @@ require_once __DIR__ . '/config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
-  die("Error in connection: " . pg_last_error());
+  die('Error in connection: ' . pg_last_error());
 }
 $sql = "SELECT * FROM pods WHERE hidden <> 'yes'";
 $result = pg_query($dbh, $sql);
 if (!$result) {
-  die("Error in SQL query: " . pg_last_error());
+  die('Error in SQL query: ' . pg_last_error());
 }
 $numrows = pg_num_rows($result);
 while ($row = pg_fetch_array($result)) {
@@ -45,7 +45,7 @@ while ($row = pg_fetch_array($result)) {
   if ($row["secure"] == "true") {$ur="https";} else {$ur="http";}
 echo <<<EOF
 { "type": "Feature", "id":"1", "properties":
-{ "html":"{$pod_name}<br><a href=\'{$ur}://{$row["domain"]}\'>Visit</a><br> Open Signup: {$signup}<br> Users: {$row["active_users_halfyear"]}<br> Uptime: {$row["uptimelast7"]}%<br> Services:{$feat}" }, "geometry": { "type": "Point", "coordinates": [{$row["long"]},{$row["lat"]} ] } },
+{ "html":"{$pod_name}<br><a href=\'{$ur}://{$row['domain']}\'>Visit</a><br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptimelast7']}%<br> Services:{$feat}" }, "geometry": { "type": "Point", "coordinates": [{$row['long']},{$row['lat']} ] } },
 EOF;
 }
 ?>
