@@ -1,17 +1,17 @@
 <?php
 /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
 //backup directory
-$backup_dir = "/var/www/podup/backup";
+$backup_dir = '/var/www/podup/backup';
 //log directory
-$log_dir = "/var/www/podup/log";
+$log_dir = '/var/www/podup/log';
 //location of pg dump
-$pg_dump_dir = "/usr/bin";
+$pg_dump_dir = '/usr/bin';
 //db username
-$pguser='';
+$pguser = '';
 //db password
-$pgpass='';
+$pgpass = '';
 //db name
-$pgdb='';
+$pgdb = '';
 //admin email for forms
 $adminemail = '';
 //admin key for deleting pods, set this as a cookie on your own
@@ -20,4 +20,3 @@ $adminkey = '';
 $chimpkey = '';
 //apikey for public api calls
 $apikey= '';
-?>

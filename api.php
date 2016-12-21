@@ -1,8 +1,9 @@
 <?php
-
 //Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file.
 if ($_GET['key'] != "4r45tg") {die;}
-include('db/config.php');
+
+require_once __DIR__ . '/config.php';
+
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
   die("Error in connection: " . pg_last_error());

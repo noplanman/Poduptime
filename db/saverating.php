@@ -1,5 +1,4 @@
 <?php
-include('config.php');
 if (!$_POST['username']){
   echo "no username given";
   die;
@@ -20,6 +19,9 @@ if (!$_POST['rating']){
   echo "no rating given";
   die;
 }
+
+require_once __DIR__ . '/../config.php';
+
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
   die("Error in connection: " . pg_last_error());

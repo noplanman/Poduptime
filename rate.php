@@ -36,7 +36,8 @@ $("#slider").slider({ animate: true, max: 10, min: 1, step: 1, value: 10, stop: 
 <body>
 <div style="height:500px;width:900px;">
 <?php
-include('db/config.php');
+require_once __DIR__ . '/config.php';
+
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
   die("Error in connection: " . pg_last_error());

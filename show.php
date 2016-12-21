@@ -1,6 +1,7 @@
 <?php
 $tt=0;
-include('db/config.php');
+require_once __DIR__ . '/config.php';
+
 $country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
