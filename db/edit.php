@@ -1,15 +1,12 @@
 <?php
 if (!$_GET['domain']){
-  echo "no pod domain given";
-  die;
+  die('no pod domain given');
 }
 if (!$_GET['token']){
-  echo "no token given";
-  die;
+  die('no token given');
 }
 if (strlen($_GET['token']) < 6){
-  echo "bad token";
-  die;
+  die('bad token');
 }
 $domain = $_GET['domain'];
 
@@ -17,62 +14,67 @@ require_once __DIR__ . '/../config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
-  die("Error in connection: " . pg_last_error());
+  die('Error in connection: ' . pg_last_error());
 }
 $sql = "SELECT domain,email,token,tokenexpire,pingdomurl,weight FROM pods WHERE domain = '$domain'";
 $result = pg_query($dbh, $sql);
 if (!$result) {
-  die("Error in SQL query: " . pg_last_error());
+  die('Error in SQL query: ' . pg_last_error());
 }
 while ($row = pg_fetch_array($result)) {
-  if ($row["token"] <> $_GET['token']) {
-    echo "token not a match";die;
+  if ($row['token'] <> $_GET['token']) {
+    die('token not a match');
   }
-  if ($row["tokenexpire"] < date("Y-m-d H:i:s", time()))  {
-    echo "token expired";die;
+  if ($row['tokenexpire'] < date('Y-m-d H:i:s', time()))  {
+    die('token expired');
   }
   //delete pod
-  if ($_GET['delete'] == $row["token"]){
+  if ($_GET['delete'] == $row['token']){
   $sql = "DELETE FROM pods WHERE domain = $1";
   $result = pg_query_params($dbh, $sql, array($_GET['domain']));
     if (!$result) {
-      die("Error in SQL query: " . pg_last_error());
+      die('Error in SQL query: ' . pg_last_error());
     } else {
-    echo "pod removed from DB";
+      echo 'pod removed from DB';
     }
   }
   //save and exit
-  if ($_GET['save'] == $row["token"]){
+  if ($_GET['save'] == $row['token']){
     if ($_GET['weight'] > 10) {
-      echo "10 is max weight";
-      die;
+      die('10 is max weight');
     }
     $sql = "UPDATE pods SET email=$1, pingdomurl=$2, weight=$3 WHERE domain = $4";
     $result = pg_query_params($dbh, $sql, array($_GET['email'],$_GET['pingdomurl'],$_GET['weight'],$_GET['domain']));
     if (!$result) {
-      die("Error in SQL query: " . pg_last_error());
+      die('Error in SQL query: ' . pg_last_error());
     }
-    $to = $_GET["email"];
-    $subject = "Edit notice from poduptime ";
-    $message = "Data for " . $_GET["domain"] . " Updated. If it was not you reply and let me know! \n\n";
+    $to = $_GET['email'];
+    $subject = 'Edit notice from poduptime ';
+    $message = 'Data for ' . $_GET['domain'] . " Updated. If it was not you reply and let me know! \n\n";
     $headers = "From: support@diasp.org\r\nCc:support@diasp.org,". $_GET['oldemail'] ."\r\n";
     @mail( $to, $subject, $message, $headers );
     pg_free_result($result);
     pg_close($dbh);
-    echo "Data saved. Will go into effect on next hourly change";
-    die;
+    die('Data saved. Will go into effect on next hourly change');
   }
 
   //form     
-  echo "Authorized to edit <b>" . $domain . "</b> until " .$row["tokenexpire"] . "<br>";
-  echo "<form action='' method='get'><input type=hidden name=oldemail value=" . $row["email"] . "><input type=hidden name=save value=" . $_GET['token'] . "><input type=hidden name=token value=" . $_GET['token'] . "><input type=hidden name=domain value=" . $_GET['domain'] . ">";
-  echo "Stats Key <input type=text size=50 name=pingdomurl value=" .$row["pingdomurl"] . ">Uptimerobot API key for this monitor<br>"; 
-  echo "Email <input type=text size=20 name=email value=" .$row["email"] . "><br>";
-  echo "Weight <input type=text size=2 name=weight value=" .$row["weight"] . "> This lets you weight your pod lower on the list if you have too much trafic coming in, 10 is the norm use lower to move down the list.<br>";
-  echo "<input type=submit name=submit><br><br><br>";
+  echo 'Authorized to edit <b>' . $domain . '</b> until ' . $row['tokenexpire'] . '<br>';
+  echo '<form action="" method="get">';
+  echo '<input type="hidden" name="oldemail" value="' . $row['email'] . '">';
+  echo '<input type="hidden" name="save" value="' . $_GET['token'] . '">';
+  echo '<input type="hidden" name="token" value="' . $_GET['token'] . '">';
+  echo '<input type="hidden" name="domain" value="' . $_GET['domain'] . '">';
+  echo 'Stats Key <input type="text" size="50" name="pingdomurl" value="' . $row['pingdomurl'] . '"">Uptimerobot API key for this monitor<br>';
+  echo 'Email <input type="text" size="20" name="email" value="' . $row['email'] . '"><br>';
+  echo 'Weight <input type="text" size="2" name="weight" value="' . $row['weight'] . '"> This lets you weight your pod lower on the list if you have too much trafic coming in, 10 is the norm use lower to move down the list.<br>';
+  echo '<input type="submit" name="submit">';
+  echo '</form><br><br><br>';
 
-  echo "<form action='' method='get'><input type=hidden name=delete value=" . $_GET['token'] . "><input type=hidden name=token value=" . $_GET['token'] . "><input type=hidden name=domain value=" . $_GET['domain'] . ">";
-  echo "WARNING: This can not be undone, you will need to add your pod again if you want back on list: <input type=submit name=submit value=delete><br><br><br>";
-
+  echo '<form action="" method="get">';
+  echo '<input type="hidden" name="delete" value="' . $_GET['token'] . '">';
+  echo '<input type="hidden" name="token" value="' . $_GET['token'] . '">';
+  echo '<input type="hidden" name="domain" value="' . $_GET['domain'] . '">';
+  echo 'WARNING: This can not be undone, you will need to add your pod again if you want back on list: <input type="submit" name="submit" value="delete">';
+  echo '</form><br><br><br>';
 }
-?>
