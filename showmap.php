@@ -1,7 +1,7 @@
 <?php
 //focus map to the users side of the globe
 //Cloudflare country code pull
-$country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
+$country_code = $_SERVER['HTTP_CF_IPCOUNTRY'];
 
 $csv = array_map('str_getcsv', file('db/country_latlon.csv'));
 foreach ($csv as $cords) {
@@ -18,45 +18,57 @@ foreach ($csv as $cords) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <script type="text/javascript">
 var geoJsonData = {
-"type": "FeatureCollection",
-"features": [
+'type': 'FeatureCollection',
+'features': [
 <?php
 require_once __DIR__ . '/config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
-  die("Error in connection: " . pg_last_error());
+  die('Error in connection: ' . pg_last_error());
 }
 $sql = "SELECT * FROM pods WHERE hidden <> 'yes'";
 $result = pg_query($dbh, $sql);
 if (!$result) {
-  die("Error in SQL query: " . pg_last_error());
+  die('Error in SQL query: ' . pg_last_error());
 }
 $numrows = pg_num_rows($result);
 while ($row = pg_fetch_array($result)) {
-  // If this isn't the first entry, put a comma to seperate the entries.
-  $feat !== null && print ',';
-
   $feat = '';
-  if ($row["service_facebook"] === "t") {$feat .= "<div class='smlogo smlogo-facebook'></div>";}
-  if ($row["service_twitter"] === "t") {$feat .= "<div class='smlogo smlogo-twitter'></div>";}
-  if ($row["service_tumblr"] === "t") {$feat .= "<div class='smlogo smlogo-tumblr'></div>";}
-  if ($row["service_wordpress"] === "t") {$feat .= "<div class='smlogo smlogo-wordpress'></div>";}
-  if ($row["xmpp"] === "t") {$feat .= "<div class='smlogo smlogo-xmpp'><img src='/images/icon-xmpp.png' width='16' height='16' title='XMPP chat server' alt='XMPP chat server'></div>";}
-  unset($signup);if ($row["signup"] == 1) {$signup = "yes";} else {$signup= "no";}
-  $pod_name = htmlentities($row["name"], ENT_QUOTES);
-  if ($row["secure"] == "true") {$ur="https";} else {$ur="http";}
+  if ($row['service_facebook'] === 't') {$feat .= '<div class="smlogo smlogo-facebook"></div>';}
+  if ($row['service_twitter'] === 't') {$feat .= '<div class="smlogo smlogo-twitter"></div>';}
+  if ($row['service_tumblr'] === 't') {$feat .= '<div class="smlogo smlogo-tumblr"></div>';}
+  if ($row['service_wordpress'] === 't') {$feat .= '<div class="smlogo smlogo-wordpress"></div>';}
+  if ($row['xmpp'] === 't') {$feat .= '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';}
+  unset($signup);if ($row['signup'] == 1) {$signup = 'yes';} else {$signup = 'no';}
+  $pod_name = htmlentities($row['name'], ENT_QUOTES);
+  if ($row['secure'] == 'true') {$ur = 'https';} else {$ur = 'http';}
 echo <<<EOF
-{ "type": "Feature", "id":"1", "properties":
-{ "html":"{$pod_name}<br><a href=\'{$ur}://{$row["domain"]}\'>Visit</a><br> Open Signup: {$signup}<br> Users: {$row["active_users_halfyear"]}<br> Uptime: {$row["uptimelast7"]}%<br> Services:{$feat}" }, "geometry": { "type": "Point", "coordinates": [{$row["long"]},{$row["lat"]} ] } }
+{
+  'type': 'Feature',
+  'id': '1',
+  'properties' : {
+    'html': '{$pod_name}<br><a href="{$ur}://{$row['domain']}">Visit</a><br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptimelast7']}%<br> Services:{$feat}'
+  },
+  'geometry': {
+    'type': 'Point',
+    'coordinates': [{$row['long']},{$row['lat']} ]
+  }
+},
 EOF;
 }
 ?>
+  {
+    'type': 'Feature',
+    'id':'1',
+    'properties': { 'html': '' },
+    'geometry': { 'type': 'Point', 'coordinates': [0,0 ] }
+  }
 ]
 };
 var tiles = L.tileLayer('https://{s}.tiles.mapbox.com/v4/diasporg.l615e519/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZGlhc3BvcmciLCJhIjoibTVBaldtayJ9.HdGPBIFeZyNKKQqCmU11nA', {
 maxZoom: 18,
-attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> <a class='mapbox-improve-map' href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a>"
+attribution: '<a href="https://www.mapbox.com/about/maps/" target="_blank">&copy; Mapbox &copy; OpenStreetMap</a> <a class="mapbox-improve-map" href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a>'
 });
 var map = L.map('map', { zoom: 5, center: [<?php echo $lat; ?>, <?php echo $long; ?>] }).addLayer(tiles);
 var markers = L.markerClusterGroup({maxClusterRadius: 2, animateAddingMarkers: true, iconCreateFunction: function(cluster) {return new L.DivIcon({ html: '<b class="icon">' + cluster.getChildCount() + '</b>', className: 'mycluster', iconSize: L.point(35, 35) });}});
