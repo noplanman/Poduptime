@@ -32,10 +32,11 @@ if (!$result) {
 $numrows = pg_num_rows($result);
 while ($row = pg_fetch_array($result)) {
   unset($feat);
-  if ($row["service_facebook"] == "t") {$feat.= "<div id=\'facebook\' class=\'smlogo\'></div>";}
-  if ($row["service_twitter"] == "t") {$feat.= "<div id=\'twitter\' class=\'smlogo\'></div>";}
-  if ($row["service_tumblr"] == "t") {$feat.= "<div id=\'tumblr\' class=\'smlogo\'></div>";}
-  if ($row["service_wordpress"] == "t") {$feat.= "<div id=\'wordpress\' class=\'smlogo\'></div>";}
+  if ($row["service_facebook"] === "t") {$feat .= "<div class='smlogo smlogo-facebook'></div>";}
+  if ($row["service_twitter"] === "t") {$feat .= "<div class='smlogo smlogo-twitter'></div>";}
+  if ($row["service_tumblr"] === "t") {$feat .= "<div class='smlogo smlogo-tumblr'></div>";}
+  if ($row["service_wordpress"] === "t") {$feat .= "<div class='smlogo smlogo-wordpress'></div>";}
+  if ($row["xmpp"] === "t") {$feat .= "<div class='smlogo smlogo-xmpp'><img src='/images/icon-xmpp.png' width='16' height='16' title='XMPP chat server' alt='XMPP chat server'></div>";}
   unset($signup);if ($row["signup"] == 1) {$signup = "yes";} else {$signup= "no";}
   $pod_name = htmlentities($row["name"], ENT_QUOTES);
   if ($row["secure"] == "true") {$ur="https";} else {$ur="http";}

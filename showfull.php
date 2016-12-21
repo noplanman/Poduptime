@@ -92,11 +92,11 @@ if (strpos($row["pingdomurl"], "pingdom.com")) {$moreurl = $row["pingdomurl"];} 
      echo "<td>" . $row["score"] . "/100</td>\n";
      echo "<td>" . $row["country"] . "</td>\n";
      echo "<td class='' title=''>";
-     if ($row["service_facebook"] == "t") {echo "<div id='facebook' class='smlogo'></div>";}
-     if ($row["service_twitter"] == "t") {echo "<div id='twitter' class='smlogo'></div>";}
-     if ($row["service_tumblr"] == "t") {echo "<div id='tumblr' class='smlogo'></div>";}
-     if ($row["service_wordpress"] == "t") {echo "<div id='wordpress' class='smlogo'></div>";}
-     if ($row["xmpp"] == "t") {echo "<div id='xmpp'><img src='/images/icon-xmpp.png' width='16px' height='16px' title='XMPP chat server' alt='XMPP chat server'></div>";}
+     if ($row["service_facebook"] === "t") {echo "<div class='smlogo smlogo-facebook'></div>";}
+     if ($row["service_twitter"] === "t") {echo "<div class='smlogo smlogo-twitter'></div>";}
+     if ($row["service_tumblr"] === "t") {echo "<div class='smlogo smlogo-tumblr'></div>";}
+     if ($row["service_wordpress"] === "t") {echo "<div class='smlogo smlogo-wordpress'></div>";}
+     if ($row["xmpp"] === "t") {echo "<div class='smlogo smlogo-xmpp'><img src='/images/icon-xmpp.png' width='16' height='16' title='XMPP chat server' alt='XMPP chat server'></div>";}
      echo "</td></tr>\n";
 }
 pg_free_result($result);       

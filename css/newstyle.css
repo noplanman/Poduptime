@@ -38,22 +38,25 @@ width: 16px;
 height: 16px;
 background: url('//podupti.me/img/smlogo.png') 0 0;
 display: inline-block;
+margin: 0 2px;
 }
-#twitter {
+.smlogo-twitter {
 background-position: 0 -776px;
 }
-#facebook {
+.smlogo-facebook {
 background-position: 0 -824px;
 }
-#tumblr {
+.smlogo-tumblr {
 background-position: 0 -792px;
 }
-#wordpress {
+.smlogo-wordpress {
 background-position: 0 -656px;
 }
-#xmpp {
-background-position: 0 -656px;
-display: inline-block;
+.smlogo-xmpp {
+background: none;
+}
+.smlogo-xmpp img {
+vertical-align: unset;
 }
 .morehover {
 display: inline-block;
