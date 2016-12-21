@@ -1,0 +1,28 @@
+{
+  "name": "poduptime",
+  "homepage": "https://github.com/diasporg/Poduptime",
+  "authors": [
+    "David Morley <support@diasp.org>"
+  ],
+  "description": "Diaspora pod checking site",
+  "main": "",
+  "keywords": [
+    "diaspora"
+  ],
+  "license": "AGPL",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "v4.0.0-alpha.5",
+    "jquery-ui": "^1.12.1",
+    "tablesorter": "jquery.tablesorter#^2.28.3",
+    "leaflet": "^1.0.2",
+    "leaflet.markercluster": "^1.0.0"
+  }
+}
