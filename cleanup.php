@@ -11,13 +11,10 @@ require_once __DIR__ . '/config.php';
  if (!$result) {
      die('Error in SQL query: ' . pg_last_error());
  }   
- $numrows = pg_num_rows($result);
-echo "<meta property='og:title' content='"; 
-echo $numrows;
-echo " #Diaspora Pods listed, Come see the privacy aware social network.' />";
-echo $numrows;
+$numrows = pg_num_rows($result);
 ?>
- pods that are open for signup now.
+
+<meta property="og:title" content="<?php echo $numrows; ?> #Diaspora Pods listed, Come see the privacy aware social network." /><?php echo $numrows; ?> pods that are open for signup now.
 <meta charset="utf-8">
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
 <table id="myTable" class="table table-striped table-sm tablesorter table-hover tfont">
@@ -57,11 +54,17 @@ $verdiff = str_replace('.', '', $row['masterversion']) - str_replace('.', '', $r
 
 
 $pod_name = htmlentities($row['name'], ENT_QUOTES);
-$tip.="\n This pod {$pod_name} has been watched for {$row['monthsmonitored']} months and its average ping time is {$row['responsetimelast7']} with uptime of {$row['uptimelast7']}% this month and was last checked on {$row['dateupdated']}. ";
-$tip.="On a score of -20 to +20 this pod is a {$row['score']} right now";
+$tip .= sprintf(
+  "\n" . 'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of -20 to +20 this pod is a %6$s right now',
+  $pod_name,
+  $row['monthsmonitored'],
+  $row['responsetimelast7'],
+  $row['uptimelast7'],
+  $row['dateupdated'],
+  $row['score']
+);
 
-     echo "<tr><td><a class='$class' target='new' href='". $method . $row['domain'] . "'>" . $row['domain'] . " <div title='$tip' class='tipsy' style='display: inline-block'>?</div></a></td>";
-'</div></td>';
+  echo '<tr><td><a class="' . $class . '" target="_self" href="' . $method . $row['domain'] . '">' . $row['domain'] . '<div title="' . $tip . '" class="tipsy" style="display: inline-block">?</div></a></td>';
 
 if (stristr($row['shortversion'],'head'))
 {$version = '.dev';$pre = 'This pod runs pre release
@@ -71,7 +74,7 @@ unknown code';}
 else 
 {$version =$row['shortversion'];$pre = 'This pod runs production code';}
 if ($row['shortversion'] == $row['masterversion'] && $row['shortversion'] != '') {$classver = 'green';} elseif ($verdiff > 6) {$classver = 'red';} else {$classver = 'black';}
-     echo "<td class='$classver'><div title='{$pre} codename: {$row['longversion']} master version is: {$row['masterversion']}' class='tipsy'>{$version}</div></td>";
+     echo '<td class="' . $classver . '"><div title="' . $pre . ' codename: ' . $row['longversion'] . ' master version is: ' . $row['masterversion'] . '" class="tipsy">' . $version . '</div></td>';
      echo '<td>' . $row['uptimelast7'] . '</td>';
      echo '<td>' . $row['responsetimelast7'] . '</td>';
 if ($row['signup'] == 1) {$signup = 'Open';} else {$signup = 'Closed';}
@@ -83,22 +86,22 @@ if ($row['signup'] == 1) {$signup = 'Open';} else {$signup = 'Closed';}
      echo '<td>' . $row['comment_counts'] . '</td>';
 if (strpos($row['pingdomurl'],
   'pingdom.com')) {$moreurl = $row['pingdomurl'];} else {$moreurl = 'http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $row['pingdomurl'];}
-     echo "<td><div title='Last Check ".$row['dateupdated'] . "' class='tipsy'><a target='new' href='" . $moreurl . "'>" . $row['monthsmonitored'] . '</a></div></td>';
-     echo '<td>' . $row['score'] . "</td>\n";
-     echo "<td><div class='tipsy' title='".$row['sslvalid'] . "'>con info </td>\n";
+     echo '<td><div title="Last Check ' . $row['dateupdated'] . '" class="tipsy"><a target="_self" href="' . $moreurl . '">' . $row['monthsmonitored'] . '</a></div></td>';
+     echo '<td>' . $row['score'] . '</td>';
+     echo '<td><div class="tipsy" title="' . $row['sslvalid'] . '">con info </td>';
 ?>
 <td>
 <form method="post" action="db/kill.php"  target="_blank">
-<input name="comments" value="<?php echo $row['sslvalid'] ?>" size=10>
-<input name="domain" value="<?php echo $row['domain'] ?>" type="hidden">
-<input name="adminkey" value="<?php echo $_COOKIE['adminkey'] ?>" type="hidden">
+<input name="comments" value="<?php echo $row['sslvalid']; ?>" size=10>
+<input name="domain" value="<?php echo $row['domain']; ?>" type="hidden">
+<input name="adminkey" value="<?php echo $_COOKIE['adminkey']; ?>" type="hidden">
 <input name="action" type="radio" value="warn">warn
 <input name="action" type="radio" value="delete">delete
 <input type="submit" value="Process">
 </form>
 </td>
 <?php
-     echo "</td></tr>\n";
+     echo '</td></tr>';
  }
  pg_free_result($result);       
  pg_close($dbh);

@@ -68,7 +68,7 @@ $podminedit = isset($_GET['podminedit'])?$_GET['podminedit']:null;
           Data last refreshed: <br><?php echo date('F d Y H:i:s.', filemtime($lastfile)) ?> EST
         </div>
         <div class="main col-md-10 offset-md-2">
-        <a href='random.php' class='btn btn-sm btn-success'>Confused? Auto pick a pod for you.</a>
+        <a href="random.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
           <div class="row placeholders">
           </div>
           <div class="table-responsive">

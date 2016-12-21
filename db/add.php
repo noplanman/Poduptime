@@ -88,7 +88,12 @@ if ($valid == '1') {
   $to = $adminemail;
   $cc = $_POST['email'];
   $subject = 'New pod added to podupti.me ';
-  $message.= "https://podupti.me\n\n Stats Url: https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=" . $_POST['url'] . "\n\n Pod: https://podupti.me/db/pull.php?debug=1&domain=" . $_POST['domain'] . "\n\n";
+  $message.= sprintf(
+    "%1$s\n\n Stats Url: %2$s\n\n Pod: %3$s\n\n",
+    'https://podupti.me',
+    'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $_POST['url'],
+    'https://podupti.me/db/pull.php?debug=1&domain=' . $_POST['domain']
+  );
   $message.= 'Your pod will not show right away, needs to pass a few checks, Give it a few hours!';
   $headers = 'From: ' . $_POST['email'] . "\r\nReply-To: " . $_POST['email'] . "\r\nCc: " . $_POST['email'] . "\r\n";
   @mail( $to, $subject, $message, $headers );    
@@ -99,6 +104,7 @@ if ($valid == '1') {
     
   pg_close($dbh);
 } else {
-  echo "Could not validate your pod on http or https, check your setup!<br>Take a look at <a href='https://".$_POST['domain']."/nodeinfo/1.0'>your /nodeinfo</a>";$log->lwrite('Could not validate your pod on http or https, check your setup! '.$_POST['domain']);
+  $log->lwrite('Could not validate your pod on http or https, check your setup! ' . $_POST['domain']);
+  echo 'Could not validate your pod on http or https, check your setup!<br>Take a look at <a href="https://' . $_POST['domain'] . '/nodeinfo/1.0">your /nodeinfo</a>';
 }
 $log->lclose();

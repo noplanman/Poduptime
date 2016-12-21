@@ -10,12 +10,12 @@ if (!$dbh) {
 }
 if ($_GET['format'] == 'georss') {
   echo <<<EOF
-  <?xml version="1.0" encoding="utf-8"?>
-  <feed xmlns="http://www.w3.org/2005/Atom"
-  xmlns:georss="http://www.georss.org/georss">
-  <title>Diaspora Pods</title>
-  <subtitle>IP Locations of Diaspora pods on podupti.me</subtitle>
-  <link href="http://podupti.me/"/>
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+xmlns:georss="http://www.georss.org/georss">
+<title>Diaspora Pods</title>
+<subtitle>IP Locations of Diaspora pods on podupti.me</subtitle>
+<link href="http://podupti.me/"/>
 
 EOF;
   $sql = "SELECT * FROM pods WHERE hidden <> 'yes'";
@@ -26,20 +26,27 @@ EOF;
   $numrows = pg_num_rows($result);
   while ($row = pg_fetch_array($result)) {
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
-    $tip= '';
-    $tip.="\n This pod {$pod_name} has been watched for {$row['monthsmonitored']} months and its average ping time is {$row['responsetimelast7']} with uptime of {$row['uptimelast7']}% this month and was last checked on {$row['dateupdated']}. ";
-    $tip.="On a score of 100 this pod is a {$row['score']} right now";
+    $tip = sprintf(
+      'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of 100 this pod is a %6$s right now',
+      $pod_name,
+      $row['monthsmonitored'],
+      $row['responsetimelast7'],
+      $row['uptimelast7'],
+      $row['dateupdated'],
+      $row['score']
+    );
     if ($row['secure'] == 'true') {$method = 'https://';} else {$method = 'http://';}
    echo <<<EOF
-   <entry>
-   <title>{$method}{$row['domain']}</title>
-   <link href="{$method}{$row['domain']}"/>
-   <id>urn:{$row['domain']}</id>
-   <summary>Pod Location is: {$row['country']}
-	&#xA;{$tip}</summary>
-   <georss:point>{$row['lat']} {$row['long']}</georss:point>
-   <georss:featureName>{$row['domain']}</georss:featureName>
-   </entry>
+<entry>
+  <title>{$method}{$row['domain']}</title>
+  <link href="{$method}{$row['domain']}"/>
+  <id>urn:{$row['domain']}</id>
+  <summary>Pod Location is: {$row['country']}
+	&#xA;
+{$tip}</summary>
+  <georss:point>{$row['lat']} {$row['long']}</georss:point>
+  <georss:featureName>{$row['domain']}</georss:featureName>
+</entry>
 
 EOF;
   }

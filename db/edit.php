@@ -60,12 +60,21 @@ while ($row = pg_fetch_array($result)) {
 
   //form     
   echo 'Authorized to edit <b>' . $domain . '</b> until ' . $row['tokenexpire'] . '<br>';
-  echo "<form action='' method='get'><input type=hidden name=oldemail value=" . $row['email'] . '><input type=hidden name=save value=' . $_GET['token'] . '><input type=hidden name=token value=' . $_GET['token'] . '><input type=hidden name=domain value=' . $_GET['domain'] . '>';
-  echo 'Stats Key <input type=text size=50 name=pingdomurl value=' . $row['pingdomurl'] . '>Uptimerobot API key for this monitor<br>';
-  echo 'Email <input type=text size=20 name=email value=' . $row['email'] . '><br>';
-  echo 'Weight <input type=text size=2 name=weight value=' . $row['weight'] . '> This lets you weight your pod lower on the list if you have too much trafic coming in, 10 is the norm use lower to move down the list.<br>';
-  echo '<input type=submit name=submit><br><br><br>';
+  echo '<form action="" method="get">';
+  echo '<input type="hidden" name="oldemail" value="' . $row['email'] . '">';
+  echo '<input type="hidden" name="save" value="' . $_GET['token'] . '">';
+  echo '<input type="hidden" name="token" value="' . $_GET['token'] . '">';
+  echo '<input type="hidden" name="domain" value="' . $_GET['domain'] . '">';
+  echo 'Stats Key <input type="text" size="50" name="pingdomurl" value="' . $row['pingdomurl'] . '"">Uptimerobot API key for this monitor<br>';
+  echo 'Email <input type="text" size="20" name="email" value="' . $row['email'] . '"><br>';
+  echo 'Weight <input type="text" size="2" name="weight" value="' . $row['weight'] . '"> This lets you weight your pod lower on the list if you have too much trafic coming in, 10 is the norm use lower to move down the list.<br>';
+  echo '<input type="submit" name="submit">';
+  echo '</form><br><br><br>';
 
-  echo "<form action='' method='get'><input type=hidden name=delete value=" . $_GET['token'] . '><input type=hidden name=token value=' . $_GET['token'] . '><input type=hidden name=domain value=' . $_GET['domain'] . '>';
-  echo 'WARNING: This can not be undone, you will need to add your pod again if you want back on list: <input type=submit name=submit value=delete><br><br><br>';
+  echo '<form action="" method="get">';
+  echo '<input type="hidden" name="delete" value="' . $_GET['token'] . '">';
+  echo '<input type="hidden" name="token" value="' . $_GET['token'] . '">';
+  echo '<input type="hidden" name="domain" value="' . $_GET['domain'] . '">';
+  echo 'WARNING: This can not be undone, you will need to add your pod again if you want back on list: <input type="submit" name="submit" value="delete">';
+  echo '</form><br><br><br>';
 }
