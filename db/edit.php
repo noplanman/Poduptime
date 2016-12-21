@@ -1,11 +1,11 @@
 <?php
-if (!$_GET['domain']){
+if (!$_GET['domain']) {
   die('no pod domain given');
 }
-if (!$_GET['token']){
+if (!$_GET['token']) {
   die('no token given');
 }
-if (strlen($_GET['token']) < 6){
+if (strlen($_GET['token']) < 6) {
   die('bad token');
 }
 $domain = $_GET['domain'];
@@ -16,7 +16,7 @@ $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
   die('Error in connection: ' . pg_last_error());
 }
-$sql = "SELECT domain,email,token,tokenexpire,pingdomurl,weight FROM pods WHERE domain = '$domain'";
+$sql    = "SELECT domain,email,token,tokenexpire,pingdomurl,weight FROM pods WHERE domain = '$domain'";
 $result = pg_query($dbh, $sql);
 if (!$result) {
   die('Error in SQL query: ' . pg_last_error());
@@ -25,13 +25,13 @@ while ($row = pg_fetch_array($result)) {
   if ($row['token'] <> $_GET['token']) {
     die('token not a match');
   }
-  if ($row['tokenexpire'] < date('Y-m-d H:i:s', time()))  {
+  if ($row['tokenexpire'] < date('Y-m-d H:i:s', time())) {
     die('token expired');
   }
   //delete pod
-  if ($_GET['delete'] == $row['token']){
-  $sql = "DELETE FROM pods WHERE domain = $1";
-  $result = pg_query_params($dbh, $sql, array($_GET['domain']));
+  if ($_GET['delete'] == $row['token']) {
+    $sql    = "DELETE FROM pods WHERE domain = $1";
+    $result = pg_query_params($dbh, $sql, [$_GET['domain']]);
     if (!$result) {
       die('Error in SQL query: ' . pg_last_error());
     } else {
@@ -39,20 +39,20 @@ while ($row = pg_fetch_array($result)) {
     }
   }
   //save and exit
-  if ($_GET['save'] == $row['token']){
+  if ($_GET['save'] == $row['token']) {
     if ($_GET['weight'] > 10) {
       die('10 is max weight');
     }
-    $sql = "UPDATE pods SET email=$1, pingdomurl=$2, weight=$3 WHERE domain = $4";
-    $result = pg_query_params($dbh, $sql, array($_GET['email'],$_GET['pingdomurl'],$_GET['weight'],$_GET['domain']));
+    $sql    = "UPDATE pods SET email=$1, pingdomurl=$2, weight=$3 WHERE domain = $4";
+    $result = pg_query_params($dbh, $sql, [$_GET['email'], $_GET['pingdomurl'], $_GET['weight'], $_GET['domain']]);
     if (!$result) {
       die('Error in SQL query: ' . pg_last_error());
     }
-    $to = $_GET['email'];
+    $to      = $_GET['email'];
     $subject = 'Edit notice from poduptime ';
     $message = 'Data for ' . $_GET['domain'] . " Updated. If it was not you reply and let me know! \n\n";
-    $headers = "From: support@diasp.org\r\nCc:support@diasp.org,". $_GET['oldemail'] ."\r\n";
-    @mail( $to, $subject, $message, $headers );
+    $headers = "From: support@diasp.org\r\nCc:support@diasp.org," . $_GET['oldemail'] . "\r\n";
+    @mail($to, $subject, $message, $headers);
     pg_free_result($result);
     pg_close($dbh);
     die('Data saved. Will go into effect on next hourly change');
