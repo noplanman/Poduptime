@@ -1,15 +1,12 @@
 <?php
 if (!$_GET['domain']){
-  echo "no pod domain given";
-  die;
+  die("no pod domain given");
 }
 if (!$_GET['token']){
-  echo "no token given";
-  die;
+  die("no token given");
 }
 if (strlen($_GET['token']) < 6){
-  echo "bad token";
-  die;
+  die("bad token");
 }
 $domain = $_GET['domain'];
 
@@ -26,10 +23,10 @@ if (!$result) {
 }
 while ($row = pg_fetch_array($result)) {
   if ($row["token"] <> $_GET['token']) {
-    echo "token not a match";die;
+    die("token not a match");
   }
   if ($row["tokenexpire"] < date("Y-m-d H:i:s", time()))  {
-    echo "token expired";die;
+    die("token expired");
   }
   //delete pod
   if ($_GET['delete'] == $row["token"]){
@@ -38,14 +35,13 @@ while ($row = pg_fetch_array($result)) {
     if (!$result) {
       die("Error in SQL query: " . pg_last_error());
     } else {
-    echo "pod removed from DB";
+      echo "pod removed from DB";
     }
   }
   //save and exit
   if ($_GET['save'] == $row["token"]){
     if ($_GET['weight'] > 10) {
-      echo "10 is max weight";
-      die;
+      die("10 is max weight");
     }
     $sql = "UPDATE pods SET email=$1, pingdomurl=$2, weight=$3 WHERE domain = $4";
     $result = pg_query_params($dbh, $sql, array($_GET['email'],$_GET['pingdomurl'],$_GET['weight'],$_GET['domain']));
@@ -59,8 +55,7 @@ while ($row = pg_fetch_array($result)) {
     @mail( $to, $subject, $message, $headers );
     pg_free_result($result);
     pg_close($dbh);
-    echo "Data saved. Will go into effect on next hourly change";
-    die;
+    die("Data saved. Will go into effect on next hourly change");
   }
 
   //form     
@@ -73,6 +68,4 @@ while ($row = pg_fetch_array($result)) {
 
   echo "<form action='' method='get'><input type=hidden name=delete value=" . $_GET['token'] . "><input type=hidden name=token value=" . $_GET['token'] . "><input type=hidden name=domain value=" . $_GET['domain'] . ">";
   echo "WARNING: This can not be undone, you will need to add your pod again if you want back on list: <input type=submit name=submit value=delete><br><br><br>";
-
 }
-?>

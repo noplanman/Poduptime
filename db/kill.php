@@ -1,15 +1,12 @@
 <?php
 if (!$_POST['domain']){
-  echo "no pod domain given";
-  die;
+  die("no pod domain given");
 }
 if (!$_POST['adminkey']){
-  echo "no token given";
-  die;
+  die("no token given");
 }
 if (!$_POST['action']){
-  echo "no action selected";
-  die;
+  die("no action selected");
 }
 $domain = $_POST['domain'];
 
@@ -26,7 +23,7 @@ if (!$result) {
 }
 while ($row = pg_fetch_array($result)) {
   if ($adminkey <> $_POST['adminkey']) {
-    echo "admin key fail";die;
+    die("admin key fail");
   }
   //save and exit
     if ($_POST['action'] == "delete") {
@@ -55,4 +52,3 @@ while ($row = pg_fetch_array($result)) {
   }
   echo $result;
 }
-?>

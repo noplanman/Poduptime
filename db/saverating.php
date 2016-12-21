@@ -1,23 +1,18 @@
 <?php
 if (!$_POST['username']){
-  echo "no username given";
-  die;
+  die("no username given");
 }
 if (!$_POST['userurl']){
-  echo "no userurl given";
-  die;
+  die("no userurl given");
 }
 if (!$_POST['domain']){
-  echo "no pod domain given";
-  die;
+  die("no pod domain given");
 }
 if (!$_POST['comment']){
-  echo "no comment";
-  die;
+  die("no comment");
 }
 if (!$_POST['rating']){
-  echo "no rating given";
-  die;
+  die("no rating given");
 }
 
 require_once __DIR__ . '/../config.php';
@@ -39,4 +34,3 @@ $headers = "From: ".$_POST["email"]."\r\n";
 echo "Comment posted!";
 pg_free_result($result);
 pg_close($dbh);
-?>

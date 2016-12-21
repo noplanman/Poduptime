@@ -16,4 +16,3 @@ while($entry = $dirh->read()) {
     }
   }
 }
-?>

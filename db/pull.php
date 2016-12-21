@@ -304,5 +304,3 @@ while ($row = pg_fetch_all($result)) {
 }     
 pg_free_result($result);
 pg_close($dbh);
-
-?>

@@ -13,4 +13,3 @@ if (!$result) {
 $row = pg_fetch_all($result);
 if ($row[0]['secure'] == "true") {$ssl="s";} else {$ssl="";}
 header("Location: http" . $ssl . "://" . $row[0]['domain'] . "/users/sign_up");
-?>

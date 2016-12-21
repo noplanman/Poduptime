@@ -6,24 +6,24 @@ require_once __DIR__ . '/../logging.php';
 $log = new Logging();
 $log->lfile($log_dir."/add.php.log");
 if (!$_POST['url']){
-  echo "no url given";$log->lwrite('no url given '.$_POST['domain']);
-  die;
+  $log->lwrite('no url given '.$_POST['domain']);
+  die("no url given");
 }
 if (!$_POST['email']){
-  echo "no email given";$log->lwrite('no email given '.$_POST['domain']);
-  die;
+  $log->lwrite('no email given '.$_POST['domain']);
+  die("no email given");
 }
 if (!$_POST['domain']){
-  echo "no pod domain given";$log->lwrite('no domain given '.$_POST['domain']);
-  die;
+  $log->lwrite('no domain given '.$_POST['domain']);
+  die("no pod domain given");
 }
 if (!$_POST['url']){
-  echo "no API key for your stats";$log->lwrite('no api given '.$_POST['domain']);
-  die;
+  $log->lwrite('no api given '.$_POST['domain']);
+  die("no API key for your stats");
 }
 if (strlen($_POST['url']) < 14){
-  echo "API key bad needs to be like m58978-80abdb799f6ccf15e3e3787ee";$log->lwrite('api key too short '.$_POST['domain']);
-  die;
+  $log->lwrite('api key too short '.$_POST['domain']);
+  die("API key bad needs to be like m58978-80abdb799f6ccf15e3e3787ee");
 }
 
 require_once __DIR__ . '/../config.php';
@@ -39,10 +39,12 @@ if (!$result) {
 }
 while ($row = pg_fetch_array($result)) {
   if ($row["domain"] == $_POST['domain']) {
-    echo "domain already exists";$log->lwrite('domain already exists '.$_POST['domain']);die;
+    $log->lwrite('domain already exists '.$_POST['domain']);
+    die("domain already exists");
   }
   if ($row["pingdomurl"] == $_POST['url']) {
-    echo "API key already exists";$log->lwrite('API key already exists '.$_POST['domain']);die;
+    $log->lwrite('API key already exists '.$_POST['domain']);
+    die("API key already exists");
   }
 }
 
@@ -68,11 +70,13 @@ $output = curl_exec($ch);
 curl_close($ch);
 
 if (stristr($outputssl, 'nodeName')) {
-  echo "Your pod has ssl and is valid<br>";$log->lwrite('Your pod has ssl and is valid '.$_POST['domain']);
+  $log->lwrite('Your pod has ssl and is valid '.$_POST['domain']);
+  echo "Your pod has ssl and is valid<br>";
   $valid=1;
 }
 if (stristr($output, 'nodeName')) {
-  echo "Your pod does not have ssl but is a valid pod<br>";$log->lwrite('Your pod does not have ssl but is a valid pod '.$_POST['domain']);
+  $log->lwrite('Your pod does not have ssl but is a valid pod '.$_POST['domain']);
+  echo "Your pod does not have ssl but is a valid pod<br>";
   $valid=1;
 }
 if ($valid=="1") {    
@@ -98,4 +102,3 @@ if ($valid=="1") {
   echo "Could not validate your pod on http or https, check your setup!<br>Take a look at <a href='https://".$_POST['domain']."/nodeinfo/1.0'>your /nodeinfo</a>";$log->lwrite('Could not validate your pod on http or https, check your setup! '.$_POST['domain']);
 }
 $log->lclose();
-?>

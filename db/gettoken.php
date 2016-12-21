@@ -1,8 +1,7 @@
 <?php
 $systemTimeZone = system('date +%Z');
 if (!$_POST['domain']){
-  echo "no pod domain given";
-  die;
+  die("no pod domain given");
 }
 $domain = $_POST['domain'];
 
@@ -19,12 +18,12 @@ if (!$result) {
 }
 $rows = pg_num_rows($result);
 if ($rows <= 0) {
-echo "domain not found";die;
+  die("domain not found");
 }
 while ($row = pg_fetch_array($result)) {
   if ($_POST['email']){
     if ($row["email"] <> $_POST['email']) {
-      echo "email not a match";die;
+      die("email not a match");
     }
     $uuid = md5(uniqid($domain, true));
     $expire = date("Y-m-d H:i:s", time() + 2700);
@@ -57,5 +56,3 @@ while ($row = pg_fetch_array($result)) {
   pg_free_result($result);
   pg_close($dbh);
 }
-
-?>

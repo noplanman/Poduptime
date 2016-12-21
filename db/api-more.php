@@ -29,4 +29,3 @@ while ($row = pg_fetch_array($result)) {
 }
 pg_free_result($result);       
 pg_close($dbh);
-?>

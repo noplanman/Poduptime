@@ -85,4 +85,3 @@ elseif ($_GET['format'] == "json") {
  pg_free_result($result);
  pg_close($dbh);
 }
-?>

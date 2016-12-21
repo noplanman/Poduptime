@@ -7,4 +7,3 @@ if ($dur > 4500) {
 else {
   http_response_code(200);
 } 
-?>
