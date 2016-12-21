@@ -1,6 +1,8 @@
 <?php
 //Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file.
-if ($_GET['key'] != '4r45tg') {die;}
+if ($_GET['key'] != '4r45tg') {
+  die;
+}
 
 require_once __DIR__ . '/config.php';
 
@@ -8,6 +10,7 @@ $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 if (!$dbh) {
   die('Error in connection: ' . pg_last_error());
 }
+
 if ($_GET['format'] == 'georss') {
   echo <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
@@ -18,15 +21,15 @@ xmlns:georss="http://www.georss.org/georss">
 <link href="http://podupti.me/"/>
 
 EOF;
-  $sql = "SELECT * FROM pods WHERE hidden <> 'yes'";
+  $sql    = "SELECT * FROM pods WHERE hidden <> 'yes'";
   $result = pg_query($dbh, $sql);
   if (!$result) {
-   die('Error in SQL query: ' . pg_last_error());
- }
+    die('Error in SQL query: ' . pg_last_error());
+  }
   $numrows = pg_num_rows($result);
   while ($row = pg_fetch_array($result)) {
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
-    $tip = sprintf(
+    $tip      = sprintf(
       'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of 100 this pod is a %6$s right now',
       $pod_name,
       $row['monthsmonitored'],
@@ -35,8 +38,12 @@ EOF;
       $row['dateupdated'],
       $row['score']
     );
-    if ($row['secure'] == 'true') {$method = 'https://';} else {$method = 'http://';}
-   echo <<<EOF
+    if ($row['secure'] == 'true') {
+      $method = 'https://';
+    } else {
+      $method = 'http://';
+    }
+    echo <<<EOF
 <entry>
   <title>{$method}{$row['domain']}</title>
   <link href="{$method}{$row['domain']}"/>
@@ -51,9 +58,8 @@ EOF;
 EOF;
   }
   echo '</feed>';
-}
-elseif ($_GET['format'] == 'json') {
-  $sql = 'SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,pingdomurl,monthsmonitored,uptimelast7,responsetimelast7,local_posts,comment_counts,dateCreated,dateUpdated,dateLaststats,hidden FROM pods';
+} elseif ($_GET['format'] == 'json') {
+  $sql    = 'SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,pingdomurl,monthsmonitored,uptimelast7,responsetimelast7,local_posts,comment_counts,dateCreated,dateUpdated,dateLaststats,hidden FROM pods';
   $result = pg_query($dbh, $sql);
   if (!$result) {
     die('Error in SQL query: ' . pg_last_error());
@@ -61,34 +67,42 @@ elseif ($_GET['format'] == 'json') {
   $numrows = pg_num_rows($result);
   //json output, thx Vipul A M for fixing this
   header('Content-type: application/json');
-  $rows=array_values(pg_fetch_all($result));
-  $obj->podcount          = $numrows;
-  $obj->pods             = $rows;
+  $rows          = array_values(pg_fetch_all($result));
+  $obj->podcount = $numrows;
+  $obj->pods     = $rows;
   if ($_GET['method'] == 'jsonp') {
     print $_GET['callback'] . '(' . json_encode($obj) . ')';
   } else {
     print json_encode($obj);
   }
-}
- else {
-  $i=0;
-  $sql = "SELECT * FROM pods WHERE hidden <> 'yes' ORDER BY uptimelast7 DESC";
+} else {
+  $i      = 0;
+  $sql    = "SELECT * FROM pods WHERE hidden <> 'yes' ORDER BY uptimelast7 DESC";
   $result = pg_query($dbh, $sql);
   if (!$result) {
     die('Error in SQL query: ' . pg_last_error());
   }
   $numrows = pg_num_rows($result);
   while ($row = pg_fetch_array($result)) {
-    if ($row['status'] == 'up'){$status = 'Online';} else {$status = 'Offline';}
-    if ($row['secure'] == 'true') {$method = 'https://';$class = 'green';} else {$method = 'http://';$class = 'red';}
+    if ($row['status'] == 'up') {
+      $status = 'Online';
+    } else {
+      $status = 'Offline';
+    }
+    if ($row['secure'] == 'true') {
+      $method = 'https://';
+      $class  = 'green';
+    } else {
+      $method = 'http://';
+      $class  = 'red';
+    }
     echo $row['domain'] . ' Up ' . $row['uptimelast7'] . '% This Month - Located in: ' . $row['country'];
-    if ($i < ($numrows -1)) {
+    if ($i < ($numrows - 1)) {
       echo ',';
     }
-    $i++;
+    $i ++;
+  }
 
-}
-
- pg_free_result($result);
- pg_close($dbh);
+  pg_free_result($result);
+  pg_close($dbh);
 }
