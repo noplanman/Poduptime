@@ -1,7 +1,9 @@
-Poduptime
+# Poduptime
 
+Poduptime is software to get live stats and data on listed Diaspora Pods.
 
-Dependencies:  
+Dependencies:
+```
 php7.0 php7.0-curl php7.0-pgsql php-geoip php7.0-cli php7.0-common php7.0-json php7.0-readline
 git
 curl
@@ -10,31 +12,38 @@ wget
 dnsutils
 npm
 nodejs nodejs-legacy
+```
 
-To Install:  
-git clone https://github.com/diasporg/Poduptime.git  
-cd Poduptime  
-sudo npm install -g bower  
-bower install  
-cp config.php.example config.php  
+To Install:
+```
+git clone https://github.com/diasporg/Poduptime.git
+cd Poduptime
+sudo npm install -g bower
+bower install
+cp config.php.example config.php
+```
 
-If you need to setup your Postgresql/DB:  
-  sudo adduser podupuser  
-  sudo -u postgres bash -c "psql -c \"CREATE USER podupuser WITH PASSWORD 'MYpassword';\""  
-  sudo -u postgres bash -c "psql -c \"CREATE DATABASE podupdb;\""  
-  sudo -u postgres bash -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE podupdb TO podupuser;\""  
-  sudo nano /etc/postgresql/vx.x/main/pg_hba.conf 
-  update your local line to allow md5 METHOD  
-  restart postgresql  
-  
-psql -u podupuser podupdb < db/tables.sql  
-  
-edit config.php with your DB and file settings  
+If you need to setup your Postgresql/DB:
+```
+sudo adduser podupuser
+sudo -u postgres bash -c "psql -c \"CREATE USER podupuser WITH PASSWORD 'MYpassword';\""
+sudo -u postgres bash -c "psql -c \"CREATE DATABASE podupdb;\""
+sudo -u postgres bash -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE podupdb TO podupuser;\""
 
+# update your local line to allow md5 METHOD
+sudo nano /etc/postgresql/vx.x/main/pg_hba.conf
+
+# restart postgresql
+
+# import database structure
+psql -u podupuser podupdb < db/tables.sql
+```
+
+Edit `config.php` to add your DB and file settings.
 
 ============================
 
-Source for http://podupti.me
+Source for https://podupti.me
 
   Poduptime is software to get live stats and data on listed Diaspora Pods.
   Copyright (C) 2011 David Morley
@@ -50,4 +59,4 @@ Source for http://podupti.me
   GNU Affero General Public License for more details.
 
   You should have received a copy of the GNU Affero General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
