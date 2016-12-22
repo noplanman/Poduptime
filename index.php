@@ -1,5 +1,4 @@
 <?php
-$hidden       = isset($_GET['hidden']) ? $_GET['hidden'] : null;
 $lastfile     = 'db/last.data';
 $advancedview = isset($_GET['advancedview']);
 $mapview      = isset($_GET['mapview']);
