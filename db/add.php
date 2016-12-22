@@ -29,14 +29,12 @@ if (strlen($_POST['url']) < 14) {
 require_once __DIR__ . '/../config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-if (!$dbh) {
-  die('Error in connection: ' . pg_last_error());
-}
+$dbh || die('Error in connection: ' . pg_last_error());
+
 $sql    = 'SELECT domain,pingdomurl FROM pods';
 $result = pg_query($dbh, $sql);
-if (!$result) {
-  die('Error in SQL query: ' . pg_last_error());
-}
+$result || die('Error in SQL query: ' . pg_last_error());
+
 while ($row = pg_fetch_array($result)) {
   if ($row['domain'] == $_POST['domain']) {
     $log->lwrite('domain already exists ' . $_POST['domain']);
@@ -82,9 +80,8 @@ if (stristr($output, 'nodeName')) {
 if ($valid == '1') {
   $sql    = "INSERT INTO pods (domain, pingdomurl, email) VALUES($1, $2, $3)";
   $result = pg_query_params($dbh, $sql, [$_POST['domain'], $_POST['url'], $_POST['email']]);
-  if (!$result) {
-    die('Error in SQL query: ' . pg_last_error());
-  }
+  $result || die('Error in SQL query: ' . pg_last_error());
+
   $to      = $adminemail;
   $cc      = $_POST['email'];
   $subject = 'New pod added to podupti.me ';

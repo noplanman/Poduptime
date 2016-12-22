@@ -13,14 +13,12 @@ $domain = $_POST['domain'];
 require_once __DIR__ . '/../config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-if (!$dbh) {
-  die('Error in connection: ' . pg_last_error());
-}
+$dbh || die('Error in connection: ' . pg_last_error());
+
 $sql    = "SELECT email FROM pods WHERE domain = '$domain'";
 $result = pg_query($dbh, $sql);
-if (!$result) {
-  die('one Error in SQL query: ' . pg_last_error());
-}
+$result || die('one Error in SQL query: ' . pg_last_error());
+
 while ($row = pg_fetch_array($result)) {
   if ($adminkey <> $_POST['adminkey']) {
     die('admin key fail');

@@ -4,15 +4,13 @@ $debug = 1;
 require_once __DIR__ . '/../config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-if (!$dbh) {
-  die('Error in connection: ' . pg_last_error());
-}
+$dbh || die('Error in connection: ' . pg_last_error());
+
 $domain = isset($_GET['domain']) ? $_GET['domain'] : null;
 $sql    = "SELECT pingdomurl FROM pods WHERE domain = $1";
 $result = pg_query_params($dbh, $sql, [$domain]);
-if (!$result) {
-  die('Error in SQL query: ' . pg_last_error());
-}
+$result || die('Error in SQL query: ' . pg_last_error());
+
 $apikey = pg_fetch_all($result);
 $upti   = curl_init();
 $key    = $apikey[0]['pingdomurl'];
@@ -52,5 +50,3 @@ if ($uptr->monitors[0]->status == 9) {
 echo 'Status: ' . $live;
 pg_free_result($result);
 pg_close($dbh);
-
-?>

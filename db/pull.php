@@ -38,9 +38,8 @@ if ($debug) {
 }
 $dbh  = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh2 = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-if (!$dbh) {
-  die('Error in connection: ' . pg_last_error());
-}
+$dbh || die('Error in connection: ' . pg_last_error());
+
 
 //foreach pod check it and update db
 $domain = isset($_GET['domain']) ? $_GET['domain'] : null;
@@ -53,10 +52,8 @@ if ($domain) {
   $sleep  = '1';
   $result = pg_query($dbh, $sql);
 }
-if (!$result) {
-  die('Error in SQL query1: ' . pg_last_error());
-}
- 
+$result || die('Error in SQL query1: ' . pg_last_error());
+
 while ($row = pg_fetch_all($result)) {
   $numrows = pg_num_rows($result);
   for ($i = 0; $i < $numrows; $i ++) {
@@ -74,9 +71,8 @@ while ($row = pg_fetch_all($result)) {
     $adminrating    = [];
     $sqlforr        = "SELECT * FROM rating_comments WHERE domain = $1";
     $ratings        = pg_query_params($dbh, $sqlforr, [$domain]);
-    if (!$ratings) {
-      die('Error in SQL query2: ' . pg_last_error());
-    }
+    $ratings || die('Error in SQL query2: ' . pg_last_error());
+
     $numratings = pg_num_rows($ratings);
     while ($myrow = pg_fetch_assoc($ratings)) {
       if ($myrow['admin'] == 0) {
@@ -406,9 +402,8 @@ while ($row = pg_fetch_all($result)) {
   comment_counts=$35, service_facebook=$36, service_tumblr=$37, service_twitter=$38, service_wordpress=$39, weightedscore=$40, xmpp=$41, softwarename=$42, sslvalid=$43
   WHERE domain=$34";
     $result  = pg_query_params($dbh, $sql, [$gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $xmpp, $softwarename, $outputsslerror]);
-    if (!$result) {
-      die('Error in SQL query3: ' . pg_last_error());
-    }
+    $result || die('Error in SQL query3: ' . pg_last_error());
+
     if ($debug) {
       echo '<br>Score out of 100: ' . $score . '<br>';
     }

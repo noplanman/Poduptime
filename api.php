@@ -1,15 +1,12 @@
 <?php
 //Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file.
-if ($_GET['key'] != '4r45tg') {
-  die;
-}
+$_GET['key'] === '4r45tg' || die;
 
 require_once __DIR__ . '/config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-if (!$dbh) {
-  die('Error in connection: ' . pg_last_error());
-}
+$dbh || die('Error in connection: ' . pg_last_error());
+
 
 if ($_GET['format'] == 'georss') {
   echo <<<EOF
@@ -23,9 +20,8 @@ xmlns:georss="http://www.georss.org/georss">
 EOF;
   $sql    = "SELECT * FROM pods WHERE hidden <> 'yes'";
   $result = pg_query($dbh, $sql);
-  if (!$result) {
-    die('Error in SQL query: ' . pg_last_error());
-  }
+  $result || die('Error in SQL query: ' . pg_last_error());
+
   $numrows = pg_num_rows($result);
   while ($row = pg_fetch_array($result)) {
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
@@ -61,9 +57,8 @@ EOF;
 } elseif ($_GET['format'] == 'json') {
   $sql    = 'SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,pingdomurl,monthsmonitored,uptimelast7,responsetimelast7,local_posts,comment_counts,dateCreated,dateUpdated,dateLaststats,hidden FROM pods';
   $result = pg_query($dbh, $sql);
-  if (!$result) {
-    die('Error in SQL query: ' . pg_last_error());
-  }
+  $result || die('Error in SQL query: ' . pg_last_error());
+
   $numrows = pg_num_rows($result);
   //json output, thx Vipul A M for fixing this
   header('Content-type: application/json');
@@ -79,9 +74,8 @@ EOF;
   $i      = 0;
   $sql    = "SELECT * FROM pods WHERE hidden <> 'yes' ORDER BY uptimelast7 DESC";
   $result = pg_query($dbh, $sql);
-  if (!$result) {
-    die('Error in SQL query: ' . pg_last_error());
-  }
+  $result || die('Error in SQL query: ' . pg_last_error());
+
   $numrows = pg_num_rows($result);
   while ($row = pg_fetch_array($result)) {
     if ($row['status'] == 'up') {
