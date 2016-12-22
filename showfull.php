@@ -6,7 +6,7 @@ $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
 $hidden = isset($_GET['hidden']) ? $_GET['hidden'] : null;
-if ($hidden == 'true') {
+if ($hidden === 'true') {
   $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY uptimelast7 DESC";
 } else {
   $sql = 'SELECT * FROM pods ORDER BY uptimelast7 DESC';
@@ -24,7 +24,7 @@ $numrows = pg_num_rows($result);
   <tr>
     <th><a data-toggle="tooltip" data-placement="bottom" title="A pod is a site for you to set up your account.">Pod</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Version of software this pod runs">Version</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online for <?php echo date('F') ?>.">Uptime</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online for <?php echo date('F'); ?>.">Uptime</a></th>
     <th>IPv6</th>
     <th>Response Time</th>
     <th>Signups</th>
@@ -43,13 +43,13 @@ $numrows = pg_num_rows($result);
   <tbody>
   <?php
   while ($row = pg_fetch_array($result)) {
-    $tt = $tt + 1;
-    if ($row['secure'] == 'true') {
-      $method = 'https://';
+    $tt++;
+    if ($row['secure'] === 'true') {
+      $scheme = 'https://';
       $class  = 'green';
       $tip    = 'This pod uses SSL encryption for traffic.';
     } else {
-      $method = 'http://';
+      $scheme = 'http://';
       $class  = 'red';
       $tip    = 'This pod does not offer SSL';
     }
@@ -58,7 +58,7 @@ $numrows = pg_num_rows($result);
     $tip .= "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an uptime of {$row['uptimelast7']}% this month and a response time average today of {$row['responsetimelast7']}ms was last checked on {$row['dateupdated']}. ";
     $tip .= "On a scale of 100 this pod is a {$row['score']} right now";
 
-    echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" class="' . $class . '" target="_self" href="' . $method . $row['domain'] . '">' . $row['domain'] . '</a></td>';
+    echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" class="' . $class . '" target="_self" href="' . $scheme . $row['domain'] . '">' . $row['domain'] . '</a></td>';
 
     if (stristr($row['shortversion'], 'head')) {
       $version = '.dev';
@@ -70,7 +70,7 @@ $numrows = pg_num_rows($result);
       $version = $row['shortversion'];
       $pre     = 'This pod runs production code';
     }
-    if ($row['shortversion'] == $row['masterversion'] && $row['shortversion'] != '') {
+    if ($row['shortversion'] === $row['masterversion'] && $row['shortversion'] !== '') {
       $classver = 'green';
     } elseif ($verdiff > 6) {
       $classver = 'red';
@@ -81,19 +81,13 @@ $numrows = pg_num_rows($result);
     echo '<td>' . $row['uptimelast7'] . '%</td>';
     echo '<td>' . $row['ipv6'] . '</td>';
     echo '<td>' . $row['responsetimelast7'] . '</td>';
-    if ($row['signup'] == 1) {
-      $signup = 'Open';
-    } else {
-      $signup = 'Closed';
-    }
-    echo '<td>' . $signup . '</td>';
+    echo '<td>' . ($row['signup'] === '1' ? 'Open' : 'Closed') . '</td>';
     echo '<td>' . $row['total_users'] . '</td>';
     echo '<td>' . $row['active_users_halfyear'] . '</td>';
     echo '<td>' . $row['active_users_monthly'] . '</td>';
     echo '<td>' . $row['local_posts'] . '</td>';
     echo '<td>' . $row['comment_counts'] . '</td>';
-    if (strpos($row['pingdomurl'],
-      'pingdom.com')) {
+    if (strpos($row['pingdomurl'], 'pingdom.com')) {
       $moreurl = $row['pingdomurl'];
     } else {
       $moreurl = '/db/showuptimerobot.php?domain=' . $row['domain'];
@@ -107,21 +101,11 @@ $numrows = pg_num_rows($result);
     echo '<td>' . $row['country'] . '</td>';
 
     echo '<td>';
-    if ($row['service_facebook'] === 't') {
-      echo '<div class="smlogo smlogo-facebook"></div>';
-    }
-    if ($row['service_twitter'] === 't') {
-      echo '<div class="smlogo smlogo-twitter"></div>';
-    }
-    if ($row['service_tumblr'] === 't') {
-      echo '<div class="smlogo smlogo-tumblr"></div>';
-    }
-    if ($row['service_wordpress'] === 't') {
-      echo '<div class="smlogo smlogo-wordpress"></div>';
-    }
-    if ($row['xmpp'] === 't') {
-      echo '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
-    }
+    $row['service_facebook'] === 't' && print '<div class="smlogo smlogo-facebook"></div>';
+    $row['service_twitter'] === 't' && print '<div class="smlogo smlogo-twitter"></div>';
+    $row['service_tumblr'] === 't' && print '<div class="smlogo smlogo-tumblr"></div>';
+    $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress"></div>';
+    $row['xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
     echo '</td></tr>';
   }
   pg_free_result($result);

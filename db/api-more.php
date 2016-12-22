@@ -11,7 +11,7 @@ $result = pg_query_params($dbh, $sql, [$_GET['url']]);
 $result || die('Error in SQL query: ' . pg_last_error());
 
 while ($row = pg_fetch_array($result)) {
-  if ($_GET['format'] == 'json') {
+  if ($_GET['format'] === 'json') {
     echo json_encode($row);
   } else {
     echo 'Status: ' . $row['status'] . '<br>';

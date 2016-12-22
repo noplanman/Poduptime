@@ -1,7 +1,7 @@
 <?php
 $_GET['domain'] || die('domain not specified');
+$domain = $_GET['domain'];
 ?>
-
 <html>
 <head>
   <style type="text/css">
@@ -23,7 +23,7 @@ $_GET['domain'] || die('domain not specified');
         $('#ratings').hide('slow');
       });
       $('#submitrating').click(function () {
-        var domain = '<?php echo $_GET['domain']; ?>';
+        var domain = '<?php echo $domain; ?>';
         $.ajax({
           type: 'POST',
           url: 'db/saverating.php',
@@ -58,37 +58,38 @@ $_GET['domain'] || die('domain not specified');
   $dbh || die('Error in connection: ' . pg_last_error());
 
   $sql    = "SELECT * FROM rating_comments WHERE domain = $1";
-  $result = pg_query_params($dbh, $sql, [$_GET['domain']]);
+  $result = pg_query_params($dbh, $sql, [$domain]);
   $result || die('Error in SQL query: ' . pg_last_error());
 
   $numrows = pg_num_rows($result);
-  echo '<input id="addrating" class="btn primary" style="float:right;margin-right:15px;" type="submit" value="Add a Rating"><h3>Podupti.me ratings for ' . $_GET['domain'] . ' pod</h3><div id="ratings"><hr>';
+  echo '<input id="addrating" class="btn primary" style="float:right;margin-right:15px;" type="submit" value="Add a Rating"><h3>Podupti.me ratings for ' . $domain . ' pod</h3><div id="ratings"><hr>';
   if (!$numrows) {
     echo '<b>This pod has no rating yet!</b>';
   }
   while ($row = pg_fetch_array($result)) {
-    if ($row['admin'] == 1) {
+    if ($row['admin'] === '1') {
       echo 'Poduptime Approved Comment - User: <b>' . $row['username'] . '</b> Url: <a href="' . $row['userurl'] . '">' . $row['userurl'] . '</a> Rating: <b>' . $row['rating'] . '</b> <br>';
       echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date'] . '</span><hr>';
-    } elseif ($row['admin'] == 0) {
+    } elseif ($row['admin'] === '0') {
       echo 'User Comment - User: <b>' . $row['username'] . '</b> Url: <a href="' . $row['userurl'] . '">' . $row['userurl'] . '</a> Rating: <b>' . $row['rating'] . '</b> <br>';
       echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date'] . '</span><hr style="margin-top:0;margin-bottom:15px;">';
     }
   }
-  echo <<<EOF
-</div>
-<div id="commentform" style="display:none">
-Would you like to add a comment?<br>
-Your Name (or Diaspora handle)?<br><input id="username" name="username"><br>
-Your Profile URL?<br><input id="userurl" name="userurl"><br>
-Comment<br><textarea id="comment" name="comment"></textarea><br>
-Rating (1-10 scale, 10 high)<br><div id="slider"></div><input class="disabled" disabled="" id="rating" name="rating" value="10">
-<br><input class="btn primary" id="submitrating" type="submit" value="Submit your Rating">
-<div class="alert-message warning" id="error" style="display:none"><span id="errortext">Some Error</span></div>
-</div>
-EOF;
-
-  pg_free_result($result);
-  pg_close($dbh);
   ?>
 </div>
+<div id="commentform" style="display:none">
+  Would you like to add a comment?<br>
+  <label>Your Name (or Diaspora handle)?<br><input id="username" name="username"></label><br>
+  <label>Your Profile URL?<br><input id="userurl" name="userurl"></label><br>
+  <label>Comment<br><textarea id="comment" name="comment"></textarea></label><br>
+  Rating (1-10 scale, 10 high)<br>
+  <div id="slider"></div>
+  <input class="disabled" disabled="" id="rating" name="rating" value="10"><br>
+  <input class="btn primary" id="submitrating" type="submit" value="Submit your Rating">
+  <div class="alert-message warning" id="error" style="display:none">
+    <span id="errortext">Some Error</span>
+  </div>
+</div>
+<?php
+pg_free_result($result);
+pg_close($dbh);

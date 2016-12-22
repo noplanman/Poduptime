@@ -33,9 +33,9 @@ $simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedi
   <a class="navbar-brand" href="#">Poduptime</a>
   <div id="navbar" class="text-muted collapse">
     <nav class="nav navbar-nav float-xs-left">
-      <a class="nav-item nav-link<?php $simpleview && print(' active'); ?>" href="/">Simple View</a>
-      <a class="nav-item nav-link<?php $advancedview && print(' active'); ?>" href="/?advancedview">Advanced View</a>
-      <a class="nav-item nav-link<?php $mapview && print(' active'); ?>" href="/?mapview">Map View</a>
+      <a class="nav-item nav-link<?php $simpleview && print ' active'; ?>" href="/">Simple View</a>
+      <a class="nav-item nav-link<?php $advancedview && print ' active'; ?>" href="/?advancedview">Advanced View</a>
+      <a class="nav-item nav-link<?php $mapview && print ' active'; ?>" href="/?mapview">Map View</a>
     </nav>
   </div>
 </nav>
@@ -43,13 +43,13 @@ $simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedi
   <div class="row">
     <div class="col-sm-3 col-md-2 sidebar">
       <ul class="nav nav-sidebar">
-        <li<?php $simpleview && print(' class="active"'); ?>><a href="/">Simple View<?php $simpleview && print(' <span class="sr-only bg-dark">(current)</span>'); ?></a></li>
-        <li<?php $advancedview && print(' class="active"'); ?>><a href="/?advancedview">Advanced View<?php $advancedview && print(' <span class="sr-only bg-dark">(current)</span>'); ?></a></li>
-        <li<?php $mapview && print(' class="active"'); ?>><a href="/?mapview">Map View<?php $mapview && print(' <span class="sr-only bg-dark">(current)</span>'); ?></a></li>
+        <li<?php $simpleview && print ' class="active"'; ?>><a href="/">Simple View<?php $simpleview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
+        <li<?php $advancedview && print ' class="active"'; ?>><a href="/?advancedview">Advanced View<?php $advancedview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
+        <li<?php $mapview && print ' class="active"'; ?>><a href="/?mapview">Map View<?php $mapview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
       </ul>
       <ul class="nav nav-sidebar">
-        <li<?php $podmin && print(' class="active"'); ?>><a href="/?podmin">Add a pod<?php $podmin && print(' <span class="sr-only bg-dark">(current)</span>'); ?></a></li>
-        <li<?php $podminedit && print(' class="active"'); ?>><a href="/?podminedit">Edit a pod<?php $podminedit && print(' <span class="sr-only bg-dark">(current)</span>'); ?></a></li>
+        <li<?php $podmin && print ' class="active"'; ?>><a href="/?podmin">Add a pod<?php $podmin && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
+        <li<?php $podminedit && print ' class="active"'; ?>><a href="/?podminedit">Edit a pod<?php $podminedit && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
         <li><a href="https://diasporafoundation.org/">Host a pod</a></li>
       </ul>
       <ul class="nav nav-sidebar">
@@ -64,7 +64,7 @@ $simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedi
         (adsbygoogle = window.adsbygoogle || []).push({});
       </script>
       <br>
-      Data last refreshed: <br><?php echo date('F d Y H:i:s.', filemtime($lastfile)) ?> EST
+      Data last refreshed: <br><?php echo date('F d Y H:i:s.', filemtime($lastfile)); ?> EST
     </div>
     <div class="main col-md-10 offset-md-2">
       <a href="random.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
@@ -73,17 +73,17 @@ $simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedi
       <div class="table-responsive">
         <?php
         if ($advancedview) {
-          include('showfull.php');
+          include_once __DIR__ . '/showfull.php';
         } elseif ($mapview) {
-          include('showmap.php');
+          include_once __DIR__ . '/showmap.php';
         } elseif ($podmin) {
-          include('podmin.php');
+          include_once __DIR__ . '/podmin.php';
         } elseif ($podminedit) {
-          include('podminedit.php');
+          include_once __DIR__ . '/podminedit.php';
         } elseif ($cleanup) {
-          include('cleanup.php');
+          include_once __DIR__ . '/cleanup.php';
         } else {
-          include('show.php');
+          include_once __DIR__ . '/show.php';
         }
         ?>
       </div>
