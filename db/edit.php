@@ -1,7 +1,7 @@
 <?php
 $_GET['domain'] || die('no pod domain given');
 $_GET['token'] || die('no token given');
-strlen($_GET['token']) < 6 || die('bad token');
+strlen($_GET['token']) > 6 || die('bad token');
 
 $domain = $_GET['domain'];
 
