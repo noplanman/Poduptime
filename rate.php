@@ -1,3 +1,7 @@
+<?php
+$_GET['domain'] || die('domain not specified');
+?>
+
 <html>
 <head>
   <style type="text/css">
@@ -51,17 +55,12 @@
   require_once __DIR__ . '/config.php';
 
   $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-  if (!$dbh) {
-    die('Error in connection: ' . pg_last_error());
-  }
-  if (is_null($_GET['domain'])) {
-    die('domain not specified');
-  }
+  $dbh || die('Error in connection: ' . pg_last_error());
+
   $sql    = "SELECT * FROM rating_comments WHERE domain = $1";
   $result = pg_query_params($dbh, $sql, [$_GET['domain']]);
-  if (!$result) {
-    die('Error in SQL query: ' . pg_last_error());
-  }
+  $result || die('Error in SQL query: ' . pg_last_error());
+
   $numrows = pg_num_rows($result);
   echo '<input id="addrating" class="btn primary" style="float:right;margin-right:15px;" type="submit" value="Add a Rating"><h3>Podupti.me ratings for ' . $_GET['domain'] . ' pod</h3><div id="ratings"><hr>';
   if (!$numrows) {

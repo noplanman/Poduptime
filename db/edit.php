@@ -1,26 +1,19 @@
 <?php
-if (!$_GET['domain']) {
-  die('no pod domain given');
-}
-if (!$_GET['token']) {
-  die('no token given');
-}
-if (strlen($_GET['token']) < 6) {
-  die('bad token');
-}
+$_GET['domain'] || die('no pod domain given');
+$_GET['token'] || die('no token given');
+strlen($_GET['token']) < 6 || die('bad token');
+
 $domain = $_GET['domain'];
 
 require_once __DIR__ . '/../config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-if (!$dbh) {
-  die('Error in connection: ' . pg_last_error());
-}
+$dbh || die('Error in connection: ' . pg_last_error());
+
 $sql    = "SELECT domain,email,token,tokenexpire,pingdomurl,weight FROM pods WHERE domain = '$domain'";
 $result = pg_query($dbh, $sql);
-if (!$result) {
-  die('Error in SQL query: ' . pg_last_error());
-}
+$result || die('Error in SQL query: ' . pg_last_error());
+
 while ($row = pg_fetch_array($result)) {
   if ($row['token'] <> $_GET['token']) {
     die('token not a match');

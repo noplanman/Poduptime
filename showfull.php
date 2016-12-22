@@ -3,9 +3,8 @@ $tt = 0;
 require_once __DIR__ . '/config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-if (!$dbh) {
-  die('Error in connection: ' . pg_last_error());
-}
+$dbh || die('Error in connection: ' . pg_last_error());
+
 $hidden = isset($_GET['hidden']) ? $_GET['hidden'] : null;
 if ($hidden == 'true') {
   $sql = "SELECT * FROM pods WHERE hidden <> 'no' ORDER BY uptimelast7 DESC";
@@ -13,9 +12,8 @@ if ($hidden == 'true') {
   $sql = 'SELECT * FROM pods ORDER BY uptimelast7 DESC';
 }
 $result = pg_query($dbh, $sql);
-if (!$result) {
-  die('Error in SQL query: ' . pg_last_error());
-}
+$result || die('Error in SQL query: ' . pg_last_error());
+
 $numrows = pg_num_rows($result);
 ?>
 
