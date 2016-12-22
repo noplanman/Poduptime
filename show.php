@@ -37,13 +37,13 @@ $numrows = pg_num_rows($result);
 
   <?php
   while ($row = pg_fetch_array($result)) {
-    $tt = $tt + 1;
-    if ($row['secure'] == 'true') {
-      $method = 'https://';
+    $tt++;
+    if ($row['secure'] === 'true') {
+      $scheme = 'https://';
       $class  = 'text-success';
 //$tip="This pod uses SSL encryption for traffic.";
     } else {
-      $method = 'http://';
+      $scheme = 'http://';
       $class  = 'red';
 //$tip="This pod does not offer SSL";
     }
@@ -57,31 +57,21 @@ $numrows = pg_num_rows($result);
       $row['uptimelast7'],
       $row['score']
     );
-    echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="' . $class . ' url" target="_self" href="' . $method . $row['domain'] . '">' . $row['domain'] . '</a></div></td>';
+    echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="' . $class . ' url" target="_self" href="' . $scheme . $row['domain'] . '">' . $row['domain'] . '</a></div></td>';
 
     echo '<td>' . $row['uptimelast7'] . '%</td>';
     echo '<td data-toggle="tooltip" data-placement="bottom" title="active six months: ' . $row['active_users_halfyear'] . ', active one month: ' . $row['active_users_monthly'] . '">' . $row['active_users_halfyear'] . '</td>';
-    if ($country_code == $row['country']) {
+    if ($country_code === $row['country']) {
       echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="' . $row['whois'] . '"><b>' . $row['country'] . '</b></td>';
     } else {
       echo '<td data-toggle="tooltip" data-placement="bottom" title="' . $row['whois'] . '">' . $row['country'] . '</td>';
     }
     echo '<td>';
-    if ($row['service_facebook'] === 't') {
-      echo '<div class="smlogo smlogo-facebook"></div>';
-    }
-    if ($row['service_twitter'] === 't') {
-      echo '<div class="smlogo smlogo-twitter"></div>';
-    }
-    if ($row['service_tumblr'] === 't') {
-      echo '<div class="smlogo smlogo-tumblr"></div>';
-    }
-    if ($row['service_wordpress'] === 't') {
-      echo '<div class="smlogo smlogo-wordpress"></div>';
-    }
-    if ($row['xmpp'] === 't') {
-      echo '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
-    }
+    $row['service_facebook'] === 't' && print '<div class="smlogo smlogo-facebook"></div>';
+    $row['service_twitter'] === 't' && print '<div class="smlogo smlogo-twitter"></div>';
+    $row['service_tumblr'] === 't' && print '<div class="smlogo smlogo-tumblr"></div>';
+    $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress"></div>';
+    $row['xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
     echo '</td></tr>';
   }
   pg_free_result($result);

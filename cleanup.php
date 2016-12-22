@@ -1,5 +1,4 @@
 <?php
-$tt = 0;
 require_once __DIR__ . '/config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
@@ -37,19 +36,19 @@ $numrows = pg_num_rows($result);
   </thead>
   <tbody>
   <?php
+  $tt = 0;
   while ($row = pg_fetch_array($result)) {
-    $tt = $tt + 1;
-    if ($row['secure'] == 'true') {
-      $method = 'https://';
+    $tt++;
+    if ($row['secure'] === 'true') {
+      $scheme = 'https://';
       $class  = 'green';
       $tip    = 'This pod uses SSL encryption for traffic.';
     } else {
-      $method = 'http://';
+      $scheme = 'http://';
       $class  = 'red';
       $tip    = 'This pod does not offer SSL';
     }
     $verdiff = str_replace('.', '', $row['masterversion']) - str_replace('.', '', $row['shortversion']);
-
 
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
     $tip .= sprintf(
@@ -62,7 +61,7 @@ $numrows = pg_num_rows($result);
       $row['score']
     );
 
-    echo '<tr><td><a class="' . $class . '" target="_self" href="' . $method . $row['domain'] . '">' . $row['domain'] . '<div title="' . $tip . '" class="tipsy" style="display: inline-block">?</div></a></td>';
+    echo '<tr><td><a class="' . $class . '" target="_self" href="' . $scheme . $row['domain'] . '">' . $row['domain'] . '<div title="' . $tip . '" class="tipsy" style="display: inline-block">?</div></a></td>';
 
     if (stristr($row['shortversion'], 'head')) {
       $version = '.dev';
@@ -74,7 +73,7 @@ $numrows = pg_num_rows($result);
       $version = $row['shortversion'];
       $pre     = 'This pod runs production code';
     }
-    if ($row['shortversion'] == $row['masterversion'] && $row['shortversion'] != '') {
+    if ($row['shortversion'] === $row['masterversion'] && $row['shortversion'] !== '') {
       $classver = 'green';
     } elseif ($verdiff > 6) {
       $classver = 'red';
@@ -84,19 +83,13 @@ $numrows = pg_num_rows($result);
     echo '<td class="' . $classver . '"><div title="' . $pre . ' codename: ' . $row['longversion'] . ' master version is: ' . $row['masterversion'] . '" class="tipsy">' . $version . '</div></td>';
     echo '<td>' . $row['uptimelast7'] . '</td>';
     echo '<td>' . $row['responsetimelast7'] . '</td>';
-    if ($row['signup'] == 1) {
-      $signup = 'Open';
-    } else {
-      $signup = 'Closed';
-    }
-    echo '<td>' . $signup . '</td>';
+    echo '<td>' . ($row['signup'] === '1' ? 'Open' : 'Closed') . '</td>';
     echo '<td>' . $row['total_users'] . '</td>';
     echo '<td>' . $row['active_users_halfyear'] . '</td>';
     echo '<td>' . $row['active_users_monthly'] . '</td>';
     echo '<td>' . $row['local_posts'] . '</td>';
     echo '<td>' . $row['comment_counts'] . '</td>';
-    if (strpos($row['pingdomurl'],
-      'pingdom.com')) {
+    if (strpos($row['pingdomurl'], 'pingdom.com')) {
       $moreurl = $row['pingdomurl'];
     } else {
       $moreurl = 'http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $row['pingdomurl'];

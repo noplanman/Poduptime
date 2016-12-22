@@ -5,7 +5,7 @@ $country_code = $_SERVER['HTTP_CF_IPCOUNTRY'];
 
 $csv = array_map('str_getcsv', file('db/country_latlon.csv'));
 foreach ($csv as $cords) {
-  if ($cords[0] == $country_code) {
+  if ($cords[0] === $country_code) {
     $lat  = $cords[1];
     $long = $cords[2];
   }
@@ -29,58 +29,38 @@ foreach ($csv as $cords) {
       $sql = "SELECT * FROM pods WHERE hidden <> 'yes'";
       $result = pg_query($dbh, $sql);
       $result || die('Error in SQL query: ' . pg_last_error());
-      
+
       $numrows = pg_num_rows($result);
+      $i = 0;
       while ($row = pg_fetch_array($result)) {
+        // If this isn't the first entry, put a comma to separate the entries.
+        $i++ > 0 && print ',';
+
         $feat = '';
-        if ($row['service_facebook'] === 't') {
-          $feat .= '<div class="smlogo smlogo-facebook"></div>';
-        }
-        if ($row['service_twitter'] === 't') {
-          $feat .= '<div class="smlogo smlogo-twitter"></div>';
-        }
-        if ($row['service_tumblr'] === 't') {
-          $feat .= '<div class="smlogo smlogo-tumblr"></div>';
-        }
-        if ($row['service_wordpress'] === 't') {
-          $feat .= '<div class="smlogo smlogo-wordpress"></div>';
-        }
-        if ($row['xmpp'] === 't') {
-          $feat .= '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
-        }
-        unset($signup);
-        if ($row['signup'] == 1) {
-          $signup = 'yes';
-        } else {
-          $signup = 'no';
-        }
+        $row['service_facebook'] === 't' && $feat .= '<div class="smlogo smlogo-facebook"></div>';
+        $row['service_twitter'] === 't' && $feat .= '<div class="smlogo smlogo-twitter"></div>';
+        $row['service_tumblr'] === 't' && $feat .= '<div class="smlogo smlogo-tumblr"></div>';
+        $row['service_wordpress'] === 't' && $feat .= '<div class="smlogo smlogo-wordpress"></div>';
+        $row['xmpp'] === 't' && $feat .= '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
+
         $pod_name = htmlentities($row['name'], ENT_QUOTES);
-        if ($row['secure'] == 'true') {
-          $ur = 'https';
-        } else {
-          $ur = 'http';
-        }
+        $scheme   = $row['secure'] === 'true' ? 'https://' : 'http://';
+        $signup   = $row['signup'] === '1' ? 'yes' : 'no';
         echo <<<EOF
 {
   'type': 'Feature',
   'id': '1',
   'properties' : {
-    'html': '{$pod_name}<br><a href="{$ur}://{$row['domain']}">Visit</a><br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptimelast7']}%<br> Services:{$feat}'
+    'html': '{$pod_name}<br><a href="{$scheme}{$row['domain']}">Visit</a><br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptimelast7']}%<br> Services:{$feat}'
   },
   'geometry': {
     'type': 'Point',
-    'coordinates': [{$row['long']},{$row['lat']} ]
+    'coordinates': [{$row['long']},{$row['lat']}]
   }
-},
+}
 EOF;
       }
       ?>
-      {
-        'type': 'Feature',
-        'id': '1',
-        'properties': {'html': ''},
-        'geometry': {'type': 'Point', 'coordinates': [0, 0]}
-      }
     ]
   };
   var tiles = L.tileLayer('https://{s}.tiles.mapbox.com/v4/diasporg.l615e519/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZGlhc3BvcmciLCJhIjoibTVBaldtayJ9.HdGPBIFeZyNKKQqCmU11nA', {
