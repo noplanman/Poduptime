@@ -1,3 +1,13 @@
+<?php
+$hidden       = isset($_GET['hidden']) ? $_GET['hidden'] : null;
+$lastfile     = 'db/last.data';
+$advancedview = isset($_GET['advancedview']);
+$mapview      = isset($_GET['mapview']);
+$cleanup      = isset($_GET['cleanup']);
+$podmin       = isset($_GET['podmin']);
+$podminedit   = isset($_GET['podminedit']);
+$simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedit);
+?>
 <!doctype html>
 <html>
 <head>
@@ -14,17 +24,6 @@
   <meta property="og:title" content="Diaspora Pod Finder"/>
   <meta property="og:type" content="website"/>
   <meta property="og:description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!"/>
-  <?php
-  $hidden       = isset($_GET['hidden']) ? $_GET['hidden'] : null;
-  $lastfile     = 'db/last.data';
-  $advancedview = isset($_GET['advancedview']);
-  $mapview      = isset($_GET['mapview']);
-  $cleanup      = isset($_GET['cleanup']);
-  $podmin       = isset($_GET['podmin']);
-  $podminedit   = isset($_GET['podminedit']);
-  $simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedit);
-  ?>
-  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 </head>
