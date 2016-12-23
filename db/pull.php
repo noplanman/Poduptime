@@ -47,10 +47,12 @@ if ($domain) {
   $sql    = "SELECT domain,pingdomurl,score,datecreated,weight FROM pods WHERE domain = $1";
   $sleep  = '0';
   $result = pg_query_params($dbh, $sql, [$domain]);
-} else {
+} elseif (php_sapi_name() == "cli") {
   $sql    = 'SELECT domain,pingdomurl,score,datecreated,adminrating,weight FROM pods';
   $sleep  = '1';
   $result = pg_query($dbh, $sql);
+} else {
+  die('No valid input');
 }
 $result || die('Error in SQL query1: ' . pg_last_error());
 
