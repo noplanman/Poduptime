@@ -92,7 +92,7 @@ $numrows = pg_num_rows($result);
     if (strpos($row['pingdomurl'], 'pingdom.com')) {
       $moreurl = $row['pingdomurl'];
     } else {
-      $moreurl = 'http://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $row['pingdomurl'];
+      $moreurl = 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $row['pingdomurl'];
     }
     echo '<td><div title="Last Check ' . $row['dateupdated'] . '" class="tipsy"><a target="_self" href="' . $moreurl . '">' . $row['monthsmonitored'] . '</a></div></td>';
     echo '<td>' . $row['score'] . '</td>';

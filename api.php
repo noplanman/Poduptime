@@ -13,7 +13,7 @@ if ($_GET['format'] === 'georss') {
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss.org/georss">
 <title>Diaspora Pods</title>
 <subtitle>IP Locations of Diaspora pods on podupti.me</subtitle>
-<link href="http://podupti.me/"/>
+<link href="https://podupti.me/"/>
 
 EOF;
   $sql    = "SELECT * FROM pods WHERE hidden <> 'yes'";
