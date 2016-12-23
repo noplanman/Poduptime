@@ -1,7 +1,7 @@
 <?php
 $debug = 1;
 //* Copyright (c) 2011-2016, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());

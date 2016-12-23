@@ -86,7 +86,7 @@ $numrows = pg_num_rows($result);
     if (strpos($row['pingdomurl'], 'pingdom.com')) {
       $moreurl = $row['pingdomurl'];
     } else {
-      $moreurl = '/db/showuptimerobot.php?domain=' . $row['domain'];
+      $moreurl = '/showstats.php?domain=' . $row['domain'];
     }
     echo '<td><div title="Last Check ' . $row['dateupdated'] . '" data-toggle="tooltip" data-placement="bottom"><a rel="facebox" href="' . $moreurl . '">' . $row['monthsmonitored'] . '</a></div></td>';
 
