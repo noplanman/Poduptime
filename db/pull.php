@@ -47,7 +47,7 @@ if ($domain) {
   $sql    = "SELECT domain,pingdomurl,score,datecreated,weight FROM pods WHERE domain = $1";
   $sleep  = '0';
   $result = pg_query_params($dbh, $sql, [$domain]);
-} elseif (php_sapi_name() == "cli") {
+} elseif (PHP_SAPI === "cli") {
   $sql    = 'SELECT domain,pingdomurl,score,datecreated,adminrating,weight FROM pods';
   $sleep  = '1';
   $result = pg_query($dbh, $sql);
