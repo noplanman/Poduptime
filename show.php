@@ -53,7 +53,7 @@ $numrows = pg_num_rows($result);
       $row['uptimelast7'],
       $row['score']
     );
-    echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="' . $class . ' url" target="_self" href="' . $scheme . $row['domain'] . '">' . $row['domain'] . '</a></div></td>';
+    echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="' . $class . ' url" target="_self" href="/go.php?url=' . $scheme . $row['domain'] . '">' . $row['domain'] . '</a></div></td>';
 
     echo '<td>' . $row['uptimelast7'] . '%</td>';
     echo '<td data-toggle="tooltip" data-placement="bottom" title="active six months: ' . $row['active_users_halfyear'] . ', active one month: ' . $row['active_users_monthly'] . '">' . $row['active_users_halfyear'] . '</td>';

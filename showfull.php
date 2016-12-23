@@ -54,7 +54,7 @@ $numrows = pg_num_rows($result);
     $tip .= "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an uptime of {$row['uptimelast7']}% this month and a response time average today of {$row['responsetimelast7']}ms was last checked on {$row['dateupdated']}. ";
     $tip .= "On a scale of 100 this pod is a {$row['score']} right now";
 
-    echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" class="' . $class . '" target="_self" href="' . $scheme . $row['domain'] . '">' . $row['domain'] . '</a></td>';
+    echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" class="' . $class . '" target="_self" href="/go.php?url=' . $scheme . $row['domain'] . '">' . $row['domain'] . '</a></td>';
 
     if (stristr($row['shortversion'], 'head')) {
       $version = '.dev';
