@@ -2,6 +2,9 @@
 $tt = 0;
 require_once __DIR__ . '/config.php';
 
+//Cloudflare country code pull
+$country_code = $_SERVER['HTTP_CF_IPCOUNTRY'];
+
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
@@ -49,15 +52,14 @@ $numrows = pg_num_rows($result);
       $class  = 'red';
       $tip    = 'This pod does not offer SSL';
     }
-    $verdiff  = str_replace('.', '', $row['masterversion']) - str_replace('.', '', $row['shortversion']);
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
     $tip .= "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an uptime of {$row['uptimelast7']}% this month and a response time average today of {$row['responsetimelast7']}ms was last checked on {$row['dateupdated']}. ";
     $tip .= "On a scale of 100 this pod is a {$row['score']} right now";
 
     echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" class="' . $class . '" target="_self" href="/go.php?url=' . $scheme . $row['domain'] . '">' . $row['domain'] . '</a></td>';
 
-    if (stristr($row['shortversion'], 'head')) {
-      $version = '.dev';
+    if ($row['shortversion'] > $row['masterversion']) {
+      $version = $row['shortversion'];
       $pre     = 'This pod runs pre release development code';
     } elseif (!$row['shortversion']) {
       $version = '0';
@@ -66,14 +68,14 @@ $numrows = pg_num_rows($result);
       $version = $row['shortversion'];
       $pre     = 'This pod runs production code';
     }
-    if ($row['shortversion'] === $row['masterversion'] && $row['shortversion'] !== '') {
-      $classver = 'green';
-    } elseif ($verdiff > 6) {
-      $classver = 'red';
+    if (version_compare($row['shortversion'], $row['masterversion'], '=')) {
+      $classver = 'text-success';
+    } elseif (version_compare($row['shortversion'], $row['masterversion'], '<')) {
+      $classver = 'text-warning';
     } else {
       $classver = 'black';
     }
-    echo '<td class="' . $classver . '"><div title="' . $pre . ' codename: ' . $row['longversion'] . ' master version is: ' . $row['masterversion'] . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
+    echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
     echo '<td>' . $row['uptimelast7'] . '%</td>';
     echo '<td>' . $row['ipv6'] . '</td>';
     echo '<td>' . $row['responsetimelast7'] . '</td>';
@@ -94,7 +96,11 @@ $numrows = pg_num_rows($result);
 
     echo '</a></td>';
     echo '<td>' . $row['score'] . '/100</td>';
-    echo '<td>' . $row['country'] . '</td>';
+    if ($country_code === $row['country']) {
+      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="' . $row['whois'] . '"><b>' . $row['country'] . '</b></td>';
+    } else {
+      echo '<td data-toggle="tooltip" data-placement="bottom" title="' . $row['whois'] . '">' . $row['country'] . '</td>';
+    }
 
     echo '<td>';
     $row['service_facebook'] === 't' && print '<div class="smlogo smlogo-facebook"></div>';
