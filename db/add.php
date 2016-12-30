@@ -85,8 +85,8 @@ if ($valid == '1') {
   $to      = $adminemail;
   $cc      = $_POST['email'];
   $subject = 'New pod added to podupti.me ';
-  $message .= sprintf(
-    "%1$s\n\n Stats Url: %2$s\n\n Pod: %3$s\n\n",
+  $message = sprintf(
+    "%1\$s\n\nStats Url: %2\$s\n\nPod: %3\$s\n\n",
     'https://podupti.me',
     'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $_POST['url'],
     'https://podupti.me/db/pull.php?debug=1&domain=' . $_POST['domain']
