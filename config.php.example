@@ -1,9 +1,9 @@
 <?php
 /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
 //backup directory
-$backup_dir = '/var/www/podup/backup';
+$backup_dir = '/backup';
 //log directory
-$log_dir = '/var/www/podup/log';
+$log_dir = '/log';
 //location of pg dump
 $pg_dump_dir = '/usr/bin';
 //db username

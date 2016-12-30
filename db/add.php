@@ -4,7 +4,7 @@ $valid = 0;
 require_once __DIR__ . '/../logging.php';
 
 $log = new Logging();
-$log->lfile('../log/add.php.log');
+$log->lfile(__DIR__ . $log_dir . '/add.log');
 if (!$_POST['url']) {
   $log->lwrite('no url given ' . $_POST['domain']);
   die('no url given');
