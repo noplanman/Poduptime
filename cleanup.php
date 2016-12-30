@@ -80,7 +80,7 @@ $numrows = pg_num_rows($result);
     } else {
       $classver = 'black';
     }
-    echo '<td class="' . $classver . '"><div title="' . $pre . ' codename: ' . $row['longversion'] . ' master version is: ' . $row['masterversion'] . '" class="tipsy">' . $version . '</div></td>';
+    echo '<td class="' . $classver . '"><div title="' . $pre . ' codename: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" class="tipsy">' . $version . '</div></td>';
     echo '<td>' . $row['uptimelast7'] . '</td>';
     echo '<td>' . $row['responsetimelast7'] . '</td>';
     echo '<td>' . ($row['signup'] === '1' ? 'Open' : 'Closed') . '</td>';
