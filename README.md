@@ -40,6 +40,8 @@ psql -u podupuser podupdb < db/tables.sql
 ```
 
 Edit `config.php` to add your DB and file settings.
+touch add.log in location you configured in config.php
+
 
 ============================
 
