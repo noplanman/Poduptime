@@ -1,8 +1,12 @@
 <?php
-$debug = isset($_GET['debug']) ? 1 : 0;
-$debug = 1;
+//$debug = isset($_GET['debug']);
+$debug = true;
 //$debug = isset($argv[1])?1:0;
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
+
+// Other parameters.
+$_domain = $_GET['domain'] ?? '';
+
 require_once __DIR__ . '/../config.php';
 
 //get master code version for diaspora pods
@@ -36,18 +40,16 @@ $fmasterversion = trim($version[1], '"');
 if ($debug) {
   echo 'Frendica Masterversion: ' . $fmasterversion . '<br>';
 }
-$dbh  = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-$dbh2 = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
+
+$dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-
 //foreach pod check it and update db
-$domain = isset($_GET['domain']) ? $_GET['domain'] : null;
-if ($domain) {
-  $sql    = "SELECT domain,pingdomurl,score,datecreated,weight FROM pods WHERE domain = $1";
+if ($_domain) {
+  $sql    = 'SELECT domain,pingdomurl,score,datecreated,weight FROM pods WHERE domain = $1';
   $sleep  = '0';
-  $result = pg_query_params($dbh, $sql, [$domain]);
-} elseif (PHP_SAPI === "cli") {
+  $result = pg_query_params($dbh, $sql, [$_domain]);
+} elseif (PHP_SAPI === 'cli') {
   $sql    = 'SELECT domain,pingdomurl,score,datecreated,adminrating,weight FROM pods';
   $sleep  = '1';
   $result = pg_query($dbh, $sql);
@@ -58,11 +60,11 @@ $result || die('Error in SQL query1: ' . pg_last_error());
 
 while ($row = pg_fetch_all($result)) {
   $numrows = pg_num_rows($result);
-  for ($i = 0; $i < $numrows; $i ++) {
+  for ($i = 0; $i < $numrows; $i++) {
     $domain    = $row[$i]['domain'];
-    $score     = $row[$i]['score'];
+    $score     = (int) $row[$i]['score'];
     $dateadded = $row[$i]['datecreated'];
-    $admindb   = $row[$i]['adminrating'];
+    $admindb   = (int) $row[$i]['adminrating'];
     $weight    = $row[$i]['weight'];
     //get ratings
     $userrate       = 0;
@@ -71,7 +73,7 @@ while ($row = pg_fetch_all($result)) {
     $adminratingavg = [];
     $userrating     = [];
     $adminrating    = [];
-    $sqlforr        = "SELECT * FROM rating_comments WHERE domain = $1";
+    $sqlforr        = 'SELECT * FROM rating_comments WHERE domain = $1';
     $ratings        = pg_query_params($dbh, $sqlforr, [$domain]);
     $ratings || die('Error in SQL query2: ' . pg_last_error());
 
@@ -126,12 +128,13 @@ while ($row = pg_fetch_all($result)) {
     unset($service_twitter);
     unset($service_tumblr);
     unset($service_wordpess);
+    unset($service_xmpp);
     unset($dver);
     unset($dverr);
     unset($xdver);
-    unset($xmpp);
     unset($softwarename);
     unset($outputsslerror);
+
     $chss = curl_init();
     curl_setopt($chss, CURLOPT_URL, 'https://' . $domain . '/nodeinfo/1.0');
     curl_setopt($chss, CURLOPT_POST, 0);
@@ -184,7 +187,7 @@ while ($row = pg_fetch_all($result)) {
       if ($jsonssl->openRegistrations === true) {
         $registrations_open = 1;
       }
-      $xdver = isset($jsonssl->software->version) ? $jsonssl->software->version : 0;
+      $xdver = $jsonssl->software->version ?? 0;
       $dverr = explode('-', trim($xdver));
       $dver  = $dverr[0];
       if ($debug) {
@@ -193,38 +196,18 @@ while ($row = pg_fetch_all($result)) {
       if (!$dver) {
         $score = $score - 2;
       }
-      $softwarename          = isset($jsonssl->software->name) ? $jsonssl->software->name : 'null';
-      $name                  = isset($jsonssl->metadata->nodeName) ? $jsonssl->metadata->nodeName : 'null';
-      $total_users           = isset($jsonssl->usage->users->total) ? $jsonssl->usage->users->total : 0;
-      $active_users_halfyear = isset($jsonssl->usage->users->activeHalfyear) ? $jsonssl->usage->users->activeHalfyear : 0;
-      $active_users_monthly  = isset($jsonssl->usage->users->activeMonth) ? $jsonssl->usage->users->activeMonth : 0;
-      $local_posts           = isset($jsonssl->usage->localPosts) ? $jsonssl->usage->localPosts : 0;
-      $comment_counts        = isset($jsonssl->usage->localComments) ? $jsonssl->usage->localComments : 0;
-      if (array_search('facebook', $jsonssl->services->outbound) !== false) {
-        $service_facebook = 'true';
-      } else {
-        $service_facebook = 'false';
-      }
-      if (array_search('twitter', $jsonssl->services->outbound) !== false) {
-        $service_twitter = 'true';
-      } else {
-        $service_twitter = 'false';
-      }
-      if (array_search('tumblr', $jsonssl->services->outbound) !== false) {
-        $service_tumblr = 'true';
-      } else {
-        $service_tumblr = 'false';
-      }
-      if (array_search('wordpress', $jsonssl->services->outbound) !== false) {
-        $service_wordpress = 'true';
-      } else {
-        $service_wordpress = 'false';
-      }
-      if ($jsonssl->metadata->xmppChat === true) {
-        $xmpp = 'true';
-      } else {
-        $xmpp = 'false';
-      }
+      $softwarename          = $jsonssl->software->name ?? 'null';
+      $name                  = $jsonssl->metadata->nodeName ?? 'null';
+      $total_users           = $jsonssl->usage->users->total ?? 0;
+      $active_users_halfyear = $jsonssl->usage->users->activeHalfyear ?? 0;
+      $active_users_monthly  = $jsonssl->usage->users->activeMonth ?? 0;
+      $local_posts           = $jsonssl->usage->localPosts ?? 0;
+      $comment_counts        = $jsonssl->usage->localComments ?? 0;
+      $service_facebook      = in_array('facebook', $jsonssl->services->outbound, true) ? 'true' : 'false';
+      $service_twitter       = in_array('twitter', $jsonssl->services->outbound, true) ? 'true' : 'false';
+      $service_tumblr        = in_array('tumblr', $jsonssl->services->outbound, true) ? 'true' : 'false';
+      $service_wordpress     = in_array('wordpress', $jsonssl->services->outbound, true) ? 'true' : 'false';
+      $service_xmpp          = $jsonssl->metadata->xmppChat === true ? 'true' : 'false';
     } else {
       $secure = 'false';
       $score  = $score - 1;
@@ -397,13 +380,13 @@ while ($row = pg_fetch_all($result)) {
     //sql it
 
     $timenow = date('Y-m-d H:i:s');
-    $sql     = "UPDATE pods SET Hgitdate=$1, Hencoding=$2, secure=$3, hidden=$4, Hruntime=$5, Hgitref=$6, ip=$7, ipv6=$8, monthsmonitored=$9, 
-  uptimelast7=$10, status=$11, dateLaststats=$12, dateUpdated=$13, responsetimelast7=$14, score=$15, adminrating=$16, country=$17, city=$18, 
-  state=$19, lat=$20, long=$21, postalcode='', connection=$22, whois=$23, userrating=$24, longversion=$25, shortversion=$26, 
-  masterversion=$27, signup=$28, total_users=$29, active_users_halfyear=$30, active_users_monthly=$31, local_posts=$32, name=$33, 
-  comment_counts=$35, service_facebook=$36, service_tumblr=$37, service_twitter=$38, service_wordpress=$39, weightedscore=$40, xmpp=$41, softwarename=$42, sslvalid=$43
-  WHERE domain=$34";
-    $result  = pg_query_params($dbh, $sql, [$gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $xmpp, $softwarename, $outputsslerror]);
+    $sql     = 'UPDATE pods SET Hgitdate = $1, Hencoding = $2, secure = $3, hidden = $4, Hruntime = $5, Hgitref = $6, ip = $7, ipv6 = $8, monthsmonitored = $9,
+  uptimelast7 = $10, status = $11, dateLaststats = $12, dateUpdated = $13, responsetimelast7 = $14, score = $15, adminrating = $16, country = $17, city = $18,
+  state = $19, lat = $20, long = $21, postalcode=\'\', connection = $22, whois = $23, userrating = $24, longversion = $25, shortversion = $26,
+  masterversion = $27, signup = $28, total_users = $29, active_users_halfyear = $30, active_users_monthly = $31, local_posts = $32, name = $33,
+  comment_counts = $35, service_facebook = $36, service_tumblr = $37, service_twitter = $38, service_wordpress = $39, weightedscore = $40, xmpp = $41, softwarename = $42, sslvalid = $43
+  WHERE domain = $34';
+    $result  = pg_query_params($dbh, $sql, [$gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror]);
     $result || die('Error in SQL query3: ' . pg_last_error());
 
     if ($debug) {

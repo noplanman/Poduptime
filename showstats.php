@@ -1,14 +1,17 @@
 <?php
-$debug = 1;
 //* Copyright (c) 2011-2016, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
+$debug = 1;
+
+// Other parameters.
+$_domain = $_GET['domain'] ?? null;
+
 require_once __DIR__ . '/config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$domain = isset($_GET['domain']) ? $_GET['domain'] : null;
-$sql    = "SELECT pingdomurl FROM pods WHERE domain = $1";
-$result = pg_query_params($dbh, $sql, [$domain]);
+$sql    = 'SELECT pingdomurl FROM pods WHERE domain = $1';
+$result = pg_query_params($dbh, $sql, [$_domain]);
 $result || die('Error in SQL query: ' . pg_last_error());
 
 $apikey = pg_fetch_all($result);

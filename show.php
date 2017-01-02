@@ -1,9 +1,9 @@
 <?php
-$tt = 0;
+
 require_once __DIR__ . '/config.php';
 
-//Cloudflare country code pull
-$country_code = $_SERVER['HTTP_CF_IPCOUNTRY'];
+// Cloudflare country code pull.
+$country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
@@ -30,10 +30,8 @@ $numrows = pg_num_rows($result);
   </thead>
   <tbody>
 
-
   <?php
   while ($row = pg_fetch_array($result)) {
-    $tt++;
     if ($row['secure'] === 'true') {
       $scheme = 'https://';
       $class  = 'text-success';

@@ -1,7 +1,7 @@
 <?php
 //focus map to the users side of the globe
-//Cloudflare country code pull
-$country_code = $_SERVER['HTTP_CF_IPCOUNTRY'];
+// Cloudflare country code pull.
+$country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
 
 $csv = array_map('str_getcsv', file('db/country_latlon.csv'));
 foreach ($csv as $cords) {
