@@ -22,7 +22,7 @@ $numrows = pg_num_rows($result);
   <thead class="thead-inverse">
   <tr>
     <th><a data-toggle="tooltip" data-placement="bottom" title="A pod is a site for you to set up your account.">Pod</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online for <?php echo date('F') ?>.">Uptime %</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online.">Uptime %</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 6 months on this pod.">Active Users</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation">Location</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to">Services Offered</a></th>

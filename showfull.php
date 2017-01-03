@@ -23,7 +23,7 @@ $numrows = pg_num_rows($result);
   <tr>
     <th><a data-toggle="tooltip" data-placement="bottom" title="A pod is a site for you to set up your account.">Pod</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Version of software this pod runs">Version</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online for <?php echo date('F'); ?>.">Uptime</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online.">Uptime</a></th>
     <th>IPv6</th>
     <th>Response Time</th>
     <th>Signups</th>
@@ -53,7 +53,7 @@ $numrows = pg_num_rows($result);
       $tip    = 'This pod does not offer SSL';
     }
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
-    $tip .= "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an uptime of {$row['uptimelast7']}% this month and a response time average today of {$row['responsetimelast7']}ms was last checked on {$row['dateupdated']}. ";
+    $tip .= "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an overall uptime of {$row['uptimelast7']}% and a response time average today of {$row['responsetimelast7']}ms was last checked on {$row['dateupdated']}. ";
     $tip .= "On a scale of 100 this pod is a {$row['score']} right now";
 
     echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" class="' . $class . '" target="_self" href="/go.php?url=' . $scheme . $row['domain'] . '">' . $row['domain'] . '</a></td>';
