@@ -29,7 +29,7 @@ while ($row = pg_fetch_array($result)) {
     if ($row['email']) {
       $to      = $row['email'];
       $subject = 'Pod deleted from poduptime ';
-      $message = 'Pod ' . $_POST['domain'] . ' was deleted from podupti.me as it was dead on the list. ' . $_POST['comments'] . " Feel free to add back at any time. \n\n";
+      $message = 'Pod ' . $_domain . ' was deleted from podupti.me as it was dead on the list. ' . $_comments . " Feel free to add back at any time. \n\n"; 
       $headers = "From: " . $adminemail ."\r\nCc:" . $adminemail . "," . $row['email'] . "\r\n";
       @mail($to, $subject, $message, $headers);
     }
@@ -38,7 +38,7 @@ while ($row = pg_fetch_array($result)) {
     if ($row['email']) {
       $to      = $row['email'];
       $subject = 'Pod removal warning from poduptime ';
-      $message = 'Pod ' . $_POST['domain'] . ' is on the list to be deleted now because:  ' . $_POST['comments'] . ". \n\n Please let me know if you need help fixing before it is removed. \n\n";
+      $message = 'Pod ' . $_domain . ' is on the list to be deleted now because:  ' . $_comments . ". \n\n Please let me know if you need help fixing before it is removed. \n\n"; 
       $headers = "From: " . $adminemail ."\r\nCc:" . $adminemail . "," . $row['email'] . "\r\n";
       @mail($to, $subject, $message, $headers);
     }

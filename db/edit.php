@@ -45,7 +45,7 @@ while ($row = pg_fetch_array($result)) {
     }
     $to      = $_email;
     $subject = 'Edit notice from poduptime ';
-    $message = 'Data for ' . $_GET['domain'] . " Updated. If it was not you reply and let me know! \n\n";
+    $message = 'Data for ' . $_domain . " Updated. If it was not you reply and let me know! \n\n"; 
     $headers = "From: " . $adminemail . "\r\nCc:" . $adminemail . "," . $_GET['oldemail'] . "\r\n";
     @mail($to, $subject, $message, $headers);
     pg_free_result($result);

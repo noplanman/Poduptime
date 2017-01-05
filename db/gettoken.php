@@ -31,7 +31,7 @@ while ($row = pg_fetch_array($result)) {
 
     $to      = $_email;
     $subject = 'Temporary edit key for podupti.me';
-    $message = 'Link: https://podupti.me/db/edit.php?domain=' . $_POST['domain'] . '&token=' . $uuid . ' Expires: ' . $expire . ' ' . $systemTimeZone . "\n\n";
+    $message = 'Link: https://podupti.me/db/edit.php?domain=' . $_domain . '&token=' . $uuid . ' Expires: ' . $expire . ' ' . $systemTimeZone . "\n\n"; 
     $headers = "From: " . $adminemail . "\r\nBcc: " . $adminemail . "\r\n";
     @mail($to, $subject, $message, $headers);
     echo 'Link sent to your email';
@@ -44,7 +44,7 @@ while ($row = pg_fetch_array($result)) {
 
     $to      = 'support@diasp.org';
     $subject = 'FORWARD REQUEST: Temporary edit key for podupti.me';
-    $message = 'User trying to edit pod without email address. Email found: ' . $row['email'] . ' Link: https://podupti.me/db/edit.php?domain=' . $_POST['domain'] . '&token=' . $uuid . ' Expires: ' . $expire . ' ' . $systemTimeZone . "\n\n";
+    $message = 'User trying to edit pod without email address. Email found: ' . $row['email'] . ' Link: https://podupti.me/db/edit.php?domain=' . $_domain . '&token=' . $uuid . ' Expires: ' . $expire . ' ' . $systemTimeZone . "\n\n"; 
     $headers = "From: " . $adminemail . "\r\nBcc: " . $adminemail . "\r\n";
     @mail($to, $subject, $message, $headers);
     echo 'Link sent to administrator to review and verify, if approved they will forward the edit key to you.';
