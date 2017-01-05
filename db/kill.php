@@ -1,35 +1,31 @@
 <?php
-if (!$_POST['domain']) {
-  die('no pod domain given');
-}
-if (!$_POST['adminkey']) {
-  die('no token given');
-}
-if (!$_POST['action']) {
-  die('no action selected');
-}
-$domain = $_POST['domain'];
+
+// Required parameters.
+($_domain = $_POST['domain'] ?? null) || die('no pod domain given');
+($_adminkey = $_POST['adminkey'] ?? null) || die('no token given');
+($_action = $_POST['action'] ?? null) || die('no action selected');
+
+// Other parameters.
+$_comments = $_POST['comments'] ?? '';
 
 require_once __DIR__ . '/../config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = "SELECT email FROM pods WHERE domain = '$domain'";
-$result = pg_query($dbh, $sql);
+$sql    = 'SELECT email FROM pods WHERE domain = $1';
+$result = pg_query_params($dbh, $sql, [$_domain]);
 $result || die('one Error in SQL query: ' . pg_last_error());
 
 while ($row = pg_fetch_array($result)) {
-  if ($adminkey <> $_POST['adminkey']) {
-    die('admin key fail');
-  }
+  $adminkey === $_adminkey || die('admin key fail');
+
   //save and exit
-  if ($_POST['action'] == 'delete') {
-    $sql    = "DELETE from pods WHERE domain = $1";
-    $result = pg_query_params($dbh, $sql, [$domain]);
-    if (!$result) {
-      die('two Error in SQL query: ' . pg_last_error());
-    }
+  if ($_action === 'delete') {
+    $sql    = 'DELETE FROM pods WHERE domain = $1';
+    $result = pg_query_params($dbh, $sql, [$_domain]);
+    $result || die('two Error in SQL query: ' . pg_last_error());
+
     if ($row['email']) {
       $to      = $row['email'];
       $subject = 'Pod deleted from poduptime ';
@@ -38,8 +34,7 @@ while ($row = pg_fetch_array($result)) {
       @mail($to, $subject, $message, $headers);
     }
     pg_free_result($result);
-    pg_close($dbh);
-  } elseif ($_POST['action'] == 'warn') {
+  } elseif ($_action === 'warn') {
     if ($row['email']) {
       $to      = $row['email'];
       $subject = 'Pod removal warning from poduptime ';
@@ -48,5 +43,8 @@ while ($row = pg_fetch_array($result)) {
       @mail($to, $subject, $message, $headers);
     }
   }
+
   echo $result;
 }
+
+pg_close($dbh);
