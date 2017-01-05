@@ -44,7 +44,7 @@ while ($row = pg_fetch_array($result)) {
     $to      = $_GET['email'];
     $subject = 'Edit notice from poduptime ';
     $message = 'Data for ' . $_GET['domain'] . " Updated. If it was not you reply and let me know! \n\n";
-    $headers = "From: support@diasp.org\r\nCc:support@diasp.org," . $_GET['oldemail'] . "\r\n";
+    $headers = "From: " . $adminemail . "\r\nCc:" . $adminemail . "," . $_GET['oldemail'] . "\r\n";
     @mail($to, $subject, $message, $headers);
     pg_free_result($result);
     pg_close($dbh);
