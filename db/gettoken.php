@@ -42,7 +42,7 @@ while ($row = pg_fetch_array($result)) {
     $result = pg_query_params($dbh, $sql, [$uuid, $expire, $_domain]);
     $result || die('Error in SQL query: ' . pg_last_error());
 
-    $to      = 'support@diasp.org';
+    $to      = $adminemail;
     $subject = 'FORWARD REQUEST: Temporary edit key for podupti.me';
     $message = 'User trying to edit pod without email address. Email found: ' . $row['email'] . ' Link: https://podupti.me/db/edit.php?domain=' . $_domain . '&token=' . $uuid . ' Expires: ' . $expire . ' ' . $systemTimeZone . "\n\n"; 
     $headers = "From: " . $adminemail . "\r\nBcc: " . $adminemail . "\r\n";
