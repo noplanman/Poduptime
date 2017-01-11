@@ -27,7 +27,9 @@ while ($row = pg_fetch_array($result)) {
     echo 'Months Monitored: ' . $row['monthsmonitored'] . '<br>';
     echo 'Response Time: ' . $row['responsetimelast7'] . '<br>';
     echo 'User Rating: ' . $row['userrating'] . '<br>';
-    echo 'Server Location: ' . $row['country'] . '<br>';
+    echo 'Server Country: ' . $row['country'] . '<br>';
+    echo 'Server State: ' . $row['state'] . '<br>';
+    echo 'Server City: ' . $row['city'] . '<br>';
     echo 'Latitude: ' . $row['lat'] . '<br>';
     echo 'Longitude: ' . $row['long'] . '<br>';
   }

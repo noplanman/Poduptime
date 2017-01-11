@@ -240,13 +240,9 @@ while ($row = pg_fetch_all($result)) {
       echo '<br>';
     }
     if ($location) {
-      $ipdata  = 'Country: ' . $location['country_name'] . "\n";
-      $whois   = 'Country: ' . $location['country_name'] . "\n Lat:" . $location['latitude'] . ' Long:' . $location['longitude'];
       $country = $location['country_code'];
-      $city    = isset($location->city) ? iconv('UTF-8', 'UTF-8//IGNORE', $location->city) : null;
-      $state   = '';
-      $months  = 0;
-      $uptime  = 0;
+      $city    = isset($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : null;
+      $state   = isset($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : null;
       $lat     = $location['latitude'];
       $long    = $location['longitude'];
       //if lat and long are just a generic country with no detail lets make some tail up or openmap just stacks them all on top another
