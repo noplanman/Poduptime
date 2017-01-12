@@ -11,7 +11,7 @@ $_weight     = $_GET['weight'] ?? '';
 $_email      = $_GET['email'] ?? '';
 $_oldemail   = $_GET['oldemail'] ?? '';
 $_statsurl   = $_GET['statsurl'] ?? '';
-$_terms   = $_GET['terms'] ?? '';
+$_terms      = $_GET['terms'] ?? '';
 
 require_once __DIR__ . '/../config.php';
 
