@@ -52,7 +52,7 @@ $numrows = pg_num_rows($result);
       $tip    = 'This pod does not offer SSL';
     }
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
-    $tip .= "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an overall uptime of {$row['uptime_alltime']}% and a response time average today of {$row['responsetimems']}ms was last checked on {$row['dateupdated']}. ";
+    $tip .= "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an overall uptime of {$row['uptime_alltime']}% and a response time average today of {$row['responsetime']}ms was last checked on {$row['dateupdated']}. ";
     $tip .= "On a scale of 100 this pod is a {$row['score']} right now";
 
     echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" class="' . $class . '" target="_self" href="/go.php?url=' . $scheme . $row['domain'] . '">' . $row['domain'] . '</a></td>';
@@ -77,7 +77,7 @@ $numrows = pg_num_rows($result);
     echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
     echo '<td>' . $row['uptime_alltime'] . '%</td>';
     echo '<td>' . ($row['ipv6'] === 't' ? 'Yes' : 'No') . '</td>';
-    echo '<td>' . $row['responsetimems'] . '</td>';
+    echo '<td>' . $row['responsetime'] . '</td>';
     echo '<td>' . ($row['signup'] === 't' ? 'Open' : 'Closed') . '</td>';
     echo '<td>' . $row['total_users'] . '</td>';
     echo '<td>' . $row['active_users_halfyear'] . '</td>';

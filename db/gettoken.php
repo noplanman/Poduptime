@@ -1,5 +1,5 @@
 <?php
-$systemTimeZone = system('date +%Z');
+$systemTimeZone = exec('date +%Z');
 
 // Required parameters.
 ($_domain = $_POST['domain'] ?? null) || die('no pod domain given');
