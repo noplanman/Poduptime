@@ -46,11 +46,11 @@ $dbh || die('Error in connection: ' . pg_last_error());
 
 //foreach pod check it and update db
 if ($_domain) {
-  $sql    = 'SELECT domain,pingdomurl,score,datecreated,weight FROM pods WHERE domain = $1';
+  $sql    = 'SELECT domain,statsurl,score,datecreated,weight FROM pods WHERE domain = $1';
   $sleep  = '0';
   $result = pg_query_params($dbh, $sql, [$_domain]);
 } elseif (PHP_SAPI === 'cli') {
-  $sql    = 'SELECT domain,pingdomurl,score,datecreated,adminrating,weight FROM pods';
+  $sql    = 'SELECT domain,statsurl,score,datecreated,adminrating,weight FROM pods';
   $sleep  = '1';
   $result = pg_query($dbh, $sql);
 } else {
@@ -254,15 +254,14 @@ while ($row = pg_fetch_all($result)) {
       }
     }
     echo '<br>';
-    $connection  = '';
     $pingdomdate = date('Y-m-d H:i:s');
-    if (strpos($row[$i]['pingdomurl'], 'pingdom.com')) {
+    if (strpos($row[$i]['statsurl'], 'pingdom.com')) {
       //curl the pingdom page 
       $ping      = curl_init();
       $thismonth = '/' . date('Y') . '/' . date('m');
-      curl_setopt($ping, CURLOPT_URL, $row[$i]['pingdomurl'] . $thismonth);
+      curl_setopt($ping, CURLOPT_URL, $row[$i]['statsurl'] . $thismonth);
       if ($debug) {
-        echo $row[$i]['pingdomurl'] . $thismonth;
+        echo $row[$i]['statsurl'] . $thismonth;
       }
       curl_setopt($ping, CURLOPT_POST, 0);
       curl_setopt($ping, CURLOPT_HEADER, 1);
@@ -308,7 +307,7 @@ while ($row = pg_fetch_all($result)) {
     } else {
       //do uptimerobot API instead
       $ping = curl_init();
-      curl_setopt($ping, CURLOPT_URL, 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=' . $row[$i]['pingdomurl']);
+      curl_setopt($ping, CURLOPT_URL, 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=' . $row[$i]['statsurl']);
       curl_setopt($ping, CURLOPT_POST, 0);
       curl_setopt($ping, CURLOPT_HEADER, 0);
       curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);
@@ -377,10 +376,10 @@ while ($row = pg_fetch_all($result)) {
 
     $timenow = date('Y-m-d H:i:s');
     $sql     = 'UPDATE pods SET Hgitdate = $1, Hencoding = $2, secure = $3, hidden = $4, Hruntime = $5, Hgitref = $6, ip = $7, ipv6 = $8, monthsmonitored = $9,
-  uptimelast7 = $10, status = $11, dateLaststats = $12, dateUpdated = $13, responsetimelast7 = $14, score = $15, adminrating = $16, country = $17, city = $18,
-  state = $19, lat = $20, long = $21, postalcode=\'\', connection = $22, whois = $23, userrating = $24, longversion = $25, shortversion = $26,
+  uptime_alltime = $10, status = $11, dateLaststats = $12, dateUpdated = $13, responsetimems = $14, score = $15, adminrating = $16, country = $17, city = $18,
+  state = $19, lat = $20, long = $21, connection = $22, whois = $23, userrating = $24, longversion = $25, shortversion = $26,
   masterversion = $27, signup = $28, total_users = $29, active_users_halfyear = $30, active_users_monthly = $31, local_posts = $32, name = $33,
-  comment_counts = $35, service_facebook = $36, service_tumblr = $37, service_twitter = $38, service_wordpress = $39, weightedscore = $40, xmpp = $41, softwarename = $42, sslvalid = $43
+  comment_counts = $35, service_facebook = $36, service_tumblr = $37, service_twitter = $38, service_wordpress = $39, weightedscore = $40, service_xmpp = $41, softwarename = $42, sslvalid = $43
   WHERE domain = $34';
     $result  = pg_query_params($dbh, $sql, [$gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror]);
     $result || die('Error in SQL query3: ' . pg_last_error());
