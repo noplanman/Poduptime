@@ -45,7 +45,7 @@ touch add.log in location you configured in config.php
 
 ============================
 
-Source for https://podupti.me
+Source for Diaspora Pod Uptime
 
   Poduptime is software to get live stats and data on listed Diaspora Pods.
   Copyright (C) 2011 David Morley

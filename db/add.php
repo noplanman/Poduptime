@@ -1,9 +1,9 @@
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
 <?php
 require_once __DIR__ . '/../logging.php';
-
+require_once __DIR__ . '/../config.php';
 $log = new Logging();
-$log->lfile(__DIR__ . $log_dir . '/add.log');
+$log->lfile(__DIR__ . '/../' . $log_dir . '/add.log');
 if (!($_domain = $_POST['domain'] ?? null)) {
   $log->lwrite('no domain given');
   die('no pod domain given');
@@ -25,7 +25,6 @@ if (strlen($_url) < 14) {
   die('API key bad needs to be like m58978-80abdb799f6ccf15e3e3787ee');
 }
 
-require_once __DIR__ . '/../config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
@@ -84,12 +83,12 @@ if ($valid) {
 
   $to      = $adminemail;
   $cc      = $_email;
-  $subject = 'New pod added to podupti.me ';
+  $subject = 'New pod added to '. $_SERVER['HTTP_HOST'];
   $message = sprintf(
     "%1\$s\n\nStats Url: %2\$s\n\nPod: %3\$s\n\n",
-    'https://podupti.me',
+    'https://' . $_SERVER['HTTP_HOST'],
     'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $_url,
-    'https://podupti.me/db/pull.php?debug=1&domain=' . $_domain
+    'https://' . $_SERVER['HTTP_HOST'] . '/db/pull.php?debug=1&domain=' . $_domain
   );
   $message .= 'Your pod will not show right away, needs to pass a few checks, Give it a few hours!';
   $headers = 'From: ' . $_email . "\r\nReply-To: " . $_email . "\r\nCc: " . $_email . "\r\n";

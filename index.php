@@ -12,14 +12,14 @@ $simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedi
 <head>
   <meta charset="utf-8">
   <title>Diaspora Pod Uptime Status - Find your new social home on a hosted pod</title>
-  <meta name="keywords" content="diaspora, federated pods, podupti.me, open source social, open source social network"/>
+  <meta name="keywords" content="diaspora, federated pods, <?php echo $_SERVER['HTTP_HOST'] ?>, open source social, open source social network"/>
   <meta name="description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!"/>
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/newstyle.css"/>
   <link rel="stylesheet" href="bower_components/facebox/src/facebox.css"/>
   <link rel="stylesheet" href="css/dashboard.css"/>
   <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.min.css"/>
-  <meta property="og:url" content="https://podupti.me"/>
+  <meta property="og:url" content="https://<?php echo $_SERVER['HTTP_HOST'] ?>"/>
   <meta property="og:title" content="Diaspora Pod Finder"/>
   <meta property="og:type" content="website"/>
   <meta property="og:description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!"/>
