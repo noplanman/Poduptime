@@ -78,7 +78,7 @@ $numrows = pg_num_rows($result);
     echo '<td>' . $row['uptime_alltime'] . '%</td>';
     echo '<td>' . ($row['ipv6'] ? 'Yes' : 'No') . '</td>';
     echo '<td>' . $row['responsetimems'] . '</td>';
-    echo '<td>' . ($row['signup'] ? 'Open' : 'Closed') . '</td>';
+    echo '<td>' . ($row['signup'] === 't' ? 'Open' : 'Closed') . '</td>';
     echo '<td>' . $row['total_users'] . '</td>';
     echo '<td>' . $row['active_users_halfyear'] . '</td>';
     echo '<td>' . $row['active_users_monthly'] . '</td>';
