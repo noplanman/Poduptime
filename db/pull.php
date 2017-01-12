@@ -129,7 +129,7 @@ while ($row = pg_fetch_all($result)) {
     unset($service_tumblr);
     unset($service_wordpess);
     unset($service_xmpp);
-    unset($dver);
+    unset($shortversion);
     unset($dverr);
     unset($xdver);
     unset($softwarename);
@@ -189,11 +189,11 @@ while ($row = pg_fetch_all($result)) {
       }
       $xdver = $jsonssl->software->version ?? 0;
       $dverr = explode('-', trim($xdver));
-      $dver  = $dverr[0];
+      $shortversion  = $dverr[0];
       if ($debug) {
-        echo ' <br> Version code: ' . $dver . '<br>';
+        echo ' <br> Version code: ' . $shortversion . '<br>';
       }
-      if (!$dver) {
+      if (!$shortversion) {
         $score = $score - 2;
       }
       $softwarename          = $jsonssl->software->name ?? 'null';
@@ -212,7 +212,7 @@ while ($row = pg_fetch_all($result)) {
       $secure = 'false';
       $score  = $score - 1;
       $dver   = '.connect error';
-      $dverr  = 0;
+      $shortversion  = 0;
       //no diaspora cookie on either, lets set this one as hidden and notify someone its not really a pod
       //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
     }
@@ -220,20 +220,20 @@ while ($row = pg_fetch_all($result)) {
     if ($debug) {
       echo '<br>Signup Open: ' . $signup . '<br>';
     }
-    $ip6    = escapeshellcmd('dig +nocmd ' . $domain . ' aaaa +noall +short');
-    $ip     = escapeshellcmd('dig +nocmd ' . $domain . ' a +noall +short');
-    $ip6num = exec($ip6);
-    $ipnum  = exec($ip);
-    $test   = strpos($ip6num, ':');
+    $ip6cmd    = escapeshellcmd('dig +nocmd ' . $domain . ' aaaa +noall +short');
+    $ipcmd     = escapeshellcmd('dig +nocmd ' . $domain . ' a +noall +short');
+    $ip6 = exec($ip6cmd);
+    $ip  = exec($ipcmd);
+    $test   = strpos($ip6, ':');
     if ($test === false) {
       $ipv6 = 'no';
     } else {
       $ipv6 = 'yes';
     }
     if ($debug) {
-      echo 'IP: ' . $ipnum . '<br>';
+      echo 'IP: ' . $ip . '<br>';
     }
-    $location = geoip_record_by_name($ipnum);
+    $location = geoip_record_by_name($ip);
     if ($debug) {
       echo ' Location: ';
       var_dump($location);
@@ -254,7 +254,7 @@ while ($row = pg_fetch_all($result)) {
       }
     }
     echo '<br>';
-    $pingdomdate = date('Y-m-d H:i:s');
+    $statslastdate = date('Y-m-d H:i:s');
     if (strpos($row[$i]['statsurl'], 'pingdom.com')) {
       //curl the pingdom page 
       $ping      = curl_init();
@@ -289,7 +289,7 @@ while ($row = pg_fetch_all($result)) {
         //uptime %
         preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)%</', $pingdom, $matchper);
         $uptime      = isset($matchper[1][0]) ? preg_replace('/,/', '.', $matchper[1][0]) : 0;
-        $pingdomdate = date('Y-m-d H:i:s');
+        $statslastdate = date('Y-m-d H:i:s');
         if (strpos($pingdom, "class=\"up\"")) {
           $live = 'up';
         } elseif (strpos($pingdom, "class=\"down\"")) {
@@ -375,13 +375,9 @@ while ($row = pg_fetch_all($result)) {
     //sql it
 
     $timenow = date('Y-m-d H:i:s');
-    $sql     = 'UPDATE pods SET Hgitdate = $1, Hencoding = $2, secure = $3, hidden = $4, Hruntime = $5, Hgitref = $6, ip = $7, ipv6 = $8, monthsmonitored = $9,
-  uptime_alltime = $10, status = $11, dateLaststats = $12, dateUpdated = $13, responsetimems = $14, score = $15, adminrating = $16, country = $17, city = $18,
-  state = $19, lat = $20, long = $21, connection = $22, whois = $23, userrating = $24, longversion = $25, shortversion = $26,
-  masterversion = $27, signup = $28, total_users = $29, active_users_halfyear = $30, active_users_monthly = $31, local_posts = $32, name = $33,
-  comment_counts = $35, service_facebook = $36, service_tumblr = $37, service_twitter = $38, service_wordpress = $39, weightedscore = $40, service_xmpp = $41, softwarename = $42, sslvalid = $43
-  WHERE domain = $34';
-    $result  = pg_query_params($dbh, $sql, [$gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror]);
+    $sql     = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, dateLaststats = $9, dateUpdated = $10, responsetimems = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36
+  WHERE domain = $1';
+    $result  = pg_query_params($dbh, $sql, [$domain, $secure, $hidden, $ip, $ipv6, $months, $uptime, $live, $statslastdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $userrating, $shortversion, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror]);
     $result || die('Error in SQL query3: ' . pg_last_error());
 
     if ($debug) {
