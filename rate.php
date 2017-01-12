@@ -56,7 +56,7 @@
   $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
   $dbh || die('Error in connection: ' . pg_last_error());
 
-  $sql    = 'SELECT * FROM rating_comments WHERE domain = $1';
+  $sql    = 'SELECT admin,username,userurl,rating,comment,date,id FROM rating_comments WHERE domain = $1';
   $result = pg_query_params($dbh, $sql, [$_domain]);
   $result || die('Error in SQL query: ' . pg_last_error());
 

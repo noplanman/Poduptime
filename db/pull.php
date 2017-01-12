@@ -73,7 +73,7 @@ while ($row = pg_fetch_all($result)) {
     $adminratingavg = [];
     $userrating     = [];
     $adminrating    = [];
-    $sqlforr        = 'SELECT * FROM rating_comments WHERE domain = $1';
+    $sqlforr        = 'SELECT admin,rating FROM rating_comments WHERE domain = $1';
     $ratings        = pg_query_params($dbh, $sqlforr, [$domain]);
     $ratings || die('Error in SQL query2: ' . pg_last_error());
 

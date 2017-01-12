@@ -29,7 +29,7 @@ foreach ($csv as $cords) {
       $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
       $dbh || die('Error in connection: ' . pg_last_error());
 
-      $sql = "SELECT * FROM pods WHERE NOT hidden";
+      $sql = "SELECT domain,signup,secure,name,lat,long,uptime_alltime,active_users_halfyear,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp FROM pods WHERE NOT hidden";
       $result = pg_query($dbh, $sql);
       $result || die('Error in SQL query: ' . pg_last_error());
 
