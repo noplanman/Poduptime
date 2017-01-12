@@ -42,7 +42,7 @@ $numrows = pg_num_rows($result);
   <tbody>
   <?php
   while ($row = pg_fetch_array($result)) {
-    if ($row['secure']) {
+    if ($row['secure'] === 't') {
       $scheme = 'https://';
       $class  = 'green';
       $tip    = 'This pod uses SSL encryption for traffic.';
@@ -76,7 +76,7 @@ $numrows = pg_num_rows($result);
     }
     echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
     echo '<td>' . $row['uptime_alltime'] . '%</td>';
-    echo '<td>' . ($row['ipv6'] ? 'Yes' : 'No') . '</td>';
+    echo '<td>' . ($row['ipv6'] === 't' ? 'Yes' : 'No') . '</td>';
     echo '<td>' . $row['responsetimems'] . '</td>';
     echo '<td>' . ($row['signup'] === 't' ? 'Open' : 'Closed') . '</td>';
     echo '<td>' . $row['total_users'] . '</td>';
