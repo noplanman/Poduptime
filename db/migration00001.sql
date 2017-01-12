@@ -1,4 +1,4 @@
-ALTER TABLE pods ADD terms text DEFAULT '/terms', ADD sslexpire timestamp, ADD uptime_custom text, ADD dnssec boolean, ADD masterversion text, ADD shortversion text;
+ALTER TABLE pods ADD terms text, ADD sslexpire timestamp, ADD uptime_custom text, ADD dnssec boolean, ADD masterversion text, ADD shortversion text;
 ALTER TABLE pods DROP Hgitdate, DROP Hgitref, DROP Hruntime, DROP Hencoding, DROP longversion, DROP ptr, DROP whois, DROP postalcode, DROP connection, DROP pingdomlast;
 
 ALTER TABLE pods RENAME COLUMN pingdomurl TO statsurl;

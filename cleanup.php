@@ -39,7 +39,7 @@ $numrows = pg_num_rows($result);
   $tt = 0;
   while ($row = pg_fetch_array($result)) {
     $tt++;
-    if ($row['secure']) {
+    if ($row['secure'] === 't') {
       $scheme = 'https://';
       $class  = 'green';
       $tip    = 'This pod uses SSL encryption for traffic.';

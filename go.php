@@ -28,7 +28,7 @@ if ($_url) {
   $result || die('Error in SQL query: ' . pg_last_error());
 
   $row    = pg_fetch_all($result);
-  $scheme = $row[0]['secure'] ? 'https://' : 'http://';
+  $scheme = $row[0]['secure'] === 't' ? 'https://' : 'http://';
   
   $sql    = 'INSERT INTO clicks (domain, autoclick) VALUES ($1, $2)';
   $result = pg_query_params($dbh, $sql, [$row[0]['domain'], '1']);

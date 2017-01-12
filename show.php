@@ -32,7 +32,7 @@ $numrows = pg_num_rows($result);
 
   <?php
   while ($row = pg_fetch_array($result)) {
-    if ($row['secure']) {
+    if ($row['secure'] === 't') {
       $scheme = 'https://';
       $class  = 'text-success';
     } else {
