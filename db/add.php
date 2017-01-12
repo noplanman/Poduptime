@@ -30,7 +30,7 @@ require_once __DIR__ . '/../config.php';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = 'SELECT domain, pingdomurl FROM pods';
+$sql    = 'SELECT domain, statsurl FROM pods';
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -39,7 +39,7 @@ while ($row = pg_fetch_array($result)) {
     $log->lwrite('domain already exists ' . $_domain);
     die('domain already exists');
   }
-  if ($row['pingdomurl'] === $_url) {
+  if ($row['statsurl'] === $_url) {
     $log->lwrite('API key already exists ' . $_domain);
     die('API key already exists');
   }
@@ -78,7 +78,7 @@ if (stristr($output, 'nodeName')) {
   $valid = true;
 }
 if ($valid) {
-  $sql    = 'INSERT INTO pods (domain, pingdomurl, email) VALUES ($1, $2, $3)';
+  $sql    = 'INSERT INTO pods (domain, statsurl, email) VALUES ($1, $2, $3)';
   $result = pg_query_params($dbh, $sql, [$_domain, $_url, $_email]);
   $result || die('Error in SQL query: ' . pg_last_error());
 

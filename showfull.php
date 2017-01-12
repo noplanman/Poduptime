@@ -8,7 +8,7 @@ $country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql = 'SELECT * FROM pods ORDER BY uptimelast7 DESC';
+$sql = 'SELECT * FROM pods ORDER BY uptime_alltime DESC';
 
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
@@ -42,7 +42,7 @@ $numrows = pg_num_rows($result);
   <tbody>
   <?php
   while ($row = pg_fetch_array($result)) {
-    if ($row['secure'] === 'true') {
+    if ($row['secure']) {
       $scheme = 'https://';
       $class  = 'green';
       $tip    = 'This pod uses SSL encryption for traffic.';
@@ -52,7 +52,7 @@ $numrows = pg_num_rows($result);
       $tip    = 'This pod does not offer SSL';
     }
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
-    $tip .= "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an overall uptime of {$row['uptimelast7']}% and a response time average today of {$row['responsetimelast7']}ms was last checked on {$row['dateupdated']}. ";
+    $tip .= "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an overall uptime of {$row['uptime_alltime']}% and a response time average today of {$row['responsetimems']}ms was last checked on {$row['dateupdated']}. ";
     $tip .= "On a scale of 100 this pod is a {$row['score']} right now";
 
     echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" class="' . $class . '" target="_self" href="/go.php?url=' . $scheme . $row['domain'] . '">' . $row['domain'] . '</a></td>';
@@ -75,17 +75,17 @@ $numrows = pg_num_rows($result);
       $classver = 'black';
     }
     echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
-    echo '<td>' . $row['uptimelast7'] . '%</td>';
-    echo '<td>' . $row['ipv6'] . '</td>';
-    echo '<td>' . $row['responsetimelast7'] . '</td>';
-    echo '<td>' . ($row['signup'] === '1' ? 'Open' : 'Closed') . '</td>';
+    echo '<td>' . $row['uptime_alltime'] . '%</td>';
+    echo '<td>';  echo $row['ipv6'] ? 'Yes' : 'No'; echo '</td>';
+    echo '<td>' . $row['responsetimems'] . '</td>';
+    echo '<td>';  echo $row['signup'] ? 'Open' : 'Closed'; echo '</td>';
     echo '<td>' . $row['total_users'] . '</td>';
     echo '<td>' . $row['active_users_halfyear'] . '</td>';
     echo '<td>' . $row['active_users_monthly'] . '</td>';
     echo '<td>' . $row['local_posts'] . '</td>';
     echo '<td>' . $row['comment_counts'] . '</td>';
-    if (strpos($row['pingdomurl'], 'pingdom.com')) {
-      $moreurl = $row['pingdomurl'];
+    if (strpos($row['statsurl'], 'pingdom.com')) {
+      $moreurl = $row['statsurl'];
     } else {
       $moreurl = '/showstats.php?domain=' . $row['domain'];
     }
@@ -106,7 +106,7 @@ $numrows = pg_num_rows($result);
     $row['service_twitter'] === 't' && print '<div class="smlogo smlogo-twitter"></div>';
     $row['service_tumblr'] === 't' && print '<div class="smlogo smlogo-tumblr"></div>';
     $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress"></div>';
-    $row['xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
+    $row['service_xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
     echo '</td></tr>';
   }
   pg_free_result($result);

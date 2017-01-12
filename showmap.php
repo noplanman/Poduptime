@@ -8,6 +8,9 @@ foreach ($csv as $cords) {
   if ($cords[0] === $country_code) {
     $lat  = $cords[1];
     $long = $cords[2];
+  } else {
+    $lat = 31;
+    $long = -99;
   }
 }
 ?>
@@ -26,7 +29,7 @@ foreach ($csv as $cords) {
       $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
       $dbh || die('Error in connection: ' . pg_last_error());
 
-      $sql = "SELECT * FROM pods WHERE hidden <> 'yes'";
+      $sql = "SELECT * FROM pods WHERE NOT hidden";
       $result = pg_query($dbh, $sql);
       $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -41,17 +44,17 @@ foreach ($csv as $cords) {
         $row['service_twitter'] === 't' && $feat .= '<div class="smlogo smlogo-twitter"></div>';
         $row['service_tumblr'] === 't' && $feat .= '<div class="smlogo smlogo-tumblr"></div>';
         $row['service_wordpress'] === 't' && $feat .= '<div class="smlogo smlogo-wordpress"></div>';
-        $row['xmpp'] === 't' && $feat .= '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
+        $row['service_xmpp'] === 't' && $feat .= '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
 
         $pod_name = htmlentities($row['name'], ENT_QUOTES);
-        $scheme   = $row['secure'] === 'true' ? 'https://' : 'http://';
-        $signup   = $row['signup'] === '1' ? 'yes' : 'no';
+        $scheme   = $row['secure'] ? 'https://' : 'http://';
+        $signup   = $row['signup'] ? 'yes' : 'no';
         echo <<<EOF
 {
   'type': 'Feature',
   'id': '1',
   'properties' : {
-    'html': '{$pod_name}<br><a href="/go.php?url={$scheme}{$row['domain']}">Visit</a><br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptimelast7']}%<br> Services:{$feat}'
+    'html': '{$pod_name}<br><a href="/go.php?url={$scheme}{$row['domain']}">Visit</a><br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptime_alltime']}%<br> Services:{$feat}'
   },
   'geometry': {
     'type': 'Point',

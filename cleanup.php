@@ -4,7 +4,7 @@ require_once __DIR__ . '/config.php';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = "SELECT * FROM pods WHERE hidden <> 'no' AND score < 50 ORDER BY weightedscore";
+$sql    = "SELECT * FROM pods WHERE score < 50 ORDER BY weightedscore";
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -39,7 +39,7 @@ $numrows = pg_num_rows($result);
   $tt = 0;
   while ($row = pg_fetch_array($result)) {
     $tt++;
-    if ($row['secure'] === 'true') {
+    if ($row['secure']) {
       $scheme = 'https://';
       $class  = 'green';
       $tip    = 'This pod uses SSL encryption for traffic.';
@@ -55,8 +55,8 @@ $numrows = pg_num_rows($result);
       "\n" . 'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of -20 to +20 this pod is a %6$s right now',
       $pod_name,
       $row['monthsmonitored'],
-      $row['responsetimelast7'],
-      $row['uptimelast7'],
+      $row['responsetimems'],
+      $row['uptime_alltime'],
       $row['dateupdated'],
       $row['score']
     );
@@ -81,18 +81,18 @@ $numrows = pg_num_rows($result);
       $classver = 'black';
     }
     echo '<td class="' . $classver . '"><div title="' . $pre . ' codename: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" class="tipsy">' . $version . '</div></td>';
-    echo '<td>' . $row['uptimelast7'] . '</td>';
-    echo '<td>' . $row['responsetimelast7'] . '</td>';
-    echo '<td>' . ($row['signup'] === '1' ? 'Open' : 'Closed') . '</td>';
+    echo '<td>' . $row['uptime_alltime'] . '</td>';
+    echo '<td>' . $row['responsetimems'] . '</td>';
+    echo '<td>';  echo $row['signup'] ? 'Open' : 'Closed'; echo '</td>';
     echo '<td>' . $row['total_users'] . '</td>';
     echo '<td>' . $row['active_users_halfyear'] . '</td>';
     echo '<td>' . $row['active_users_monthly'] . '</td>';
     echo '<td>' . $row['local_posts'] . '</td>';
     echo '<td>' . $row['comment_counts'] . '</td>';
-    if (strpos($row['pingdomurl'], 'pingdom.com')) {
-      $moreurl = $row['pingdomurl'];
+    if (strpos($row['statsurl'], 'pingdom.com')) {
+      $moreurl = $row['statsurl'];
     } else {
-      $moreurl = 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $row['pingdomurl'];
+      $moreurl = 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $row['statsurl'];
     }
     echo '<td><div title="Last Check ' . $row['dateupdated'] . '" class="tipsy"><a target="_self" href="' . $moreurl . '">' . $row['monthsmonitored'] . '</a></div></td>';
     echo '<td>' . $row['score'] . '</td>';
