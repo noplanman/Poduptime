@@ -56,9 +56,9 @@ $numrows = pg_num_rows($result);
     echo '<td>' . $row['uptimelast7'] . '%</td>';
     echo '<td data-toggle="tooltip" data-placement="bottom" title="active six months: ' . $row['active_users_halfyear'] . ', active one month: ' . $row['active_users_monthly'] . '">' . $row['active_users_halfyear'] . '</td>';
     if ($country_code === $row['country']) {
-      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: ' . $row['city'] . ' State: ' . $row['state'] . '"><b>' . $row['country'] . '</b></td>';
+      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: '; echo $row['city'] ?? 'n/a'; echo ' State: '; echo $row['state'] ?? 'n/a'; echo '"><b>' . $row['country'] . '</b></td>';
     } else {
-      echo '<td data-toggle="tooltip" data-placement="bottom" title="City: ' . $row['city'] . ' State: ' . $row['state'] . '">' . $row['country'] . '</td>';
+      echo '<td data-toggle="tooltip" data-placement="bottom" title="City: '; echo $row['city'] ?? 'n/a'; echo ' State: '; echo $row['state'] ?? 'n/a'; echo '">' . $row['country'] . '</td>';
     }
     echo '<td>';
     $row['service_facebook'] === 't' && print '<div class="smlogo smlogo-facebook" title="Publish to Facebook" alt="Publish to Facebook"></div>';

@@ -240,11 +240,11 @@ while ($row = pg_fetch_all($result)) {
       echo '<br>';
     }
     if ($location) {
-      $country = isset($location['country_code']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_code']) : "n/a";
-      $city    = isset($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : "n/a";
-      $state   = isset($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : "n/a";
-      $lat     = isset($location['latitude']) ? $location['latitude']: "n/a";
-      $long    = isset($location['longitude']) ? $location['longitude'] : "n/a";
+      $country = isset($location['country_code']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_code']) : null;
+      $city    = isset($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : null;
+      $state   = isset($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : null;
+      $lat     = isset($location['latitude']) ? $location['latitude']: null;
+      $long    = isset($location['longitude']) ? $location['longitude'] : null;
       //if lat and long are just a generic country with no detail lets make some tail up or openmap just stacks them all on top another
       if (strlen($lat) < 4) {
         $lat = $lat + (rand(1, 15) / 10);
