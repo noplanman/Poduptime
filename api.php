@@ -37,7 +37,7 @@ EOF;
       $row['dateupdated'],
       $row['score']
     );
-    $scheme   = $row['secure'] ? 'https://' : 'http://';
+    $scheme   = $row['secure'] === 't' ? 'https://' : 'http://';
     echo <<<EOF
 <entry>
   <title>{$scheme}{$row['domain']}</title>

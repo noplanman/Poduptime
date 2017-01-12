@@ -47,8 +47,8 @@ foreach ($csv as $cords) {
         $row['service_xmpp'] === 't' && $feat .= '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
 
         $pod_name = htmlentities($row['name'], ENT_QUOTES);
-        $scheme   = $row['secure'] ? 'https://' : 'http://';
-        $signup   = $row['signup'] ? 'yes' : 'no';
+        $scheme   = $row['secure'] === 't' ? 'https://' : 'http://';
+        $signup   = $row['signup'] === 't' ? 'yes' : 'no';
         echo <<<EOF
 {
   'type': 'Feature',
