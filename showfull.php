@@ -76,9 +76,9 @@ $numrows = pg_num_rows($result);
     }
     echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
     echo '<td>' . $row['uptime_alltime'] . '%</td>';
-    echo '<td>';  echo $row['ipv6'] ? 'Yes' : 'No'; echo '</td>';
+    echo '<td>' . ($row['ipv6'] ? 'Yes' : 'No') . '</td>';
     echo '<td>' . $row['responsetimems'] . '</td>';
-    echo '<td>';  echo $row['signup'] ? 'Open' : 'Closed'; echo '</td>';
+    echo '<td>' . ($row['signup'] ? 'Open' : 'Closed') . '</td>';
     echo '<td>' . $row['total_users'] . '</td>';
     echo '<td>' . $row['active_users_halfyear'] . '</td>';
     echo '<td>' . $row['active_users_monthly'] . '</td>';

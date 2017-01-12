@@ -8,7 +8,7 @@ $country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql = "SELECT * FROM pods WHERE adminrating <> -1 AND NOT hidden AND signup ORDER BY uptime_alltime DESC";
+$sql = "SELECT * FROM pods WHERE NOT hidden AND signup ORDER BY uptime_alltime DESC";
 
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());

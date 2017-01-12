@@ -291,13 +291,13 @@ while ($row = pg_fetch_all($result)) {
         $uptime      = isset($matchper[1][0]) ? preg_replace('/,/', '.', $matchper[1][0]) : 0;
         $statslastdate = date('Y-m-d H:i:s');
         if (strpos($pingdom, "class=\"up\"")) {
-          $live = 'up';
+          $status = 'up';
         } elseif (strpos($pingdom, "class=\"down\"")) {
-          $live = 'down';
+          $status = 'down';
         } elseif (strpos($pingdom, "class=\"paused\"")) {
-          $live = 'paused';
+          $status = 'paused';
         } else {
-          $live  = 'error';
+          $status  = 'error';
           $score = $score - 2;
         }
       } else {
@@ -330,25 +330,26 @@ while ($row = pg_fetch_all($result)) {
       $responsetime    = $uptr->monitors->monitor{'0'}->responsetime{'0'}->value;
       $uptimerobotstat = $uptr->stat;
       $uptime          = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
+      $uptime_custom   = $uptr->monitors->monitor{'0'}->customuptimeratio;
       $diff            = abs(strtotime(date('Y-m-d H:i:s')) - strtotime($dateadded));
       $months          = floor(($diff - $years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
       if ($uptr->monitors->monitor{'0'}->status == 2) {
-        $live = 'Up';
+        $status = 'Up';
       }
       if ($uptr->monitors->monitor{'0'}->status == 0) {
-        $live = 'Paused';
+        $status = 'Paused';
       }
       if ($uptr->monitors->monitor{'0'}->status == 1) {
-        $live = 'Not Checked Yet';
+        $status = 'Not Checked Yet';
       }
       if ($uptr->monitors->monitor{'0'}->status == 8) {
-        $live = 'Seems Down';
+        $status = 'Seems Down';
       }
       if ($uptr->monitors->monitor{'0'}->status == 9) {
-        $live = 'Down';
+        $status = 'Down';
       }
       $pingdomdate = date('Y-m-d H:i:s');
-      if ($uptimerobotstat == 'fail' || $live <> 'Up') {
+      if ($uptimerobotstat == 'fail' || $status <> 'Up') {
         $score = $score - 2;
       }
     }
@@ -375,9 +376,9 @@ while ($row = pg_fetch_all($result)) {
     //sql it
 
     $timenow = date('Y-m-d H:i:s');
-    $sql     = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, dateLaststats = $9, dateUpdated = $10, responsetimems = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36
+    $sql     = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, dateLaststats = $9, dateUpdated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, uptime_custom = $37
   WHERE domain = $1';
-    $result  = pg_query_params($dbh, $sql, [$domain, $secure, $hidden, $ip, $ipv6, $months, $uptime, $live, $statslastdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $userrating, $shortversion, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror]);
+    $result  = pg_query_params($dbh, $sql, [$domain, $secure, $hidden, $ip, $ipv6, $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $userrating, $shortversion, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror, $uptime_custom]);
     $result || die('Error in SQL query3: ' . pg_last_error());
 
     if ($debug) {
