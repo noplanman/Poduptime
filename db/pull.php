@@ -168,10 +168,20 @@ while ($row = pg_fetch_all($result)) {
     if (!$output && !$outpulssl && !$domain) {
       continue;
       echo 'no connection to pod';
+      
+      $sql    = 'INSERT INTO checks (domain, online, error) VALUES ($1, $2)';
+      $result = pg_query_params($dbh, $sql, [$domain, false, $outputsslerror]);
+      $result || die('Error in SQL query: ' . pg_last_error());
+      
     }
     if ($outputssl) {
       $secure        = 'true';
       $outputresults = $outputssl;
+      
+      $sql    = 'INSERT INTO checks (domain, online) VALUES ($1, $2)';
+      $result = pg_query_params($dbh, $sql, [$domain, true]);
+      $result || die('Error in SQL query: ' . pg_last_error());
+  
     } elseif ($output) {
       $secure        = 'false';
       $outputresults = $output;

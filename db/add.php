@@ -16,6 +16,10 @@ if (!($_email = $_POST['email'] ?? null)) {
   $log->lwrite('no email given ' . $_domain);
   die('no email given');
 }
+if (!($_terms = $_POST['terms'] ?? null)) {
+  $log->lwrite('terms link required ' . $_domain);
+  die('no terms link');
+}
 if (!$_url) {
   $log->lwrite('no api given ' . $_domain);
   die('no API key for your stats');
@@ -78,8 +82,8 @@ if (stristr($output, 'nodeName')) {
   $valid = true;
 }
 if ($valid) {
-  $sql    = 'INSERT INTO pods (domain, statsurl, email) VALUES ($1, $2, $3)';
-  $result = pg_query_params($dbh, $sql, [$_domain, $_url, $_email]);
+  $sql    = 'INSERT INTO pods (domain, statsurl, email, terms) VALUES ($1, $2, $3, $4)';
+  $result = pg_query_params($dbh, $sql, [$_domain, $_url, $_email, $_terms]);
   $result || die('Error in SQL query: ' . pg_last_error());
 
   $to      = $adminemail;

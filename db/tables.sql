@@ -38,7 +38,7 @@ CREATE TABLE pods (
  service_xmpp boolean,
  token text,
  tokenexpire timestamp,
- terms text DEFAULT '/terms',
+ terms text,
  sslexpire timestamp,
  dnssec boolean,
  comment_counts int,
