@@ -1,10 +1,10 @@
-ALTER TABLE pods ADD terms text, ADD sslexpire timestamp, ADD uptime_custom text, ADD dnssec boolean, ADD masterversion text, ADD shortversion text;
+ALTER TABLE pods ADD terms text DEFAULT '/terms', ADD sslexpire timestamp, ADD uptime_custom text, ADD dnssec boolean, ADD masterversion text, ADD shortversion text;
 ALTER TABLE pods DROP Hgitdate, DROP Hgitref, DROP Hruntime, DROP Hencoding, DROP longversion, DROP ptr, DROP whois, DROP postalcode, DROP connection, DROP pingdomlast;
 
 ALTER TABLE pods RENAME COLUMN pingdomurl TO statsurl;
 ALTER TABLE pods RENAME COLUMN xmpp TO service_xmpp;
 ALTER TABLE pods RENAME COLUMN uptimelast7 TO uptime_alltime;
-ALTER TABLE pods RENAME COLUMN responsetimelast7 TO responsetimems;
+ALTER TABLE pods RENAME COLUMN responsetimelast7 TO responsetime;
 
 ALTER TABLE pods ALTER COLUMN ipv6 TYPE boolean USING ipv6::boolean;
 ALTER TABLE pods ALTER hidden DROP DEFAULT;
