@@ -63,4 +63,24 @@ CREATE TABLE rating_comments (
  userurl text,
  date timestamp DEFAULT current_timestamp
 );
+CREATE TABLE apikeys (
+ key text,
+ email text,
+ usage int,
+ dateCreated timestamp DEFAULT current_timestamp
+);
+
+CREATE TABLE clicks (
+ domain text,
+ manualclick int,
+ autoclick int,
+ dateClicked timestamp DEFAULT current_timestamp
+);
+
+CREATE TABLE checks (
+ domain text,
+ online boolean,
+ error text,
+ dateChecked timestamp DEFAULT current_timestamp
+);
 
