@@ -96,9 +96,9 @@ $numrows = pg_num_rows($result);
     echo '</a></td>';
     echo '<td>' . $row['score'] . '/100</td>';
     if ($country_code === $row['country']) {
-      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="' . $row['whois'] . '"><b>' . $row['country'] . '</b></td>';
+      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: '. ($row['city'] ?? 'n/a') . ' State: ' . ($row['state'] ?? 'n/a') . '"><b>' . $row['country'] . '</b></td>';
     } else {
-      echo '<td data-toggle="tooltip" data-placement="bottom" title="' . $row['whois'] . '">' . $row['country'] . '</td>';
+      echo '<td data-toggle="tooltip" data-placement="bottom" title="City: '. ($row['city'] ?? 'n/a') . ' State: ' . ($row['state'] ?? 'n/a') . '">' . $row['country'] . '</td>';
     }
 
     echo '<td>';
