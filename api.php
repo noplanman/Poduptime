@@ -17,8 +17,8 @@ if ($_format === 'georss') {
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss.org/georss">
 <title>Diaspora Pods</title>
-<subtitle>IP Locations of Diaspora pods on podupti.me</subtitle>
-<link href="https://podupti.me/"/>
+<subtitle>IP Locations of Diaspora pods on {$_SERVER['HTTP_HOST']}</subtitle>
+<link href="https://{$_SERVER['HTTP_HOST']}/"/>
 
 EOF;
   $sql    = "SELECT * FROM pods WHERE hidden <> 'yes'";
