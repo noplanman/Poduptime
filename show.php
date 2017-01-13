@@ -42,7 +42,7 @@ $numrows = pg_num_rows($result);
       $row['uptime_alltime'],
       $row['score']
     );
-    echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="' . $class . ' url" target="_self" href="/go.php?url=https://' $row['domain'] . '">' . $row['domain'] . '</a></div></td>';
+    echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="' . $class . ' url" target="_self" href="/go.php?url=https://' . $row['domain'] . '">' . $row['domain'] . '</a></div></td>';
 
     echo '<td>' . $row['uptime_alltime'] . '%</td>';
     echo '<td data-toggle="tooltip" data-placement="bottom" title="active six months: ' . $row['active_users_halfyear'] . ', active one month: ' . $row['active_users_monthly'] . '">' . $row['active_users_halfyear'] . '</td>';
