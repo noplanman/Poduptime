@@ -46,11 +46,11 @@ $dbh || die('Error in connection: ' . pg_last_error());
 
 //foreach pod check it and update db
 if ($_domain) {
-  $sql    = 'SELECT domain,statsurl,score,datecreated,weight FROM pods WHERE domain = $1';
+  $sql    = 'SELECT domain,statsurl,score,date_created,weight FROM pods WHERE domain = $1';
   $sleep  = '0';
   $result = pg_query_params($dbh, $sql, [$_domain]);
 } elseif (PHP_SAPI === 'cli') {
-  $sql    = 'SELECT domain,statsurl,score,datecreated,adminrating,weight FROM pods';
+  $sql    = 'SELECT domain,statsurl,score,date_created,adminrating,weight FROM pods';
   $sleep  = '1';
   $result = pg_query($dbh, $sql);
 } else {
@@ -63,7 +63,7 @@ while ($row = pg_fetch_all($result)) {
   for ($i = 0; $i < $numrows; $i++) {
     $domain    = $row[$i]['domain'];
     $score     = (int) $row[$i]['score'];
-    $dateadded = $row[$i]['datecreated'];
+    $dateadded = $row[$i]['date_created'];
     $admindb   = (int) $row[$i]['adminrating'];
     $weight    = $row[$i]['weight'];
     //get ratings
