@@ -16,6 +16,10 @@ if (!($_email = $_POST['email'] ?? null)) {
   $log->lwrite('no email given ' . $_domain);
   die('no email given');
 }
+if (!($_terms = $_POST['terms'] ?? null)) {
+  $log->lwrite('terms link required ' . $_domain);
+  die('no terms link');
+}
 if (!$_url) {
   $log->lwrite('no api given ' . $_domain);
   die('no API key for your stats');
@@ -29,7 +33,7 @@ if (strlen($_url) < 14) {
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = 'SELECT domain, pingdomurl FROM pods';
+$sql    = 'SELECT domain, statsurl FROM pods';
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -38,7 +42,7 @@ while ($row = pg_fetch_array($result)) {
     $log->lwrite('domain already exists ' . $_domain);
     die('domain already exists');
   }
-  if ($row['pingdomurl'] === $_url) {
+  if ($row['statsurl'] === $_url) {
     $log->lwrite('API key already exists ' . $_domain);
     die('API key already exists');
   }
@@ -77,8 +81,8 @@ if (stristr($output, 'nodeName')) {
   $valid = true;
 }
 if ($valid) {
-  $sql    = 'INSERT INTO pods (domain, pingdomurl, email) VALUES ($1, $2, $3)';
-  $result = pg_query_params($dbh, $sql, [$_domain, $_url, $_email]);
+  $sql    = 'INSERT INTO pods (domain, statsurl, email, terms) VALUES ($1, $2, $3, $4)';
+  $result = pg_query_params($dbh, $sql, [$_domain, $_url, $_email, $_terms]);
   $result || die('Error in SQL query: ' . pg_last_error());
 
   $to      = $adminemail;

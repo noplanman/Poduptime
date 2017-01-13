@@ -46,11 +46,11 @@ $dbh || die('Error in connection: ' . pg_last_error());
 
 //foreach pod check it and update db
 if ($_domain) {
-  $sql    = 'SELECT domain,pingdomurl,score,datecreated,weight FROM pods WHERE domain = $1';
+  $sql    = 'SELECT domain,statsurl,score,date_created,weight FROM pods WHERE domain = $1';
   $sleep  = '0';
   $result = pg_query_params($dbh, $sql, [$_domain]);
 } elseif (PHP_SAPI === 'cli') {
-  $sql    = 'SELECT domain,pingdomurl,score,datecreated,adminrating,weight FROM pods';
+  $sql    = 'SELECT domain,statsurl,score,date_created,adminrating,weight FROM pods';
   $sleep  = '1';
   $result = pg_query($dbh, $sql);
 } else {
@@ -63,7 +63,7 @@ while ($row = pg_fetch_all($result)) {
   for ($i = 0; $i < $numrows; $i++) {
     $domain    = $row[$i]['domain'];
     $score     = (int) $row[$i]['score'];
-    $dateadded = $row[$i]['datecreated'];
+    $dateadded = $row[$i]['date_created'];
     $admindb   = (int) $row[$i]['adminrating'];
     $weight    = $row[$i]['weight'];
     //get ratings
@@ -73,7 +73,7 @@ while ($row = pg_fetch_all($result)) {
     $adminratingavg = [];
     $userrating     = [];
     $adminrating    = [];
-    $sqlforr        = 'SELECT * FROM rating_comments WHERE domain = $1';
+    $sqlforr        = 'SELECT admin,rating FROM rating_comments WHERE domain = $1';
     $ratings        = pg_query_params($dbh, $sqlforr, [$domain]);
     $ratings || die('Error in SQL query2: ' . pg_last_error());
 
@@ -129,7 +129,7 @@ while ($row = pg_fetch_all($result)) {
     unset($service_tumblr);
     unset($service_wordpess);
     unset($service_xmpp);
-    unset($dver);
+    unset($shortversion);
     unset($dverr);
     unset($xdver);
     unset($softwarename);
@@ -168,10 +168,20 @@ while ($row = pg_fetch_all($result)) {
     if (!$output && !$outpulssl && !$domain) {
       continue;
       echo 'no connection to pod';
+      
+      $sql    = 'INSERT INTO checks (domain, online, error) VALUES ($1, $2, $3)';
+      $result = pg_query_params($dbh, $sql, [$domain, false, $outputsslerror]);
+      $result || die('Error in SQL query: ' . pg_last_error());
+      
     }
     if ($outputssl) {
       $secure        = 'true';
       $outputresults = $outputssl;
+      
+      $sql    = 'INSERT INTO checks (domain, online) VALUES ($1, $2)';
+      $result = pg_query_params($dbh, $sql, [$domain, true]);
+      $result || die('Error in SQL query: ' . pg_last_error());
+  
     } elseif ($output) {
       $secure        = 'false';
       $outputresults = $output;
@@ -189,11 +199,11 @@ while ($row = pg_fetch_all($result)) {
       }
       $xdver = $jsonssl->software->version ?? 0;
       $dverr = explode('-', trim($xdver));
-      $dver  = $dverr[0];
+      $shortversion  = $dverr[0];
       if ($debug) {
-        echo ' <br> Version code: ' . $dver . '<br>';
+        echo ' <br> Version code: ' . $shortversion . '<br>';
       }
-      if (!$dver) {
+      if (!$shortversion) {
         $score = $score - 2;
       }
       $softwarename          = $jsonssl->software->name ?? 'null';
@@ -212,7 +222,7 @@ while ($row = pg_fetch_all($result)) {
       $secure = 'false';
       $score  = $score - 1;
       $dver   = '.connect error';
-      $dverr  = 0;
+      $shortversion  = 0;
       //no diaspora cookie on either, lets set this one as hidden and notify someone its not really a pod
       //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
     }
@@ -220,20 +230,20 @@ while ($row = pg_fetch_all($result)) {
     if ($debug) {
       echo '<br>Signup Open: ' . $signup . '<br>';
     }
-    $ip6    = escapeshellcmd('dig +nocmd ' . $domain . ' aaaa +noall +short');
-    $ip     = escapeshellcmd('dig +nocmd ' . $domain . ' a +noall +short');
-    $ip6num = exec($ip6);
-    $ipnum  = exec($ip);
-    $test   = strpos($ip6num, ':');
+    $ip6cmd    = escapeshellcmd('dig +nocmd ' . $domain . ' aaaa +noall +short');
+    $ipcmd     = escapeshellcmd('dig +nocmd ' . $domain . ' a +noall +short');
+    $ip6 = exec($ip6cmd);
+    $ip  = exec($ipcmd);
+    $test   = strpos($ip6, ':');
     if ($test === false) {
       $ipv6 = 'no';
     } else {
       $ipv6 = 'yes';
     }
     if ($debug) {
-      echo 'IP: ' . $ipnum . '<br>';
+      echo 'IP: ' . $ip . '<br>';
     }
-    $location = geoip_record_by_name($ipnum);
+    $location = geoip_record_by_name($ip);
     if ($debug) {
       echo ' Location: ';
       var_dump($location);
@@ -254,15 +264,14 @@ while ($row = pg_fetch_all($result)) {
       }
     }
     echo '<br>';
-    $connection  = '';
-    $pingdomdate = date('Y-m-d H:i:s');
-    if (strpos($row[$i]['pingdomurl'], 'pingdom.com')) {
+    $statslastdate = date('Y-m-d H:i:s');
+    if (strpos($row[$i]['statsurl'], 'pingdom.com')) {
       //curl the pingdom page 
       $ping      = curl_init();
       $thismonth = '/' . date('Y') . '/' . date('m');
-      curl_setopt($ping, CURLOPT_URL, $row[$i]['pingdomurl'] . $thismonth);
+      curl_setopt($ping, CURLOPT_URL, $row[$i]['statsurl'] . $thismonth);
       if ($debug) {
-        echo $row[$i]['pingdomurl'] . $thismonth;
+        echo $row[$i]['statsurl'] . $thismonth;
       }
       curl_setopt($ping, CURLOPT_POST, 0);
       curl_setopt($ping, CURLOPT_HEADER, 1);
@@ -290,15 +299,15 @@ while ($row = pg_fetch_all($result)) {
         //uptime %
         preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)%</', $pingdom, $matchper);
         $uptime      = isset($matchper[1][0]) ? preg_replace('/,/', '.', $matchper[1][0]) : 0;
-        $pingdomdate = date('Y-m-d H:i:s');
+        $statslastdate = date('Y-m-d H:i:s');
         if (strpos($pingdom, "class=\"up\"")) {
-          $live = 'up';
+          $status = 'up';
         } elseif (strpos($pingdom, "class=\"down\"")) {
-          $live = 'down';
+          $status = 'down';
         } elseif (strpos($pingdom, "class=\"paused\"")) {
-          $live = 'paused';
+          $status = 'paused';
         } else {
-          $live  = 'error';
+          $status  = 'error';
           $score = $score - 2;
         }
       } else {
@@ -308,7 +317,7 @@ while ($row = pg_fetch_all($result)) {
     } else {
       //do uptimerobot API instead
       $ping = curl_init();
-      curl_setopt($ping, CURLOPT_URL, 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=' . $row[$i]['pingdomurl']);
+      curl_setopt($ping, CURLOPT_URL, 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=' . $row[$i]['statsurl']);
       curl_setopt($ping, CURLOPT_POST, 0);
       curl_setopt($ping, CURLOPT_HEADER, 0);
       curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);
@@ -331,25 +340,26 @@ while ($row = pg_fetch_all($result)) {
       $responsetime    = $uptr->monitors->monitor{'0'}->responsetime{'0'}->value;
       $uptimerobotstat = $uptr->stat;
       $uptime          = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
+      $uptime_custom   = $uptr->monitors->monitor{'0'}->customuptimeratio;
       $diff            = abs(strtotime(date('Y-m-d H:i:s')) - strtotime($dateadded));
       $months          = floor(($diff - $years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
       if ($uptr->monitors->monitor{'0'}->status == 2) {
-        $live = 'Up';
+        $status = 'Up';
       }
       if ($uptr->monitors->monitor{'0'}->status == 0) {
-        $live = 'Paused';
+        $status = 'Paused';
       }
       if ($uptr->monitors->monitor{'0'}->status == 1) {
-        $live = 'Not Checked Yet';
+        $status = 'Not Checked Yet';
       }
       if ($uptr->monitors->monitor{'0'}->status == 8) {
-        $live = 'Seems Down';
+        $status = 'Seems Down';
       }
       if ($uptr->monitors->monitor{'0'}->status == 9) {
-        $live = 'Down';
+        $status = 'Down';
       }
       $pingdomdate = date('Y-m-d H:i:s');
-      if ($uptimerobotstat == 'fail' || $live <> 'Up') {
+      if ($uptimerobotstat == 'fail' || $status <> 'Up') {
         $score = $score - 2;
       }
     }
@@ -376,13 +386,9 @@ while ($row = pg_fetch_all($result)) {
     //sql it
 
     $timenow = date('Y-m-d H:i:s');
-    $sql     = 'UPDATE pods SET Hgitdate = $1, Hencoding = $2, secure = $3, hidden = $4, Hruntime = $5, Hgitref = $6, ip = $7, ipv6 = $8, monthsmonitored = $9,
-  uptimelast7 = $10, status = $11, dateLaststats = $12, dateUpdated = $13, responsetimelast7 = $14, score = $15, adminrating = $16, country = $17, city = $18,
-  state = $19, lat = $20, long = $21, postalcode=\'\', connection = $22, whois = $23, userrating = $24, longversion = $25, shortversion = $26,
-  masterversion = $27, signup = $28, total_users = $29, active_users_halfyear = $30, active_users_monthly = $31, local_posts = $32, name = $33,
-  comment_counts = $35, service_facebook = $36, service_tumblr = $37, service_twitter = $38, service_wordpress = $39, weightedscore = $40, xmpp = $41, softwarename = $42, sslvalid = $43
-  WHERE domain = $34';
-    $result  = pg_query_params($dbh, $sql, [$gitdate, $encoding, $secure, $hidden, $runtime, $gitrev, $ipnum, $ipv6, $months, $uptime, $live, $pingdomdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $dver, $whois, $userrating, $xdver, $dver, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $domain, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror]);
+    $sql     = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, uptime_custom = $37
+  WHERE domain = $1';
+    $result  = pg_query_params($dbh, $sql, [$domain, $secure, $hidden, $ip, $ipv6, $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $userrating, $shortversion, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror, $uptime_custom]);
     $result || die('Error in SQL query3: ' . pg_last_error());
 
     if ($debug) {

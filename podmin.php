@@ -6,6 +6,7 @@ Create a monitor for your pod, then in "My Settings" create a monitor-specific A
 <form action="https://<?php echo $_SERVER['HTTP_HOST'] ?>/db/add.php" method="post">
   <label>Monitor API Key: <input type="text" name="url" class="xlarge span8" placeholder="m58978-80abdb799f6ccf15e3e4ttwe"> (don't copy the period on the end)</label><br>
   <label>Pod Domain Name: <input type="text" name="domain" class="xlarge span4" placeholder="domain.com"></label><br>
+  <label>Pod Terms Link: <input type="text" name="terms" class="xlarge span4" value="/terms" placeholder="/terms"></label><br>
   <label>Your Email: <input type="text" name="email" class="xlarge span4" placeholder="user@domain.com"></label><br>
   <input type="submit" value="submit">
 </form>
