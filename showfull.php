@@ -89,7 +89,7 @@ $numrows = pg_num_rows($result);
     } else {
       $moreurl = '/showstats.php?domain=' . $row['domain'];
     }
-    echo '<td><div title="Last Check ' . $row['dateupdated'] . '" data-toggle="tooltip" data-placement="bottom"><a rel="facebox" href="' . $moreurl . '">' . $row['monthsmonitored'] . '</a></div></td>';
+    echo '<td><div title="Last Check ' . $row['date_updated'] . '" data-toggle="tooltip" data-placement="bottom"><a rel="facebox" href="' . $moreurl . '">' . $row['monthsmonitored'] . '</a></div></td>';
 
     echo '<td><a rel="facebox" href="rate.php?domain=' . $row['domain'] . '">' . $row['userrating'] . '/10';
 
@@ -100,7 +100,6 @@ $numrows = pg_num_rows($result);
     } else {
       echo '<td data-toggle="tooltip" data-placement="bottom" title="City: '. ($row['city'] ?? 'n/a') . ' State: ' . ($row['state'] ?? 'n/a') . '">' . $row['country'] . '</td>';
     }
-
     echo '<td>';
     $row['service_facebook'] === 't' && print '<div class="smlogo smlogo-facebook"></div>';
     $row['service_twitter'] === 't' && print '<div class="smlogo smlogo-twitter"></div>';

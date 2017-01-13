@@ -250,11 +250,11 @@ while ($row = pg_fetch_all($result)) {
       echo '<br>';
     }
     if ($location) {
-      $country = isset($location['country_code']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_code']) : null;
-      $city    = isset($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : null;
-      $state   = isset($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : null;
-      $lat     = isset($location['latitude']) ? $location['latitude']: null;
-      $long    = isset($location['longitude']) ? $location['longitude'] : null;
+      $country = !empty($location['country_code']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_code']) : null;
+      $city    = !empty($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : null;
+      $state   = !empty($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : null;
+      $lat     = !empty($location['latitude']) ? $location['latitude']: null;
+      $long    = !empty($location['longitude']) ? $location['longitude'] : null;
       //if lat and long are just a generic country with no detail lets make some tail up or openmap just stacks them all on top another
       if (strlen($lat) < 4) {
         $lat = $lat + (rand(1, 15) / 10);
@@ -341,8 +341,8 @@ while ($row = pg_fetch_all($result)) {
       $uptimerobotstat = $uptr->stat;
       $uptime          = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
       $uptime_custom   = $uptr->monitors->monitor{'0'}->customuptimeratio;
-      $diff            = abs(strtotime(date('Y-m-d H:i:s')) - strtotime($dateadded));
-      $months          = floor(($diff - $years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
+      $diff            = (new DateTime())->diff(new DateTime($dateadded));
+      $months          = $diff->m + ($diff->y * 12);
       if ($uptr->monitors->monitor{'0'}->status == 2) {
         $status = 'Up';
       }

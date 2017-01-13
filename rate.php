@@ -69,7 +69,7 @@
     if ($row['admin'] === '1') {
       echo 'Poduptime Approved Comment - User: <b>' . $row['username'] . '</b> Url: <a href="' . $row['userurl'] . '">' . $row['userurl'] . '</a> Rating: <b>' . $row['rating'] . '</b> <br>';
       echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date'] . '</span><hr>';
-    } elseif ($row['admin'] === '0') {
+    } else {
       echo 'User Comment - User: <b>' . $row['username'] . '</b> Url: <a href="' . $row['userurl'] . '">' . $row['userurl'] . '</a> Rating: <b>' . $row['rating'] . '</b> <br>';
       echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date'] . '</span><hr style="margin-top:0;margin-bottom:15px;">';
     }
