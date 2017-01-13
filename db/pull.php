@@ -46,11 +46,11 @@ $dbh || die('Error in connection: ' . pg_last_error());
 
 //foreach pod check it and update db
 if ($_domain) {
-  $sql    = 'SELECT domain,statsurl,score,date_created,weight FROM pods WHERE domain = $1';
+  $sql    = 'SELECT domain,stats_apikey,score,date_created,weight FROM pods WHERE domain = $1';
   $sleep  = '0';
   $result = pg_query_params($dbh, $sql, [$_domain]);
 } elseif (PHP_SAPI === 'cli') {
-  $sql    = 'SELECT domain,statsurl,score,date_created,adminrating,weight FROM pods';
+  $sql    = 'SELECT domain,stats_apikey,score,date_created,adminrating,weight FROM pods';
   $sleep  = '1';
   $result = pg_query($dbh, $sql);
 } else {
@@ -147,25 +147,10 @@ while ($row = pg_fetch_all($result)) {
     $outputsslerror = curl_error($chss);
     curl_close($chss);
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'http://' . $domain . '/nodeinfo/1.0');
-    curl_setopt($ch, CURLOPT_POST, 0);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 9);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 9);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_NOBODY, 0);
-    $output = curl_exec($ch);
-    curl_close($ch);
     if ($debug) {
-      echo 'not-e';
-      print $output;
-    }
-    if ($debug) {
-      echo 'e';
       var_dump($outputssl);
     }
-    if (!$output && !$outpulssl && !$domain) {
+    if (!$outpulssl && !$domain) {
       continue;
       echo 'no connection to pod';
       
@@ -182,7 +167,7 @@ while ($row = pg_fetch_all($result)) {
       $result = pg_query_params($dbh, $sql, [$domain, true]);
       $result || die('Error in SQL query: ' . pg_last_error());
   
-    } elseif ($output) {
+    } else {
       $secure        = 'false';
       $outputresults = $output;
     }
@@ -223,7 +208,6 @@ while ($row = pg_fetch_all($result)) {
       $score  = $score - 1;
       $dver   = '.connect error';
       $shortversion  = 0;
-      //no diaspora cookie on either, lets set this one as hidden and notify someone its not really a pod
       //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
     }
     $signup = $registrations_open;
@@ -265,59 +249,8 @@ while ($row = pg_fetch_all($result)) {
     }
     echo '<br>';
     $statslastdate = date('Y-m-d H:i:s');
-    if (strpos($row[$i]['statsurl'], 'pingdom.com')) {
-      //curl the pingdom page 
-      $ping      = curl_init();
-      $thismonth = '/' . date('Y') . '/' . date('m');
-      curl_setopt($ping, CURLOPT_URL, $row[$i]['statsurl'] . $thismonth);
-      if ($debug) {
-        echo $row[$i]['statsurl'] . $thismonth;
-      }
-      curl_setopt($ping, CURLOPT_POST, 0);
-      curl_setopt($ping, CURLOPT_HEADER, 1);
-      curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);
-      curl_setopt($ping, CURLOPT_CONNECTTIMEOUT, 8);
-      curl_setopt($ping, CURLOPT_NOBODY, 0);
-      curl_setopt($ping, CURLOPT_MAXCONNECTS, 5);
-      curl_setopt($ping, CURLOPT_FOLLOWLOCATION, true);
-      $pingdom = curl_exec($ping);
-      $info    = curl_getinfo($ping);
-      curl_close($ping);
-      if ($debug) {
-        echo '<br>Pingdom code: ' . $info['http_code'] . '<br>';
-      }
-      if ($info['http_code'] == 200) {
-        //response time
-        preg_match_all('/<h3>Avg. resp. time this month<\/h3>
-          <p class="large">(.*?)</', $pingdom, $matcheach);
-        $responsetime = $matcheach[1][0];
-        //months monitored
-        preg_match_all('/"historySelect">\s*(.*?)\s*<\/select/is', $pingdom, $matchhistory);
-        $implodemonths = implode(' ', $matchhistory[1]);
-        preg_match_all('/<option(.*?)/s', $implodemonths, $matchdates);
-        $months = isset($matchdates[0]) ? count($matchdates[0]) : 0;
-        //uptime %
-        preg_match_all('/<h3>Uptime this month<\/h3>\s*<p class="large">(.*?)%</', $pingdom, $matchper);
-        $uptime      = isset($matchper[1][0]) ? preg_replace('/,/', '.', $matchper[1][0]) : 0;
-        $statslastdate = date('Y-m-d H:i:s');
-        if (strpos($pingdom, "class=\"up\"")) {
-          $status = 'up';
-        } elseif (strpos($pingdom, "class=\"down\"")) {
-          $status = 'down';
-        } elseif (strpos($pingdom, "class=\"paused\"")) {
-          $status = 'paused';
-        } else {
-          $status  = 'error';
-          $score = $score - 2;
-        }
-      } else {
-        //pingdom url is <> 200 so stats are gone, lower score
-        $score = $score - 2;
-      }
-    } else {
-      //do uptimerobot API instead
       $ping = curl_init();
-      curl_setopt($ping, CURLOPT_URL, 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=' . $row[$i]['statsurl']);
+      curl_setopt($ping, CURLOPT_URL, 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=' . $row[$i]['stats_apikey']);
       curl_setopt($ping, CURLOPT_POST, 0);
       curl_setopt($ping, CURLOPT_HEADER, 0);
       curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);
@@ -362,7 +295,6 @@ while ($row = pg_fetch_all($result)) {
       if ($uptimerobotstat == 'fail' || $status <> 'Up') {
         $score = $score - 2;
       }
-    }
     if ($softwarename == 'diaspora') {
       $masterversion = $dmasterversion;
     } elseif ($softwarename == 'friendica') {

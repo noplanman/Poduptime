@@ -10,7 +10,7 @@ $_delete     = $_GET['delete'] ?? '';
 $_weight     = $_GET['weight'] ?? '';
 $_email      = $_GET['email'] ?? '';
 $_oldemail   = $_GET['oldemail'] ?? '';
-$_statsurl   = $_GET['statsurl'] ?? '';
+$_stats_apikey   = $_GET['stats_apikey'] ?? '';
 $_terms      = $_GET['terms'] ?? '';
 
 require_once __DIR__ . '/../config.php';
@@ -18,7 +18,7 @@ require_once __DIR__ . '/../config.php';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = 'SELECT domain,email,token,tokenexpire,statsurl,weight,terms FROM pods WHERE domain = $1';
+$sql    = 'SELECT domain,email,token,tokenexpire,stats_apikey,weight,terms FROM pods WHERE domain = $1';
 $result = pg_query_params($dbh, $sql, [$_domain]);
 $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -39,8 +39,8 @@ while ($row = pg_fetch_array($result)) {
   if ($_save === $row['token']) {
     $_weight <= 10 || die('10 is max weight');
 
-    $sql    = 'UPDATE pods SET email = $1, statsurl = $2, weight = $3, terms = $4 WHERE domain = $5';
-    $result = pg_query_params($dbh, $sql, [$_email, $_statsurl, $_weight, $_terms, $_domain]);
+    $sql    = 'UPDATE pods SET email = $1, stats_apikey = $2, weight = $3, terms = $4 WHERE domain = $5';
+    $result = pg_query_params($dbh, $sql, [$_email, $_stats_apikey, $_weight, $_terms, $_domain]);
     if (!$result) {
       die('Error in SQL query: ' . pg_last_error());
     }
@@ -61,7 +61,7 @@ while ($row = pg_fetch_array($result)) {
   echo '<input type="hidden" name="save" value="' . $_token . '">';
   echo '<input type="hidden" name="token" value="' . $_token . '">';
   echo '<input type="hidden" name="domain" value="' . $_domain . '">';
-  echo 'Stats Key <input type="text" size="50" name="statsurl" value="' . $row['statsurl'] . '"">Uptimerobot API key for this monitor<br>';
+  echo 'Stats Key <input type="text" size="50" name="stats_apikey" value="' . $row['stats_apikey'] . '"">Uptimerobot API key for this monitor<br>';
   echo 'Email <input type="text" size="20" name="email" value="' . $row['email'] . '"><br>';
   echo 'Terms Link <input type="text" size="20" name="terms" value="' . $row['terms'] . '"><br>';
   echo 'Weight <input type="text" size="2" name="weight" value="' . $row['weight'] . '"> This lets you weight your pod lower on the list if you have too much trafic coming in, 10 is the norm use lower to move down the list.<br>';

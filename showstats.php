@@ -10,13 +10,13 @@ require_once __DIR__ . '/config.php';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = 'SELECT statsurl FROM pods WHERE domain = $1';
+$sql    = 'SELECT stats_apikey FROM pods WHERE domain = $1';
 $result = pg_query_params($dbh, $sql, [$_domain]);
 $result || die('Error in SQL query: ' . pg_last_error());
 
 $apikey = pg_fetch_all($result);
 $upti   = curl_init();
-$key    = $apikey[0]['statsurl'];
+$key    = $apikey[0]['stats_apikey'];
 $data   = ['all_time_uptime_ratio' => 1, 'format' => 'json', 'custom_uptime_ratios' => '7-30-60-90', 'response_times' => 1, 'response_times_average' => 86400, 'api_key' => $key, 'callback' => 'jsonpUptimeRobot'];
 curl_setopt($upti, CURLOPT_URL, 'https://api.uptimerobot.com/v2/getMonitors');
 curl_setopt($upti, CURLOPT_HEADER, 0);

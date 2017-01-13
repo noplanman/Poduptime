@@ -8,7 +8,7 @@ $country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql = "SELECT domain,masterversion,shortversion,softwarename,monthsmonitored,score,signup,secure,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp FROM pods WHERE NOT hidden AND signup ORDER BY uptime_alltime DESC";
+$sql = "SELECT domain,masterversion,shortversion,softwarename,monthsmonitored,score,signup,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp FROM pods WHERE NOT hidden AND signup ORDER BY uptime_alltime DESC";
 
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
@@ -32,13 +32,6 @@ $numrows = pg_num_rows($result);
 
   <?php
   while ($row = pg_fetch_array($result)) {
-    if ($row['secure'] === 't') {
-      $scheme = 'https://';
-      $class  = 'text-success';
-    } else {
-      $scheme = 'http://';
-      $class  = 'red';
-    }
     $verdiff  = str_replace('.', '', $row['masterversion']) - str_replace('.', '', $row['shortversion']);
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
     $tip      = sprintf(
@@ -49,7 +42,7 @@ $numrows = pg_num_rows($result);
       $row['uptime_alltime'],
       $row['score']
     );
-    echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="' . $class . ' url" target="_self" href="/go.php?url=' . $scheme . $row['domain'] . '">' . $row['domain'] . '</a></div></td>';
+    echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="' . $class . ' url" target="_self" href="/go.php?url=https://' $row['domain'] . '">' . $row['domain'] . '</a></div></td>';
 
     echo '<td>' . $row['uptime_alltime'] . '%</td>';
     echo '<td data-toggle="tooltip" data-placement="bottom" title="active six months: ' . $row['active_users_halfyear'] . ', active one month: ' . $row['active_users_monthly'] . '">' . $row['active_users_halfyear'] . '</td>';

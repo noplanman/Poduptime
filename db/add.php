@@ -33,7 +33,7 @@ if (strlen($_url) < 14) {
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = 'SELECT domain, statsurl FROM pods';
+$sql    = 'SELECT domain, stats_apikey FROM pods';
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -42,7 +42,7 @@ while ($row = pg_fetch_array($result)) {
     $log->lwrite('domain already exists ' . $_domain);
     die('domain already exists');
   }
-  if ($row['statsurl'] === $_url) {
+  if ($row['stats_apikey'] === $_url) {
     $log->lwrite('API key already exists ' . $_domain);
     die('API key already exists');
   }
@@ -59,29 +59,14 @@ curl_setopt($chss, CURLOPT_NOBODY, 0);
 $outputssl = curl_exec($chss);
 curl_close($chss);
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, 'http://' . $_domain . '/nodeinfo/1.0');
-curl_setopt($ch, CURLOPT_POST, 0);
-curl_setopt($ch, CURLOPT_HEADER, 0);
-curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_NOBODY, 0);
-$output = curl_exec($ch);
-curl_close($ch);
-
 $valid = false;
 if (stristr($outputssl, 'nodeName')) {
   $log->lwrite('Your pod has ssl and is valid ' . $_domain);
   echo 'Your pod has ssl and is valid<br>';
   $valid = true;
 }
-if (stristr($output, 'nodeName')) {
-  $log->lwrite('Your pod does not have ssl but is a valid pod ' . $_domain);
-  echo 'Your pod does not have ssl but is a valid pod<br>';
-  $valid = true;
-}
 if ($valid) {
-  $sql    = 'INSERT INTO pods (domain, statsurl, email, terms) VALUES ($1, $2, $3, $4)';
+  $sql    = 'INSERT INTO pods (domain, stats_apikey, email, terms) VALUES ($1, $2, $3, $4)';
   $result = pg_query_params($dbh, $sql, [$_domain, $_url, $_email, $_terms]);
   $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -104,7 +89,7 @@ if ($valid) {
 
   pg_close($dbh);
 } else {
-  $log->lwrite('Could not validate your pod on http or https, check your setup! ' . $_domain);
-  echo 'Could not validate your pod on http or https, check your setup!<br>Take a look at <a href="https://' . $_domain . '/nodeinfo/1.0">your /nodeinfo</a>';
+  $log->lwrite('Could not validate your pod, check your setup! ' . $_domain);
+  echo 'Could not validate your pod, check your setup!<br>Take a look at <a href="https://' . $_domain . '/nodeinfo/1.0">your /nodeinfo</a>';
 }
 $log->lclose();

@@ -21,7 +21,7 @@ if ($_format === 'georss') {
 <link href="https://{$_SERVER['HTTP_HOST']}/"/>
 
 EOF;
-  $sql    = "SELECT name,monthsmonitored,responsetime,uptime_alltime,dateupdated,score,secure,domain,country,lat,long FROM pods";
+  $sql    = "SELECT name,monthsmonitored,responsetime,uptime_alltime,dateupdated,score,domain,country,lat,long FROM pods";
   $result = pg_query($dbh, $sql);
   $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -37,10 +37,9 @@ EOF;
       $row['dateupdated'],
       $row['score']
     );
-    $scheme   = $row['secure'] === 't' ? 'https://' : 'http://';
     echo <<<EOF
 <entry>
-  <title>{$scheme}{$row['domain']}</title>
+  <title>https://{$row['domain']}</title>
   <link href="{$scheme}{$row['domain']}"/>
   <id>urn:{$row['domain']}</id>
   <summary>Pod Location is: {$row['country']}
@@ -54,7 +53,7 @@ EOF;
   }
   echo '</feed>';
 } elseif ($_format === 'json') {
-  $sql    = 'SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,statsurl,monthsmonitored,uptime_alltime,responsetime,local_posts,comment_counts,date_created,date_updated,date_laststats,hidden,terms,sslexpire,uptime_custom,dnssec,softwarename,total_users,local_posts,comment_counts,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp FROM pods';
+  $sql    = 'SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,stats_apikey,monthsmonitored,uptime_alltime,responsetime,local_posts,comment_counts,date_created,date_updated,date_laststats,hidden,terms,sslexpire,uptime_custom,dnssec,softwarename,total_users,local_posts,comment_counts,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp FROM pods';
   $result = pg_query($dbh, $sql);
   $result || die('Error in SQL query: ' . pg_last_error());
 
