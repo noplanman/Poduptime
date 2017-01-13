@@ -169,7 +169,7 @@ while ($row = pg_fetch_all($result)) {
       continue;
       echo 'no connection to pod';
       
-      $sql    = 'INSERT INTO checks (domain, online, error) VALUES ($1, $2)';
+      $sql    = 'INSERT INTO checks (domain, online, error) VALUES ($1, $2, $3)';
       $result = pg_query_params($dbh, $sql, [$domain, false, $outputsslerror]);
       $result || die('Error in SQL query: ' . pg_last_error());
       
@@ -386,7 +386,7 @@ while ($row = pg_fetch_all($result)) {
     //sql it
 
     $timenow = date('Y-m-d H:i:s');
-    $sql     = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, dateLaststats = $9, dateUpdated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, uptime_custom = $37
+    $sql     = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, uptime_custom = $37
   WHERE domain = $1';
     $result  = pg_query_params($dbh, $sql, [$domain, $secure, $hidden, $ip, $ipv6, $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $userrating, $shortversion, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror, $uptime_custom]);
     $result || die('Error in SQL query3: ' . pg_last_error());

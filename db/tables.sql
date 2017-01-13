@@ -43,9 +43,9 @@ CREATE TABLE pods (
  dnssec boolean,
  comment_counts int,
  weight int DEFAULT 50,
- dateUpdated timestamp DEFAULT current_timestamp,
- dateLaststats timestamp DEFAULT current_timestamp,
- dateCreated timestamp DEFAULT current_timestamp
+ date_updated timestamp DEFAULT current_timestamp,
+ date_laststats timestamp DEFAULT current_timestamp,
+ date_created timestamp DEFAULT current_timestamp
 );
 CREATE TABLE rating_comments (
  id serial8 UNIQUE PRIMARY KEY,
@@ -62,20 +62,20 @@ CREATE TABLE apikeys (
  key text,
  email text,
  usage int,
- dateCreated timestamp DEFAULT current_timestamp
+ date_created timestamp DEFAULT current_timestamp
 );
 
 CREATE TABLE clicks (
  domain text,
  manualclick int,
  autoclick int,
- dateClicked timestamp DEFAULT current_timestamp
+ date_clicked timestamp DEFAULT current_timestamp
 );
 
 CREATE TABLE checks (
  domain text,
  online boolean,
  error text,
- dateChecked timestamp DEFAULT current_timestamp
+ date_checked timestamp DEFAULT current_timestamp
 );
 
