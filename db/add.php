@@ -29,7 +29,6 @@ if (strlen($_url) < 14) {
   die('API key bad needs to be like m58978-80abdb799f6ccf15e3e3787ee');
 }
 
-
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
@@ -48,7 +47,6 @@ while ($row = pg_fetch_array($result)) {
   }
 }
 
-//curl the header of pod with and without https
 $chss = curl_init();
 curl_setopt($chss, CURLOPT_URL, 'https://' . $_domain . '/nodeinfo/1.0');
 curl_setopt($chss, CURLOPT_POST, 0);
@@ -59,13 +57,10 @@ curl_setopt($chss, CURLOPT_NOBODY, 0);
 $outputssl = curl_exec($chss);
 curl_close($chss);
 
-$valid = false;
 if (stristr($outputssl, 'nodeName')) {
   $log->lwrite('Your pod has ssl and is valid ' . $_domain);
   echo 'Your pod has ssl and is valid<br>';
-  $valid = true;
-}
-if ($valid) {
+
   $sql    = 'INSERT INTO pods (domain, stats_apikey, email, terms) VALUES ($1, $2, $3, $4)';
   $result = pg_query_params($dbh, $sql, [$_domain, $_url, $_email, $_terms]);
   $result || die('Error in SQL query: ' . pg_last_error());

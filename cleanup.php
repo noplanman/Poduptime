@@ -52,7 +52,7 @@ $numrows = pg_num_rows($result);
       $row['score']
     );
 
-    echo '<tr><td><a class="green" target="_self" href="https://' $row['domain'] . '">' . $row['domain'] . '<div title="' . $tip . '" class="tipsy" style="display: inline-block">?</div></a></td>';
+    echo '<tr><td><a class="text-success" target="_self" href="https://' $row['domain'] . '">' . $row['domain'] . '<div title="' . $tip . '" class="tipsy" style="display: inline-block">?</div></a></td>';
 
     if (stristr($row['shortversion'], 'head')) {
       $version = '.dev';
@@ -65,9 +65,9 @@ $numrows = pg_num_rows($result);
       $pre     = 'This pod runs production code';
     }
     if ($row['shortversion'] === $row['masterversion'] && $row['shortversion'] !== '') {
-      $classver = 'green';
+      $classver = 'text-success';
     } elseif ($verdiff > 6) {
-      $classver = 'red';
+      $classver = 'text-warning';
     } else {
       $classver = 'black';
     }

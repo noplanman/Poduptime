@@ -5,13 +5,13 @@
 strlen($_token) > 6 || die('bad token');
 
 // Other parameters.
-$_save       = $_GET['save'] ?? '';
-$_delete     = $_GET['delete'] ?? '';
-$_weight     = $_GET['weight'] ?? '';
-$_email      = $_GET['email'] ?? '';
-$_oldemail   = $_GET['oldemail'] ?? '';
-$_stats_apikey   = $_GET['stats_apikey'] ?? '';
-$_terms      = $_GET['terms'] ?? '';
+$_save         = $_GET['save'] ?? '';
+$_delete       = $_GET['delete'] ?? '';
+$_weight       = $_GET['weight'] ?? '';
+$_email        = $_GET['email'] ?? '';
+$_oldemail     = $_GET['oldemail'] ?? '';
+$_stats_apikey = $_GET['stats_apikey'] ?? '';
+$_terms        = $_GET['terms'] ?? '';
 
 require_once __DIR__ . '/../config.php';
 
