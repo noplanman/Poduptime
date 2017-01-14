@@ -40,10 +40,10 @@ foreach ($csv as $cords) {
         $i++ > 0 && print ',';
 
         $feat = '';
-        $row['service_facebook'] === 't' && $feat .= '<div class="smlogo smlogo-facebook"></div>';
-        $row['service_twitter'] === 't' && $feat .= '<div class="smlogo smlogo-twitter"></div>';
-        $row['service_tumblr'] === 't' && $feat .= '<div class="smlogo smlogo-tumblr"></div>';
-        $row['service_wordpress'] === 't' && $feat .= '<div class="smlogo smlogo-wordpress"></div>';
+        $row['service_facebook'] === 't' && $feat .= '<div class="smlogo smlogo-facebook" title="Publish to Facebook" alt="Publish to Facebook"></div>';
+        $row['service_twitter'] === 't' && $feat .= '<div class="smlogo smlogo-twitter" title="Publish to Twitter" alt="Publish to Twitter"></div>';
+        $row['service_tumblr'] === 't' && $feat .= '<div class="smlogo smlogo-tumblr" title="Publish to Tumblr" alt="Publish to Tumblr"></div>';
+        $row['service_wordpress'] === 't' && $feat .= '<div class="smlogo smlogo-wordpress" title="Publish to Wordpress" alt="Publish to Wordpress"></div>';
         $row['service_xmpp'] === 't' && $feat .= '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
 
         $pod_name = htmlentities($row['name'], ENT_QUOTES);

@@ -291,7 +291,9 @@ while ($row = pg_fetch_all($result)) {
       if ($uptr->monitors->monitor{'0'}->status == 9) {
         $status = 'Down';
       }
-      $pingdomdate = date('Y-m-d H:i:s');
+      if ($uptr) {
+      $statslastdate = date('Y-m-d H:i:s');
+      }
       if ($uptimerobotstat == 'fail' || $status <> 'Up') {
         $score = $score - 2;
       }
