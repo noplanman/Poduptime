@@ -24,8 +24,8 @@ $numrows = pg_num_rows($result);
     <th><a data-toggle="tooltip" data-placement="bottom" title="A pod is a site for you to set up your account.">Pod</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online.">Uptime %</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 6 months on this pod.">Active Users</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation">Location</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to">Services Offered</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation.">Location</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to.">Services Offered</a></th>
   </tr>
   </thead>
   <tbody>
@@ -55,7 +55,7 @@ $numrows = pg_num_rows($result);
     $row['service_facebook'] === 't' && print '<div class="smlogo smlogo-facebook" title="Publish to Facebook" alt="Publish to Facebook"></div>';
     $row['service_twitter'] === 't' && print '<div class="smlogo smlogo-twitter" title="Publish to Twitter" alt="Publish to Twitter"></div>';
     $row['service_tumblr'] === 't' && print '<div class="smlogo smlogo-tumblr" title="Publish to Tumblr" alt="Publish to Tumblr"></div>';
-    $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress"  title="Publish to Wordpress" alt="Publish to Wordpress"></div>';
+    $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress"  title="Publish to WordPress" alt="Publish to WordPress"></div>';
     $row['service_xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
     echo '</td></tr>';
   }

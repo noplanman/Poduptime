@@ -34,9 +34,9 @@ $numrows = pg_num_rows($result);
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total comments on this pod.">Comments</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="How many months has this pod been online? Click number for more history.">Months</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="User rating for this pod.">Rating</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="System Score on a 100 point scale">Score</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation">Country</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to">Services</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="System Score on a 100 point scale.">Score</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation.">Country</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to.">Services</a></th>
   </tr>
   </thead>
   <tbody>
@@ -89,7 +89,7 @@ $numrows = pg_num_rows($result);
     $row['service_facebook'] === 't' && print '<div class="smlogo smlogo-facebook" title="Publish to Facebook" alt="Publish to Facebook"></div>';
     $row['service_twitter'] === 't' && print '<div class="smlogo smlogo-twitter" title="Publish to Twitter" alt="Publish to Twitter"></div>';
     $row['service_tumblr'] === 't' && print '<div class="smlogo smlogo-tumblr" title="Publish to Tumblr" alt="Publish to Tumblr"></div>';
-    $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress"  title="Publish to Wordpress" alt="Publish to Wordpress"></div>';
+    $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress"  title="Publish to WordPress" alt="Publish to WordPress"></div>';
     $row['service_xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
     echo '</td></tr>';
   }

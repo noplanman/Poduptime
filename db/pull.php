@@ -292,7 +292,7 @@ while ($row = pg_fetch_all($result)) {
         $status = 'Down';
       }
       if ($uptr) {
-      $statslastdate = date('Y-m-d H:i:s');
+        $statslastdate = date('Y-m-d H:i:s');
       }
       if ($uptimerobotstat == 'fail' || $status <> 'Up') {
         $score = $score - 2;

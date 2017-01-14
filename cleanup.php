@@ -28,7 +28,7 @@ $numrows = pg_num_rows($result);
     <th>Comm<a class="tipsy" title="Number of total comments on this pod.">?</a></th>
     <th>Month<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a>
     </th>
-    <th>Sc<a class="tipsy" title="System Score on a 100 scale">?</a></th>
+    <th>Sc<a class="tipsy" title="System Score on a 100 scale.">?</a></th>
     <th>conn<a class="tipsy" title="">?</a></th>
     <th>Delete?<a class="tipsy" title="Delete this pod from DB?">?</a></th>
   </tr>
