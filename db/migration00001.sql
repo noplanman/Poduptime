@@ -10,6 +10,8 @@ ALTER TABLE pods RENAME COLUMN dateUpdated TO date_updated;
 ALTER TABLE pods RENAME COLUMN dateLaststats TO date_laststats;
 ALTER TABLE pods RENAME COLUMN dateCreated TO date_created;
 
+ALTER TABLE rating_comments RENAME COLUMN date TO date_created;
+
 ALTER TABLE pods ALTER COLUMN ipv6 TYPE boolean USING ipv6::boolean;
 ALTER TABLE pods ALTER hidden DROP DEFAULT;
 ALTER TABLE pods ALTER COLUMN hidden TYPE boolean USING hidden::boolean;

@@ -56,7 +56,7 @@ CREATE TABLE rating_comments (
  rating int,
  username text,
  userurl text,
- date timestamp DEFAULT current_timestamp
+ date_created timestamp DEFAULT current_timestamp
 );
 CREATE TABLE apikeys (
  key text,

@@ -56,7 +56,7 @@
   $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
   $dbh || die('Error in connection: ' . pg_last_error());
 
-  $sql    = 'SELECT admin,username,userurl,rating,comment,date,id FROM rating_comments WHERE domain = $1';
+  $sql    = 'SELECT admin,username,userurl,rating,comment,date_created,id FROM rating_comments WHERE domain = $1';
   $result = pg_query_params($dbh, $sql, [$_domain]);
   $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -68,10 +68,10 @@
   while ($row = pg_fetch_array($result)) {
     if ($row['admin'] === '1') {
       echo 'Poduptime Approved Comment - User: <b>' . $row['username'] . '</b> Url: <a href="' . $row['userurl'] . '">' . $row['userurl'] . '</a> Rating: <b>' . $row['rating'] . '</b> <br>';
-      echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date'] . '</span><hr>';
+      echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date_created'] . '</span><hr>';
     } else {
       echo 'User Comment - User: <b>' . $row['username'] . '</b> Url: <a href="' . $row['userurl'] . '">' . $row['userurl'] . '</a> Rating: <b>' . $row['rating'] . '</b> <br>';
-      echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date'] . '</span><hr style="margin-top:0;margin-bottom:15px;">';
+      echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date_created'] . '</span><hr style="margin-top:0;margin-bottom:15px;">';
     }
   }
   ?>

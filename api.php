@@ -21,7 +21,7 @@ if ($_format === 'georss') {
 <link href="https://{$_SERVER['HTTP_HOST']}/"/>
 
 EOF;
-  $sql    = "SELECT name,monthsmonitored,responsetime,uptime_alltime,dateupdated,score,domain,country,lat,long FROM pods";
+  $sql    = "SELECT name,monthsmonitored,responsetime,uptime_alltime,date_updated,score,domain,country,lat,long FROM pods";
   $result = pg_query($dbh, $sql);
   $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -34,7 +34,7 @@ EOF;
       $row['monthsmonitored'],
       $row['responsetime'],
       $row['uptime_alltime'],
-      $row['dateupdated'],
+      $row['date_updated'],
       $row['score']
     );
     echo <<<EOF
