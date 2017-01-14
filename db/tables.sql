@@ -20,7 +20,7 @@ CREATE TABLE pods (
  ipv6 boolean,
  secure boolean,
  sslvalid text,
- statsurl text,
+ stats_apikey text,
  monthsmonitored int,
  signup boolean,
  total_users int, 

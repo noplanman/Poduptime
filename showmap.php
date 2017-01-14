@@ -29,7 +29,7 @@ foreach ($csv as $cords) {
       $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
       $dbh || die('Error in connection: ' . pg_last_error());
 
-      $sql = "SELECT domain,signup,secure,name,lat,long,uptime_alltime,active_users_halfyear,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp FROM pods WHERE NOT hidden";
+      $sql = "SELECT domain,signup,name,lat,long,uptime_alltime,active_users_halfyear,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp FROM pods WHERE NOT hidden";
       $result = pg_query($dbh, $sql);
       $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -40,21 +40,20 @@ foreach ($csv as $cords) {
         $i++ > 0 && print ',';
 
         $feat = '';
-        $row['service_facebook'] === 't' && $feat .= '<div class="smlogo smlogo-facebook"></div>';
-        $row['service_twitter'] === 't' && $feat .= '<div class="smlogo smlogo-twitter"></div>';
-        $row['service_tumblr'] === 't' && $feat .= '<div class="smlogo smlogo-tumblr"></div>';
-        $row['service_wordpress'] === 't' && $feat .= '<div class="smlogo smlogo-wordpress"></div>';
+        $row['service_facebook'] === 't' && $feat .= '<div class="smlogo smlogo-facebook" title="Publish to Facebook" alt="Publish to Facebook"></div>';
+        $row['service_twitter'] === 't' && $feat .= '<div class="smlogo smlogo-twitter" title="Publish to Twitter" alt="Publish to Twitter"></div>';
+        $row['service_tumblr'] === 't' && $feat .= '<div class="smlogo smlogo-tumblr" title="Publish to Tumblr" alt="Publish to Tumblr"></div>';
+        $row['service_wordpress'] === 't' && $feat .= '<div class="smlogo smlogo-wordpress" title="Publish to WordPress" alt="Publish to WordPress"></div>';
         $row['service_xmpp'] === 't' && $feat .= '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
 
         $pod_name = htmlentities($row['name'], ENT_QUOTES);
-        $scheme   = $row['secure'] === 't' ? 'https://' : 'http://';
         $signup   = $row['signup'] === 't' ? 'yes' : 'no';
         echo <<<EOF
 {
   'type': 'Feature',
   'id': '1',
   'properties' : {
-    'html': '{$pod_name}<br><a href="/go.php?url={$scheme}{$row['domain']}">Visit</a><br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptime_alltime']}%<br> Services:{$feat}'
+    'html': '{$pod_name}<br><a href="/go.php?url=https://{$row['domain']}">Visit</a><br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptime_alltime']}%<br> Services:{$feat}'
   },
   'geometry': {
     'type': 'Point',

@@ -4,10 +4,9 @@ require_once __DIR__ . '/config.php';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = "SELECT domain,masterversion,shortversion,softwarename,monthsmonitored,score,signup,secure,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp,responsetime,dateupdated,ipv6,total_users,local_posts,comment_counts,statsurl,userrating,sslvalid FROM pods WHERE score < 50 ORDER BY weightedscore";
+$sql    = "SELECT domain,masterversion,shortversion,softwarename,monthsmonitored,score,signup,secure,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp,responsetime,dateupdated,ipv6,total_users,local_posts,comment_counts,stats_apikey,userrating,sslvalid FROM pods WHERE score < 50 ORDER BY weightedscore";
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
-
 $numrows = pg_num_rows($result);
 ?>
 
@@ -29,7 +28,7 @@ $numrows = pg_num_rows($result);
     <th>Comm<a class="tipsy" title="Number of total comments on this pod.">?</a></th>
     <th>Month<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a>
     </th>
-    <th>Sc<a class="tipsy" title="System Score on a 100 scale">?</a></th>
+    <th>Sc<a class="tipsy" title="System Score on a 100 scale.">?</a></th>
     <th>conn<a class="tipsy" title="">?</a></th>
     <th>Delete?<a class="tipsy" title="Delete this pod from DB?">?</a></th>
   </tr>
@@ -39,19 +38,10 @@ $numrows = pg_num_rows($result);
   $tt = 0;
   while ($row = pg_fetch_array($result)) {
     $tt++;
-    if ($row['secure'] === 't') {
-      $scheme = 'https://';
-      $class  = 'green';
-      $tip    = 'This pod uses SSL encryption for traffic.';
-    } else {
-      $scheme = 'http://';
-      $class  = 'red';
-      $tip    = 'This pod does not offer SSL';
-    }
     $verdiff = str_replace('.', '', $row['masterversion']) - str_replace('.', '', $row['shortversion']);
 
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
-    $tip .= sprintf(
+    $tip = sprintf(
       "\n" . 'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of -20 to +20 this pod is a %6$s right now',
       $pod_name,
       $row['monthsmonitored'],
@@ -61,7 +51,7 @@ $numrows = pg_num_rows($result);
       $row['score']
     );
 
-    echo '<tr><td><a class="' . $class . '" target="_self" href="' . $scheme . $row['domain'] . '">' . $row['domain'] . '<div title="' . $tip . '" class="tipsy" style="display: inline-block">?</div></a></td>';
+    echo '<tr><td><a class="text-success" target="_self" href="https://' $row['domain'] . '">' . $row['domain'] . '<div title="' . $tip . '" class="tipsy" style="display: inline-block">?</div></a></td>';
 
     if (stristr($row['shortversion'], 'head')) {
       $version = '.dev';
@@ -74,9 +64,9 @@ $numrows = pg_num_rows($result);
       $pre     = 'This pod runs production code';
     }
     if ($row['shortversion'] === $row['masterversion'] && $row['shortversion'] !== '') {
-      $classver = 'green';
+      $classver = 'text-success';
     } elseif ($verdiff > 6) {
-      $classver = 'red';
+      $classver = 'text-warning';
     } else {
       $classver = 'black';
     }
@@ -89,11 +79,7 @@ $numrows = pg_num_rows($result);
     echo '<td>' . $row['active_users_monthly'] . '</td>';
     echo '<td>' . $row['local_posts'] . '</td>';
     echo '<td>' . $row['comment_counts'] . '</td>';
-    if (strpos($row['statsurl'], 'pingdom.com')) {
-      $moreurl = $row['statsurl'];
-    } else {
-      $moreurl = 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $row['statsurl'];
-    }
+    $moreurl = 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $row['stats_apikey'];
     echo '<td><div title="Last Check ' . $row['dateupdated'] . '" class="tipsy"><a target="_self" href="' . $moreurl . '">' . $row['monthsmonitored'] . '</a></div></td>';
     echo '<td>' . $row['score'] . '</td>';
     echo '<td><div class="tipsy" title="' . $row['sslvalid'] . '">con info </td>';
