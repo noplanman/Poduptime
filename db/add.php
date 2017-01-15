@@ -62,17 +62,19 @@ if (stristr($outputssl, 'nodeName')) {
   $result || die('Error in SQL query: ' . pg_last_error());
 
   $to      = $adminemail;
-  $cc      = $_email;
-  $subject = 'New pod added to '. $_SERVER['HTTP_HOST'];
-  $message = sprintf(
-    "%1\$s\n\nStats Url: %2\$s\n\nPod: %3\$s\n\n",
+  $subject = 'New pod added to ' . $_SERVER['HTTP_HOST'];
+  $headers = ['From: ' . $_email, 'Reply-To: ' . $_email, 'Cc: ' . $_email];
+
+  $message_lines = [
     'https://' . $_SERVER['HTTP_HOST'],
-    'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&apiKey=' . $_stats_apikey,
-    'https://' . $_SERVER['HTTP_HOST'] . '/db/pull.php?debug=1&domain=' . $_domain
-  );
-  $message .= 'Your pod will not show right away, needs to pass a few checks, Give it a few hours!';
-  $headers = 'From: ' . $_email . "\r\nReply-To: " . $_email . "\r\nCc: " . $_email . "\r\n";
-  @mail($to, $subject, $message, $headers);
+    'Stats Url: https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&apiKey=' . $_stats_apikey,
+    'Pod: https://' . $_SERVER['HTTP_HOST'] . '/db/pull.php?debug=1&domain=' . $_domain,
+    '',
+    'Your pod will not show up right away, as it needs to pass a few checks first.',
+    'Give it a few hours!',
+  ];
+
+  @mail($to, $subject, implode("\r\n", $message_lines), implode("\r\n", $headers));
 
   echo 'Data successfully inserted! Your pod will be reviewed and live on the list in a few hours!';
 

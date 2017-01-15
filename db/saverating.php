@@ -20,8 +20,16 @@ $result = pg_query_params($dbh, $sql, [$_domain, $_comment, $_rating, $_username
 $result || die('Error in SQL query: ' . pg_last_error());
 
 $to      = $adminemail;
+$headers = ['From: ' . $_email];
 $subject = 'New rating added to poduptime ';
-$message = 'Pod:' . $_domain . $_domain . $_username . $_userurl . $_comment . $_rating . "\n\n";
-$headers = 'From: ' . $_email . "\r\n";
-@mail($to, $subject, $message, $headers);
+
+$message_lines = [
+  'Pod: ' . $_domain,
+  'Username: ' . $_username,
+  'User URL: ' . $_userurl,
+  'Comment: ' . $_comment,
+  'Rating:' . $_rating,
+];
+
+@mail($to, $subject, implode("\r\n", $message_lines), implode("\r\n", $headers));
 echo 'Comment posted!';

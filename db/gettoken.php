@@ -1,5 +1,4 @@
 <?php
-$systemTimeZone = exec('date +%Z');
 
 // Required parameters.
 ($_domain = $_POST['domain'] ?? null) || die('no pod domain given');
@@ -20,33 +19,37 @@ $rows = pg_num_rows($result);
 $rows > 0 || die('domain not found');
 
 while ($row = pg_fetch_array($result)) {
+  // Set up common variables.
+  $uuid          = md5(uniqid($_domain, true));
+  $link          = sprintf('https://%1$s/db/edit.php?domain=%2$s&token=%3$s', $_SERVER['HTTP_HOST'], $_domain, $uuid);
+  $headers       = ['From: ' . $adminemail];
+  $message_lines = [];
+
   if ($_email) {
-    $row['email'] === $_email || die('email not a match');
+    $row['email'] === $_email || die('email mismatch');
 
-    $uuid   = md5(uniqid($_domain, true));
-    $expire = date('Y-m-d H:i:s', time() + 2700);
-    $sql    = 'UPDATE pods SET token = $1, tokenexpire = $2 WHERE domain = $3';
-    $result = pg_query_params($dbh, $sql, [$uuid, $expire, $_domain]);
-    $result || die('Error in SQL query: ' . pg_last_error());
-
-    $to      = $_email;
-    $subject = 'Temporary edit key for ' . $_SERVER['HTTP_HOST'];
-    $message = 'Link: https://' . $_SERVER['HTTP_HOST'] . '/db/edit.php?domain=' . $_domain . '&token=' . $uuid . ' Expires: ' . $expire . ' ' . $systemTimeZone . "\n\n";
-    $headers = "From: " . $adminemail . "\r\nBcc: " . $adminemail . "\r\n";
-    @mail($to, $subject, $message, $headers);
-    echo 'Link sent to your email';
+    $to        = $_email;
+    $subject   = 'Temporary edit key for ' . $_SERVER['HTTP_HOST'];
+    $headers[] = 'Bcc: ' . $adminemail;
+    $expire    = time() + 2700;
+    $output    = 'Link sent to your email';
   } else {
-    $uuid   = md5(uniqid($_domain, true));
-    $expire = date('Y-m-d H:i:s', time() + 9700);
+    $to              = $adminemail;
+    $subject         = 'FORWARD REQUEST: Temporary edit key for ' . $_SERVER['HTTP_HOST'];
+    $message_lines[] = 'User trying to edit pod without email address.';
+    $message_lines[] = 'Email found: ' . $row['email'];
+    $expire          = time() + 9700;
+    $output          = 'Link sent to administrator to review and verify, if approved they will forward the edit key to you.';
+  }
+
     $sql    = 'UPDATE pods SET token = $1, tokenexpire = $2 WHERE domain = $3';
-    $result = pg_query_params($dbh, $sql, [$uuid, $expire, $_domain]);
+  $result = pg_query_params($dbh, $sql, [$uuid, date('Y-m-d H:i:s', $expire), $_domain]);
     $result || die('Error in SQL query: ' . pg_last_error());
 
-    $to      = $adminemail;
-    $subject = 'FORWARD REQUEST: Temporary edit key for ' . $_SERVER['HTTP_HOST'];
-    $message = 'User trying to edit pod without email address. Email found: ' . $row['email'] . ' Link: https://' . $_SERVER['HTTP_HOST'] . '/db/edit.php?domain=' . $_domain . '&token=' . $uuid . ' Expires: ' . $expire . ' ' . $systemTimeZone . "\n\n";
-    $headers = "From: " . $adminemail . "\r\nBcc: " . $adminemail . "\r\n";
-    @mail($to, $subject, $message, $headers);
-    echo 'Link sent to administrator to review and verify, if approved they will forward the edit key to you.';
-  }
+  $message_lines[] = 'Link: ' . $link;
+  $message_lines[] = 'Expires: ' . date('Y-m-d H:i:s T', $expire);
+
+  @mail($to, $subject, implode("\r\n", $message_lines), implode("\r\n", $headers));
+
+  echo $output;
 }

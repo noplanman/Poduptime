@@ -26,8 +26,7 @@ $numrows = pg_num_rows($result);
     <th>Active 1<a class="tipsy" title="Number of users active last 1 month on this pod.">?</a></th>
     <th>Posts<a class="tipsy" title="Number of total posts on this pod.">?</a></th>
     <th>Comm<a class="tipsy" title="Number of total comments on this pod.">?</a></th>
-    <th>Month<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a>
-    </th>
+    <th>Month<a class="tipsy" title="How many months has this pod been online? Click number for more history.">?</a></th>
     <th>Sc<a class="tipsy" title="System Score on a 100 scale.">?</a></th>
     <th>conn<a class="tipsy" title="">?</a></th>
     <th>Delete?<a class="tipsy" title="Delete this pod from DB?">?</a></th>
@@ -41,8 +40,8 @@ $numrows = pg_num_rows($result);
     $verdiff = str_replace('.', '', $row['masterversion']) - str_replace('.', '', $row['shortversion']);
 
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
-    $tip = sprintf(
-      "\n" . 'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of -20 to +20 this pod is a %6$s right now',
+    $tip      = sprintf(
+      'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of -20 to +20 this pod is a %6$s right now',
       $pod_name,
       $row['monthsmonitored'],
       $row['responsetime'],
@@ -82,20 +81,20 @@ $numrows = pg_num_rows($result);
     $moreurl = 'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&apiKey=' . $row['stats_apikey'];
     echo '<td><div title="Last Check ' . $row['date_updated'] . '" class="tipsy"><a target="_self" href="' . $moreurl . '">' . $row['monthsmonitored'] . '</a></div></td>';
     echo '<td>' . $row['score'] . '</td>';
-    echo '<td><div class="tipsy" title="' . $row['sslvalid'] . '">con info </td>';
+    echo '<td><div class="tipsy" title="' . $row['sslvalid'] . '">con info</td>';
     ?>
     <td>
       <form method="post" action="db/kill.php" target="_blank">
-        <input name="comments" value="<?php echo $row['sslvalid']; ?>" size=10>
-        <input name="domain" value="<?php echo $row['domain']; ?>" type="hidden">
-        <input name="adminkey" value="<?php echo $_COOKIE['adminkey']; ?>" type="hidden">
-        <input name="action" type="radio" value="warn">warn
-        <input name="action" type="radio" value="delete">delete
+        <input type="hidden" name="domain" value="<?php echo $row['domain']; ?>">
+        <input type="hidden" name="adminkey" value="<?php echo $_COOKIE['adminkey']; ?>">
+        <label>Comments<input name="comments" value="<?php echo $row['sslvalid']; ?>" size="10"></label>
+        <label><input type="radio" name="action" value="warn">warn</label>
+        <label><input type="radio" name="action" value="delete">delete</label>
         <input type="submit" value="Process">
       </form>
     </td>
     <?php
-    echo '</td></tr>';
+    echo '</tr>';
   }
   ?>
   </tbody>
