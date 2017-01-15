@@ -53,7 +53,7 @@ foreach ($csv as $cords) {
   'type': 'Feature',
   'id': '1',
   'properties' : {
-    'html': '{$pod_name}<br><a href="/go.php?url=https://{$row['domain']}">Visit</a><br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptime_alltime']}%<br> Services:{$feat}'
+    'html': '{$pod_name}<br><a href="/go.php?domain={$row['domain']}">Visit</a><br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptime_alltime']}%<br> Services:{$feat}'
   },
   'geometry': {
     'type': 'Point',

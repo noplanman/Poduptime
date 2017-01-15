@@ -2,7 +2,7 @@
 
 // Required parameters.
 ($_domain = $_POST['domain'] ?? null) || die('no pod domain given');
-($_adminkey = $_POST['adminkey'] ?? null) || die('no token given');
+($_adminkey = $_POST['adminkey'] ?? null) || die('no admin key given');
 ($_action = $_POST['action'] ?? null) || die('no action selected');
 
 // Other parameters.
@@ -18,7 +18,7 @@ $result = pg_query_params($dbh, $sql, [$_domain]);
 $result || die('one Error in SQL query: ' . pg_last_error());
 
 while ($row = pg_fetch_array($result)) {
-  $adminkey === $_adminkey || die('admin key fail');
+  $adminkey === $_adminkey || die('admin key mismatch');
 
   //save and exit
   if ($_action === 'delete') {

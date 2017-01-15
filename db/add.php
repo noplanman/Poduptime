@@ -8,9 +8,13 @@ if (!($_domain = $_POST['domain'] ?? null)) {
   $log->lwrite('no domain given');
   die('no pod domain given');
 }
-if (!($_url = $_POST['url'] ?? null)) {
-  $log->lwrite('no url given ' . $_domain);
-  die('no url given');
+if (!($_stats_apikey = $_POST['stats_apikey'] ?? null)) {
+  $log->lwrite('no api given ' . $_domain);
+  die('no API key for your stats');
+}
+if (strlen($_stats_apikey) < 14) {
+  $log->lwrite('api key too short ' . $_domain);
+  die('API key bad needs to be like m58978-80abdb799f6ccf15e3e3787ee');
 }
 if (!($_email = $_POST['email'] ?? null)) {
   $log->lwrite('no email given ' . $_domain);
@@ -19,14 +23,6 @@ if (!($_email = $_POST['email'] ?? null)) {
 if (!($_terms = $_POST['terms'] ?? null)) {
   $log->lwrite('terms link required ' . $_domain);
   die('no terms link');
-}
-if (!$_url) {
-  $log->lwrite('no api given ' . $_domain);
-  die('no API key for your stats');
-}
-if (strlen($_url) < 14) {
-  $log->lwrite('api key too short ' . $_domain);
-  die('API key bad needs to be like m58978-80abdb799f6ccf15e3e3787ee');
 }
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
@@ -41,7 +37,7 @@ while ($row = pg_fetch_array($result)) {
     $log->lwrite('domain already exists ' . $_domain);
     die('domain already exists');
   }
-  if ($row['stats_apikey'] === $_url) {
+  if ($row['stats_apikey'] === $_stats_apikey) {
     $log->lwrite('API key already exists ' . $_domain);
     die('API key already exists');
   }
@@ -62,7 +58,7 @@ if (stristr($outputssl, 'nodeName')) {
   echo 'Your pod has ssl and is valid<br>';
 
   $sql    = 'INSERT INTO pods (domain, stats_apikey, email, terms) VALUES ($1, $2, $3, $4)';
-  $result = pg_query_params($dbh, $sql, [$_domain, $_url, $_email, $_terms]);
+  $result = pg_query_params($dbh, $sql, [$_domain, $_stats_apikey, $_email, $_terms]);
   $result || die('Error in SQL query: ' . pg_last_error());
 
   $to      = $adminemail;
@@ -71,7 +67,7 @@ if (stristr($outputssl, 'nodeName')) {
   $message = sprintf(
     "%1\$s\n\nStats Url: %2\$s\n\nPod: %3\$s\n\n",
     'https://' . $_SERVER['HTTP_HOST'],
-    'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&apiKey=' . $_url,
+    'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&apiKey=' . $_stats_apikey,
     'https://' . $_SERVER['HTTP_HOST'] . '/db/pull.php?debug=1&domain=' . $_domain
   );
   $message .= 'Your pod will not show right away, needs to pass a few checks, Give it a few hours!';
