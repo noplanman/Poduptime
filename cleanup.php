@@ -51,7 +51,7 @@ $numrows = pg_num_rows($result);
       $row['score']
     );
 
-    echo '<tr><td><a class="text-success" target="_self" href="https://' $row['domain'] . '">' . $row['domain'] . '<div title="' . $tip . '" class="tipsy" style="display: inline-block">?</div></a></td>';
+    echo '<tr><td><a class="text-success" target="_self" href="https://' . $row['domain'] . '">' . $row['domain'] . '<div title="' . $tip . '" class="tipsy" style="display: inline-block">?</div></a></td>';
 
     if (stristr($row['shortversion'], 'head')) {
       $version = '.dev';
@@ -79,7 +79,7 @@ $numrows = pg_num_rows($result);
     echo '<td>' . $row['active_users_monthly'] . '</td>';
     echo '<td>' . $row['local_posts'] . '</td>';
     echo '<td>' . $row['comment_counts'] . '</td>';
-    $moreurl = 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $row['stats_apikey'];
+    $moreurl = 'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&apiKey=' . $row['stats_apikey'];
     echo '<td><div title="Last Check ' . $row['date_updated'] . '" class="tipsy"><a target="_self" href="' . $moreurl . '">' . $row['monthsmonitored'] . '</a></div></td>';
     echo '<td>' . $row['score'] . '</td>';
     echo '<td><div class="tipsy" title="' . $row['sslvalid'] . '">con info </td>';

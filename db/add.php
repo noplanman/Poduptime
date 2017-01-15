@@ -71,7 +71,7 @@ if (stristr($outputssl, 'nodeName')) {
   $message = sprintf(
     "%1\$s\n\nStats Url: %2\$s\n\nPod: %3\$s\n\n",
     'https://' . $_SERVER['HTTP_HOST'],
-    'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&apiKey=' . $_url,
+    'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&apiKey=' . $_url,
     'https://' . $_SERVER['HTTP_HOST'] . '/db/pull.php?debug=1&domain=' . $_domain
   );
   $message .= 'Your pod will not show right away, needs to pass a few checks, Give it a few hours!';

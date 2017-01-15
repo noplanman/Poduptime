@@ -47,11 +47,11 @@ $dbh || die('Error in connection: ' . pg_last_error());
 //foreach pod check it and update db
 if ($_domain) {
   $sql    = 'SELECT domain,stats_apikey,score,date_created,weight FROM pods WHERE domain = $1';
-  $sleep  = '0';
+  //$sleep  = '0';
   $result = pg_query_params($dbh, $sql, [$_domain]);
 } elseif (PHP_SAPI === 'cli') {
   $sql    = 'SELECT domain,stats_apikey,score,date_created,adminrating,weight FROM pods';
-  $sleep  = '1';
+  //$sleep  = '1';
   $result = pg_query($dbh, $sql);
 } else {
   die('No valid input');
@@ -66,57 +66,30 @@ while ($row = pg_fetch_all($result)) {
     $dateadded = $row[$i]['date_created'];
     $admindb   = (int) $row[$i]['adminrating'];
     $weight    = $row[$i]['weight'];
-    //get ratings
-    $userrate       = 0;
-    $adminrate      = 0;
-    $userratingavg  = [];
-    $adminratingavg = [];
-    $userrating     = [];
-    $adminrating    = [];
-    $sqlforr        = 'SELECT admin,rating FROM rating_comments WHERE domain = $1';
-    $ratings        = pg_query_params($dbh, $sqlforr, [$domain]);
+    $sqlforr       = 'SELECT admin,rating FROM rating_comments WHERE domain = $1';
+    $ratings       = pg_query_params($dbh, $sqlforr, [$domain]);
     $ratings || die('Error in SQL query2: ' . pg_last_error());
 
-    $numratings = pg_num_rows($ratings);
-    while ($myrow = pg_fetch_assoc($ratings)) {
-      if ($myrow['admin'] == 0) {
-        $userratingavg[] = $myrow['rating'];
-        $userrate ++;
-      } elseif ($myrow['admin'] == 1) {
-        $adminratingavg[] = $myrow['rating'];
-        $adminrate ++;
-      }
-    }
-
-    if ($userrate > 0) {
-      $userrating = round(array_sum($userratingavg) / $userrate, 2);
-    }
-    if ($adminrate > 0) {
-      $adminrating = round(array_sum($adminratingavg) / $adminrate, 2);
-    }
     if ($debug) {
       echo 'Domain: ' . $domain . '<br>';
     }
-    if (!$userrating) {
-      $userrating = 0;
+
+    $user_ratings  = [];
+    $admin_ratings = [];
+    while ($rating = pg_fetch_assoc($ratings)) {
+      if ($rating['admin'] == 0) {
+        $user_ratings[] = $rating['rating'];
+      } elseif ($rating['admin'] == 1) {
+        $admin_ratings[] = $rating['rating'];
+      }
     }
-    if ($userrating > 10) {
-      $userrating = 10;
-    }
-    if (!$adminrating) {
-      $adminrating = 0;
-    }
-    if ($adminrating > 10) {
-      $adminrating = 10;
-    }
+    $user_rating  = empty($user_ratings) ? 0 : max(10, round(array_sum($user_ratings) / count($user_ratings), 2));
+    $admin_rating = empty($admin_ratings) ? 0 : max(10, round(array_sum($admin_ratings) / count($admin_ratings), 2));
+
     if ($admindb == - 1) {
-      $adminrating = - 1;
+      $admin_rating = - 1;
     }
     pg_free_result($ratings);
-    $userrate  = 0;
-    $adminrate = 0;
-    unset($userratingavg);
-    unset($adminratingavg);
     unset($name);
     unset($total_users);
     unset($active_users_halfyear);
@@ -172,7 +145,7 @@ while ($row = pg_fetch_all($result)) {
       $outputresults = $output;
     }
     if (stristr($outputresults, 'openRegistrations')) {
-      $score = $score + 1;
+      $score += 1;
       if ($debug) {
         echo 'Secure: ' . $secure . '<br>';
       }
@@ -188,9 +161,8 @@ while ($row = pg_fetch_all($result)) {
       if ($debug) {
         echo ' <br> Version code: ' . $shortversion . '<br>';
       }
-      if (!$shortversion) {
-        $score = $score - 2;
-      }
+      $shortversion || $score -= 2;
+
       $softwarename          = $jsonssl->software->name ?? 'null';
       $name                  = $jsonssl->metadata->nodeName ?? 'null';
       $total_users           = $jsonssl->usage->users->total ?? 0;
@@ -205,7 +177,7 @@ while ($row = pg_fetch_all($result)) {
       $service_xmpp          = $jsonssl->metadata->xmppChat === true ? 'true' : 'false';
     } else {
       $secure = 'false';
-      $score  = $score - 1;
+      $score -= 1;
       $dver   = '.connect error';
       $shortversion  = 0;
       //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
@@ -214,16 +186,11 @@ while ($row = pg_fetch_all($result)) {
     if ($debug) {
       echo '<br>Signup Open: ' . $signup . '<br>';
     }
-    $ip6cmd    = escapeshellcmd('dig +nocmd ' . $domain . ' aaaa +noall +short');
-    $ipcmd     = escapeshellcmd('dig +nocmd ' . $domain . ' a +noall +short');
-    $ip6 = exec($ip6cmd);
-    $ip  = exec($ipcmd);
+    $ip6    = exec(escapeshellcmd('dig +nocmd ' . $domain . ' aaaa +noall +short'));
+    $ip     = exec(escapeshellcmd('dig +nocmd ' . $domain . ' a +noall +short'));
     $test   = strpos($ip6, ':');
-    if ($test === false) {
-      $ipv6 = 'no';
-    } else {
-      $ipv6 = 'yes';
-    }
+    $ipv6   = $test === false ? 'no' : 'yes';
+
     if ($debug) {
       echo 'IP: ' . $ip . '<br>';
     }
@@ -237,20 +204,18 @@ while ($row = pg_fetch_all($result)) {
       $country = !empty($location['country_code']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_code']) : null;
       $city    = !empty($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : null;
       $state   = !empty($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : null;
-      $lat     = !empty($location['latitude']) ? $location['latitude']: null;
+      $lat     = !empty($location['latitude']) ? $location['latitude'] : null;
       $long    = !empty($location['longitude']) ? $location['longitude'] : null;
-      //if lat and long are just a generic country with no detail lets make some tail up or openmap just stacks them all on top another
-      if (strlen($lat) < 4) {
-        $lat = $lat + (rand(1, 15) / 10);
-      }
-      if (strlen($long) < 4) {
-        $long = $long + (rand(1, 15) / 10);
-      }
+
+      // If lat and long are just a generic country with no detail lets make some tail up
+      // else openmap just stacks them all on top of each other.
+      strlen($lat) < 4 && $lat += (random_int(1, 15) / 10);
+      strlen($long) < 4 && $long += (random_int(1, 15) / 10);
     }
     echo '<br>';
     $statslastdate = date('Y-m-d H:i:s');
       $ping = curl_init();
-      curl_setopt($ping, CURLOPT_URL, 'https://api.uptimerobot.com/getMonitors?format=json&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=' . $row[$i]['stats_apikey']);
+      curl_setopt($ping, CURLOPT_URL, 'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=' . $row[$i]['stats_apikey']);
       curl_setopt($ping, CURLOPT_POST, 0);
       curl_setopt($ping, CURLOPT_HEADER, 0);
       curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);
@@ -258,18 +223,14 @@ while ($row = pg_fetch_all($result)) {
       curl_setopt($ping, CURLOPT_NOBODY, 0);
       curl_setopt($ping, CURLOPT_MAXCONNECTS, 5);
       curl_setopt($ping, CURLOPT_FOLLOWLOCATION, true);
-      $uptimerobot = curl_exec($ping);
+      $uptr = json_decode(curl_exec($ping));
       curl_close($ping);
-      $json_encap = 'jsonUptimeRobotApi()';
-      $up2        = substr($uptimerobot, strlen($json_encap) - 1, strlen($uptimerobot) - strlen($json_encap));
-      $uptr       = json_decode($up2);
       if ($debug) {
         print_r($uptr);
         echo '<br>';
       }
-      if (!$uptr) {
-        $score = $score - 2;
-      }
+      $uptr || $score -= 2;
+
       $responsetime    = $uptr->monitors->monitor{'0'}->responsetime{'0'}->value;
       $uptimerobotstat = $uptr->stat;
       $uptime          = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
@@ -294,19 +255,14 @@ while ($row = pg_fetch_all($result)) {
       if ($uptr) {
         $statslastdate = date('Y-m-d H:i:s');
       }
-      if ($uptimerobotstat == 'fail' || $status <> 'Up') {
-        $score = $score - 2;
-      }
-    if ($softwarename == 'diaspora') {
+      ($uptimerobotstat !== 'fail' && $status === 'Up') || $score -= 2;
+
+    if ($softwarename === 'diaspora') {
       $masterversion = $dmasterversion;
-    } elseif ($softwarename == 'friendica') {
+    } elseif ($softwarename === 'friendica') {
       $masterversion = $fmasterversion;
     }
-    if ($score > 70) {
-      $hidden = 'no';
-    } else {
-      $hidden = 'yes';
-    }
+    $hidden = $score > 70 ? 'no' : 'yes';
     if ($debug) {
       echo 'Hidden: ' . $hidden . '<br>';
     }
@@ -322,13 +278,12 @@ while ($row = pg_fetch_all($result)) {
     $timenow = date('Y-m-d H:i:s');
     $sql     = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, uptime_custom = $37
   WHERE domain = $1';
-    $result  = pg_query_params($dbh, $sql, [$domain, $secure, $hidden, $ip, $ipv6, $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $adminrating, $country, $city, $state, $lat, $long, $userrating, $shortversion, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror, $uptime_custom]);
+    $result  = pg_query_params($dbh, $sql, [$domain, $secure, $hidden, $ip, $ipv6, $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $admin_rating, $country, $city, $state, $lat, $long, $user_rating, $shortversion, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror, $uptime_custom]);
     $result || die('Error in SQL query3: ' . pg_last_error());
 
     if ($debug) {
       echo '<br>Score out of 100: ' . $score . '<br>';
-    }
-    if (!$debug) {
+    } else {
       echo 'Success';
     }
     //end foreach
