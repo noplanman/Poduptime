@@ -90,6 +90,3 @@ EOF;
     );
   }
 }
-
-pg_free_result($result);
-pg_close($dbh);

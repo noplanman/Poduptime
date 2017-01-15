@@ -97,8 +97,6 @@ $numrows = pg_num_rows($result);
     <?php
     echo '</td></tr>';
   }
-  pg_free_result($result);
-  pg_close($dbh);
   ?>
   </tbody>
 </table>

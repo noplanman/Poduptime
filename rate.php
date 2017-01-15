@@ -90,5 +90,3 @@
   </div>
 </div>
 <?php
-pg_free_result($result);
-pg_close($dbh);

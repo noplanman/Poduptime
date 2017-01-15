@@ -89,7 +89,6 @@ while ($row = pg_fetch_all($result)) {
     if ($admindb == - 1) {
       $admin_rating = - 1;
     }
-    pg_free_result($ratings);
     unset($name);
     unset($total_users);
     unset($active_users_halfyear);
@@ -289,5 +288,3 @@ while ($row = pg_fetch_all($result)) {
     //end foreach
   }
 }
-pg_free_result($result);
-pg_close($dbh);

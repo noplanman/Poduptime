@@ -93,8 +93,6 @@ $numrows = pg_num_rows($result);
     $row['service_xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
     echo '</td></tr>';
   }
-  pg_free_result($result);
-  pg_close($dbh);
   ?>
   </tbody>
 </table>

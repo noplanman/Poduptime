@@ -35,5 +35,3 @@ if ($_url) {
   
   header('Location:https://' . $row[0]['domain'] . '/users/sign_up');
 }
-  pg_free_result($result);
-  pg_close($dbh);

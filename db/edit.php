@@ -49,8 +49,6 @@ while ($row = pg_fetch_array($result)) {
     $message = 'Data for ' . $_domain . " Updated. If it was not you reply and let me know! \n\n";
     $headers = "From: " . $adminemail . "\r\nCc:" . $adminemail . "," . $_oldemail . "\r\n";
     @mail($to, $subject, $message, $headers);
-    pg_free_result($result);
-    pg_close($dbh);
     die('Data saved. Will go into effect on next hourly change');
   }
 

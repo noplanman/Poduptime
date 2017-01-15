@@ -25,6 +25,3 @@ $message = 'Pod:' . $_domain . $_domain . $_username . $_userurl . $_comment . $
 $headers = 'From: ' . $_email . "\r\n";
 @mail($to, $subject, $message, $headers);
 echo 'Comment posted!';
-
-pg_free_result($result);
-pg_close($dbh);

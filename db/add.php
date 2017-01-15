@@ -80,9 +80,6 @@ if (stristr($outputssl, 'nodeName')) {
 
   echo 'Data successfully inserted! Your pod will be reviewed and live on the list in a few hours!';
 
-  pg_free_result($result);
-
-  pg_close($dbh);
 } else {
   $log->lwrite('Could not validate your pod, check your setup! ' . $_domain);
   echo 'Could not validate your pod, check your setup!<br>Take a look at <a href="https://' . $_domain . '/nodeinfo/1.0">your /nodeinfo</a>';

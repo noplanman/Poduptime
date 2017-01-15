@@ -32,5 +32,3 @@ while ($row = pg_fetch_array($result)) {
     echo 'Longitude: ' . $row['long'] . '<br>';
   }
 }
-pg_free_result($result);
-pg_close($dbh);

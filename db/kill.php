@@ -33,7 +33,6 @@ while ($row = pg_fetch_array($result)) {
       $headers = "From: " . $adminemail ."\r\nCc:" . $adminemail . "," . $row['email'] . "\r\n";
       @mail($to, $subject, $message, $headers);
     }
-    pg_free_result($result);
   } elseif ($_action === 'warn') {
     if ($row['email']) {
       $to      = $row['email'];
@@ -46,5 +45,3 @@ while ($row = pg_fetch_array($result)) {
 
   echo $result;
 }
-
-pg_close($dbh);

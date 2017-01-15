@@ -49,8 +49,4 @@ while ($row = pg_fetch_array($result)) {
     @mail($to, $subject, $message, $headers);
     echo 'Link sent to administrator to review and verify, if approved they will forward the edit key to you.';
   }
-
-  pg_free_result($result);
 }
-
-pg_close($dbh);
