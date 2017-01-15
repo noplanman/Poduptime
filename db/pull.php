@@ -115,8 +115,12 @@ while ($row = pg_fetch_all($result)) {
     curl_setopt($chss, CURLOPT_TIMEOUT, 9);
     curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($chss, CURLOPT_NOBODY, 0);
+    curl_setopt($chss, CURLOPT_CERTINFO, 1);
+    curl_setopt($chss, CURLOPT_VERBOSE, 1);
     $outputssl      = curl_exec($chss);
     $outputsslerror = curl_error($chss);
+    $info = curl_getinfo($chss, CURLINFO_CERTINFO);
+    $sslexpire = $info[0]['Expire date'];
     curl_close($chss);
 
     if ($debug) {
@@ -186,9 +190,11 @@ while ($row = pg_fetch_all($result)) {
       echo '<br>Signup Open: ' . $signup . '<br>';
     }
     $ip6    = exec(escapeshellcmd('dig +nocmd ' . $domain . ' aaaa +noall +short'));
-    $ip     = exec(escapeshellcmd('dig +nocmd ' . $domain . ' a +noall +short'));
-    $test   = strpos($ip6, ':');
-    $ipv6   = $test === false ? 'no' : 'yes';
+    exec(escapeshellcmd('delv ' . $domain), $iplookup);
+    $dnssec = in_array('; fully validated', $iplookup) ? 't' : 'f' ;
+    preg_match('/A(.*)/', $iplookup[1], $version);
+    $ip = trim($version[1]);
+    $ipv6   = strpos($ip6, ':') === false ? 'no' : 'yes';
 
     if ($debug) {
       echo 'IP: ' . $ip . '<br>';
@@ -275,9 +281,11 @@ while ($row = pg_fetch_all($result)) {
     //sql it
 
     $timenow = date('Y-m-d H:i:s');
-    $sql     = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, uptime_custom = $37
+    $sql     = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, uptime_custom = $37, dnssec = $38, sslexpire = $39
   WHERE domain = $1';
-    $result  = pg_query_params($dbh, $sql, [$domain, $secure, $hidden, $ip, $ipv6, $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $admin_rating, $country, $city, $state, $lat, $long, $user_rating, $shortversion, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror, $uptime_custom]);
+
+    $result  = pg_query_params($dbh, $sql, [$domain, $secure, $hidden, $ip, $ipv6, $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $admin_rating, $country, $city, $state, $lat, $long, $user_rating, $shortversion, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, $service_facebook, $service_tumblr, $service_twitter, $service_wordpress, $weightedscore, $service_xmpp, $softwarename, $outputsslerror, $uptime_custom, $dnssec, $sslexpire]);
+
     $result || die('Error in SQL query3: ' . pg_last_error());
 
     if ($debug) {
