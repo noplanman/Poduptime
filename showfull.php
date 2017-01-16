@@ -26,7 +26,7 @@ $numrows = pg_num_rows($result);
     <th><a data-toggle="tooltip" data-placement="bottom" title="Type of software this pod runs">Software</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online.">Uptime</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod offer ipv6 connection.">IPv6</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Average response time in ms.">Response Time</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Average response time in ms.">Response</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod allow new users.">Signups</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total users on this pod.">Users</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 6 months on this pod.">Active 6m</a></th>
@@ -49,7 +49,7 @@ $numrows = pg_num_rows($result);
     $tip = "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an overall uptime of {$row['uptime_alltime']}% and a response time average today of {$row['responsetime']}ms was last checked on {$row['date_updated']}. ";
     $tip .= "On a scale of 100 this pod is a {$row['score']} right now";
 
-    echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" class="text-success" target="_self" href="/go.php?domain=' . $row['domain'] . '">' . $row['domain'] . '</a></td>';
+    echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $row['domain'] . '">' . $row['domain'] . '</a><span class="text-success" " data-toggle="tooltip" title="This site is SSL/TLS encrypted with a cert that expires: ' . $row['sslexpire'] . '"> &#128274;</span></td>';
 
     if ($row['shortversion'] > $row['masterversion']) {
       $version = $row['shortversion'];
