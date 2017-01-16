@@ -25,9 +25,9 @@ $numrows = pg_num_rows($result);
     <th><a data-toggle="tooltip" data-placement="bottom" title="Version of software this pod runs">Version</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Type of software this pod runs">Software</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online.">Uptime</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod offer ipv6 connection.">IPv6</th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Average response time in ms.">Response Time</th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod allow new users.">Signups</th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod offer ipv6 connection.">IPv6</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Average response time in ms.">Response Time</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod allow new users.">Signups</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total users on this pod.">Users</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 6 months on this pod.">Active 6m</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 1 month on this pod.">Active 1m</a></th>
@@ -86,15 +86,15 @@ $numrows = pg_num_rows($result);
     echo '<td>' . $row['score'] . '</td>';
     echo '<td>' . ($row['dnssec'] === 't' ? '&#10003;' : '') . '</td>';
     if ($country_code === $row['country']) {
-      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: '. ($row['city'] ?? 'n/a') . ' State: ' . ($row['state'] ?? 'n/a') . '"><b>' . $row['country'] . '</b></td>';
+      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: ' . ($row['city'] ?? 'n/a') . ' State: ' . ($row['state'] ?? 'n/a') . '"><b>' . $row['country'] . '</b></td>';
     } else {
-      echo '<td data-toggle="tooltip" data-placement="bottom" title="City: '. ($row['city'] ?? 'n/a') . ' State: ' . ($row['state'] ?? 'n/a') . '">' . $row['country'] . '</td>';
+      echo '<td data-toggle="tooltip" data-placement="bottom" title="City: ' . ($row['city'] ?? 'n/a') . ' State: ' . ($row['state'] ?? 'n/a') . '">' . $row['country'] . '</td>';
     }
     echo '<td>';
-    $row['service_facebook'] === 't' && print '<div class="smlogo smlogo-facebook" title="Publish to Facebook" alt="Publish to Facebook"></div>';
-    $row['service_twitter'] === 't' && print '<div class="smlogo smlogo-twitter" title="Publish to Twitter" alt="Publish to Twitter"></div>';
-    $row['service_tumblr'] === 't' && print '<div class="smlogo smlogo-tumblr" title="Publish to Tumblr" alt="Publish to Tumblr"></div>';
-    $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress"  title="Publish to WordPress" alt="Publish to WordPress"></div>';
+    $row['service_facebook'] === 't' && print '<div class="smlogo smlogo-facebook" title="Publish to Facebook"></div>';
+    $row['service_twitter'] === 't' && print '<div class="smlogo smlogo-twitter" title="Publish to Twitter"></div>';
+    $row['service_tumblr'] === 't' && print '<div class="smlogo smlogo-tumblr" title="Publish to Tumblr"></div>';
+    $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress" title="Publish to WordPress"></div>';
     $row['service_xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
     echo '</td>';
     echo '<td><a href="https://' . $row['domain'] . $row['terms'] . '">&#128279;</a></td></tr>';
