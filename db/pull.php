@@ -102,11 +102,11 @@ while ($row = pg_fetch_assoc($result)) {
   //get new json from nodeinfo
   $jsonssl = json_decode($outputssl);
 
-  if (!$jsonssl && !$domain) {    
+  if (!$jsonssl) {    
     _debug('Connection:', 'Can not connect to pod');
 
     $sql    = 'INSERT INTO checks (domain, online, error) VALUES ($1, $2, $3)';
-    $result = pg_query_params($dbh, $sql, [$domain, false, $outputsslerror]);
+    $result = pg_query_params($dbh, $sql, [$domain, 'false', $outputsslerror]);
     $result || die('Error in SQL query: ' . pg_last_error());
     continue;
   }
@@ -119,7 +119,6 @@ while ($row = pg_fetch_assoc($result)) {
   if ($jsonssl !== null) {
     $score += 1;
 
-    _debug('Json raw data', $jsonssl, true);
     if ($jsonssl->openRegistrations === true) {
       $signup = true;
     }
@@ -140,7 +139,7 @@ while ($row = pg_fetch_assoc($result)) {
     $service_twitter       = in_array('twitter', $jsonssl->services->outbound, true);
     $service_tumblr        = in_array('tumblr', $jsonssl->services->outbound, true);
     $service_wordpress     = in_array('wordpress', $jsonssl->services->outbound, true);
-    $service_xmpp          = $jsonssl->metadata->xmppChat === true ?? 'f';
+    $service_xmpp          = $jsonssl->metadata->xmppChat === true ?? false;
   } else {
     $score -= 1;
     $dver         = '.connect error';
@@ -152,8 +151,8 @@ while ($row = pg_fetch_assoc($result)) {
   $ip6 = exec(escapeshellcmd('dig @4.2.2.2 +nocmd ' . $domain . ' aaaa +noall +short'));
   $iplookup = [];
   exec(escapeshellcmd('delv @4.2.2.2 ' . $domain), $iplookup);
-  $dnssec = in_array('; fully validated', $iplookup);
   if ($iplookup) {
+    $dnssec = in_array('; fully validated', $iplookup) ?? false ;
     preg_match('/A(.*)/', $iplookup[1], $version);
     $ip   = trim($version[1]);
   }
