@@ -23,7 +23,7 @@ preg_match('/number: "(.*?)"/', $outputmv, $version);
 $dmasterversion = trim($version[1], '"');
 _debug('Diaspora Masterversion', $dmasterversion);
 
-//get master code version for freindica pods
+//get master code version for friendica pods
 $mv = curl_init();
 curl_setopt($mv, CURLOPT_URL, 'https://raw.githubusercontent.com/friendica/friendica/master/boot.php');
 curl_setopt($mv, CURLOPT_POST, 0);
@@ -43,11 +43,9 @@ $dbh || die('Error in connection: ' . pg_last_error());
 //foreach pod check it and update db
 if ($_domain) {
   $sql = 'SELECT domain,stats_apikey,score,date_created,adminrating,weight FROM pods WHERE domain = $1';
-  //$sleep  = '0';
   $result = pg_query_params($dbh, $sql, [$_domain]);
 } elseif (PHP_SAPI === 'cli') {
   $sql = 'SELECT domain,stats_apikey,score,date_created,adminrating,weight FROM pods';
-  //$sleep  = '1';
   $result = pg_query($dbh, $sql);
 } else {
   die('No valid input');
@@ -91,11 +89,11 @@ while ($row = pg_fetch_assoc($result)) {
   curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($chss, CURLOPT_NOBODY, 0);
   curl_setopt($chss, CURLOPT_CERTINFO, 1);
-  curl_setopt($chss, CURLOPT_VERBOSE, 1);
+  curl_setopt($chss, CURLOPT_VERBOSE, 0);
   $outputssl      = curl_exec($chss);
   $outputsslerror = curl_error($chss);
   $info           = curl_getinfo($chss, CURLINFO_CERTINFO);
-  $sslexpire      = $info[0]['Expire date'];
+  $sslexpire      = $info[0]['Expire date'] ?? null;
   curl_close($chss);
 
   _debug('Nodeinfo output', $outputssl, true);
@@ -104,13 +102,13 @@ while ($row = pg_fetch_assoc($result)) {
   //get new json from nodeinfo
   $jsonssl = json_decode($outputssl);
 
-  if (!$jsonssl && !$domain) {
-    continue;
-    /*echo 'no connection to pod';
+  if (!$jsonssl && !$domain) {    
+    _debug('Connection:', 'Can not connect to pod');
 
     $sql    = 'INSERT INTO checks (domain, online, error) VALUES ($1, $2, $3)';
     $result = pg_query_params($dbh, $sql, [$domain, false, $outputsslerror]);
-    $result || die('Error in SQL query: ' . pg_last_error());*/
+    $result || die('Error in SQL query: ' . pg_last_error());
+    continue;
   }
 
   $sql_checks    = 'INSERT INTO checks (domain, online) VALUES ($1, $2)';
@@ -121,7 +119,7 @@ while ($row = pg_fetch_assoc($result)) {
   if ($jsonssl !== null) {
     $score += 1;
 
-    var_dump($jsonssl);
+    _debug('Json raw data', $jsonssl, true);
     if ($jsonssl->openRegistrations === true) {
       $signup = true;
     }
@@ -142,7 +140,7 @@ while ($row = pg_fetch_assoc($result)) {
     $service_twitter       = in_array('twitter', $jsonssl->services->outbound, true);
     $service_tumblr        = in_array('tumblr', $jsonssl->services->outbound, true);
     $service_wordpress     = in_array('wordpress', $jsonssl->services->outbound, true);
-    $service_xmpp          = $jsonssl->metadata->xmppChat === true;
+    $service_xmpp          = $jsonssl->metadata->xmppChat === true ?? 'f';
   } else {
     $score -= 1;
     $dver         = '.connect error';
@@ -151,14 +149,18 @@ while ($row = pg_fetch_assoc($result)) {
   }
 
   _debug('Signup Open', $signup);
-  $ip6 = exec(escapeshellcmd('dig +nocmd ' . $domain . ' aaaa +noall +short'));
+  $ip6 = exec(escapeshellcmd('dig @4.2.2.2 +nocmd ' . $domain . ' aaaa +noall +short'));
   $iplookup = [];
-  exec(escapeshellcmd('delv ' . $domain), $iplookup);
+  exec(escapeshellcmd('delv @4.2.2.2 ' . $domain), $iplookup);
   $dnssec = in_array('; fully validated', $iplookup);
-  preg_match('/A(.*)/', $iplookup[1], $version);
-  $ip   = trim($version[1]);
+  if ($iplookup) {
+    preg_match('/A(.*)/', $iplookup[1], $version);
+    $ip   = trim($version[1]);
+  }
+  $ip || $score -= 4;
   $ipv6 = strpos($ip6, ':') !== false;
   _debug('IP', $ip);
+  _debug('IPv6', $ip6);
 
   $location = geoip_record_by_name($ip);
   _debug('Location', $location, true);
@@ -184,33 +186,32 @@ while ($row = pg_fetch_assoc($result)) {
   $uptr = json_decode(curl_exec($ping));
   curl_close($ping);
   _debug('Uptime Robot', $uptr, true);
-  $uptr || $score -= 2;
-
-  $responsetime    = $uptr->monitors->monitor{'0'}->responsetime{'0'}->value;
-  $uptimerobotstat = $uptr->stat;
-  $uptime          = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
-  $uptime_custom   = $uptr->monitors->monitor{'0'}->customuptimeratio;
-  $diff            = (new DateTime())->diff(new DateTime($dateadded));
-  $months          = $diff->m + ($diff->y * 12);
-  if ($uptr->monitors->monitor{'0'}->status == 2) {
-    $status = 'Up';
+  
+  if ($uptr->stat === 'ok') {
+    $responsetime    = $uptr->monitors->monitor{'0'}->responsetime{'0'}->value ?? 'n/a';
+    $uptimerobotstat = $uptr->stat;
+    $uptime          = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
+    $uptime_custom   = $uptr->monitors->monitor{'0'}->customuptimeratio;
+    $diff            = (new DateTime())->diff(new DateTime($dateadded));
+    $months          = $diff->m + ($diff->y * 12);
+    if ($uptr->monitors->monitor{'0'}->status == 2) {
+      $status = 'Up';
+      $score += 2;
+    }
+    if ($uptr->monitors->monitor{'0'}->status == 0) {
+      $status = 'Paused';
+    }
+    if ($uptr->monitors->monitor{'0'}->status == 1) {
+      $status = 'Not Checked Yet';
+    }
+    if ($uptr->monitors->monitor{'0'}->status == 8) {
+      $status = 'Seems Down';
+    }
+    if ($uptr->monitors->monitor{'0'}->status == 9) {
+      $status = 'Down';
+    }
+      $statslastdate = date('Y-m-d H:i:s');
   }
-  if ($uptr->monitors->monitor{'0'}->status == 0) {
-    $status = 'Paused';
-  }
-  if ($uptr->monitors->monitor{'0'}->status == 1) {
-    $status = 'Not Checked Yet';
-  }
-  if ($uptr->monitors->monitor{'0'}->status == 8) {
-    $status = 'Seems Down';
-  }
-  if ($uptr->monitors->monitor{'0'}->status == 9) {
-    $status = 'Down';
-  }
-  if ($uptr) {
-    $statslastdate = date('Y-m-d H:i:s');
-  }
-  ($uptimerobotstat !== 'fail' && $status === 'Up') || $score -= 2;
 
   if ($softwarename === 'diaspora') {
     $masterversion = $dmasterversion;
@@ -236,7 +237,7 @@ while ($row = pg_fetch_assoc($result)) {
   _debug('Score out of 100', $score);
 
   echo 'Success';
-
+  
   echo $newline;
   echo $newline;
 }
