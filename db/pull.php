@@ -103,20 +103,21 @@ while ($row = pg_fetch_assoc($result)) {
   $jsonssl = json_decode($outputssl);
 
   if (!$jsonssl) {    
-    _debug('Connection:', 'Can not connect to pod');
+    _debug('Connection', 'Can not connect to pod');
 
-    $sql    = 'INSERT INTO checks (domain, online, error) VALUES ($1, $2, $3)';
-    $result = pg_query_params($dbh, $sql, [$domain, 'false', $outputsslerror]);
-    $result || die('Error in SQL query: ' . pg_last_error());
+    $sql_errors    = 'INSERT INTO checks (domain, online, error) VALUES ($1, $2, $3)';
+    $result_errors = pg_query_params($dbh, $sql_errors, [$domain, false, $outputsslerror]);
+    $result_errors || die('Error in SQL query: ' . pg_last_error());
     continue;
   }
 
-  $sql_checks    = 'INSERT INTO checks (domain, online) VALUES ($1, $2)';
-  $result_checks = pg_query_params($dbh, $sql_checks, [$domain, true]);
-  $result_checks || die('Error in SQL query: ' . pg_last_error());
 
-  $signup = false;
   if ($jsonssl !== null) {
+    $sql_checks    = 'INSERT INTO checks (domain, online) VALUES ($1, $2)';
+    $result_checks = pg_query_params($dbh, $sql_checks, [$domain, true]);
+    $result_checks || die('Error in SQL query: ' . pg_last_error());
+
+    $signup = false;
     $score += 1;
 
     if ($jsonssl->openRegistrations === true) {
