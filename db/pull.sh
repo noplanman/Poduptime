@@ -1,4 +1,5 @@
-WGET="/usr/bin/wget"
+SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
 if [ -s /tmp/index.google ];then
         echo "already running die"
 exit;
@@ -6,8 +7,7 @@ else
 	echo "Checking for internet";
 fi
 
-$WGET -q --tries=10 --timeout=15 http://www.google.com -O /tmp/index.google
-# &> /dev/null
+wget -q --tries=2 --timeout=15 http://www.google.com -O /tmp/index.google
 sleep 2
 
 if [ ! -s /tmp/index.google ];then
@@ -16,8 +16,8 @@ if [ ! -s /tmp/index.google ];then
 exit;
 else
 	echo "Pulling in new pod data";
-	cd /var/www/poduptime/db
-	php pull.php debug=1
+	cd "$SCRIPT_DIR"
+	php pull.php
  	touch last.data
 	php backup.php
 	rm /tmp/index.google
