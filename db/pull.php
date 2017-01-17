@@ -152,6 +152,7 @@ while ($row = pg_fetch_assoc($result)) {
 
   _debug('Signup Open', $signup);
   $ip6 = exec(escapeshellcmd('dig +nocmd ' . $domain . ' aaaa +noall +short'));
+  $iplookup = [];
   exec(escapeshellcmd('delv ' . $domain), $iplookup);
   $dnssec = in_array('; fully validated', $iplookup);
   preg_match('/A(.*)/', $iplookup[1], $version);
