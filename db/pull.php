@@ -37,6 +37,20 @@ preg_match('/FRIENDICA_VERSION\',      \'(.*?)\'/', $outputmv, $version);
 $fmasterversion = trim($version[1], '"');
 _debug('Friendica Masterversion: ' . $fmasterversion);
 
+//get master code version for hubzilla pods
+$mv = curl_init();
+curl_setopt($mv, CURLOPT_URL, 'https://raw.githubusercontent.com/redmatrix/hubzilla/master/boot.php');
+curl_setopt($mv, CURLOPT_POST, 0);
+curl_setopt($mv, CURLOPT_HEADER, 0);
+curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
+curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($mv, CURLOPT_NOBODY, 0);
+$outputmv = curl_exec($mv);
+curl_close($mv);
+preg_match('/STD_VERSION\',             \'(.*?)\'/', $outputmv, $version);
+$hmasterversion = trim($version[1], '"');
+_debug('Hubzilla Masterversion: ' . $hmasterversion);
+
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
@@ -106,29 +120,21 @@ while ($row = pg_fetch_assoc($result)) {
     _debug('Connection', 'Can not connect to pod');
 
     $sql_errors    = 'INSERT INTO checks (domain, online, error) VALUES ($1, $2, $3)';
-    $result_errors = pg_query_params($dbh, $sql_errors, [$domain, false, $outputsslerror]);
+    $result_errors = pg_query_params($dbh, $sql_errors, [$domain, 'f', $outputsslerror]);
     $result_errors || die('Error in SQL query: ' . pg_last_error());
-    continue;
   }
-
 
   if ($jsonssl !== null) {
     $sql_checks    = 'INSERT INTO checks (domain, online) VALUES ($1, $2)';
-    $result_checks = pg_query_params($dbh, $sql_checks, [$domain, true]);
+    $result_checks = pg_query_params($dbh, $sql_checks, [$domain, 't']);
     $result_checks || die('Error in SQL query: ' . pg_last_error());
-
-    $signup = false;
-    $score += 1;
-
-    if ($jsonssl->openRegistrations === true) {
-      $signup = true;
-    }
+    
+    (!$jsonssl->software->version) || $score += 1;
     $xdver        = $jsonssl->software->version ?? 0;
     $dverr        = explode('-', trim($xdver));
     $shortversion = $dverr[0];
     _debug('Version code', $shortversion);
-    $shortversion || $score -= 2;
-
+    $signup                = ($jsonssl->openRegistrations === true) ? 't' : 'f';
     $softwarename          = $jsonssl->software->name ?? 'null';
     $name                  = $jsonssl->metadata->nodeName ?? 'null';
     $total_users           = $jsonssl->usage->users->total ?? 0;
@@ -145,7 +151,6 @@ while ($row = pg_fetch_assoc($result)) {
     $score -= 1;
     $dver         = '.connect error';
     $shortversion = 0;
-    //could also be a ssl pod with a bad cert, I think its ok to call that a dead pod now
   }
 
   _debug('Signup Open', $signup);
@@ -157,7 +162,7 @@ while ($row = pg_fetch_assoc($result)) {
     preg_match('/A(.*)/', $iplookup[1], $version);
     $ip   = trim($version[1]);
   }
-  $ip || $score -= 4;
+  $ip || $score -= 2;
   $ipv6 = strpos($ip6, ':') !== false;
   _debug('IP', $ip);
   _debug('IPv6', $ip6);
@@ -196,7 +201,6 @@ while ($row = pg_fetch_assoc($result)) {
     $months          = $diff->m + ($diff->y * 12);
     if ($uptr->monitors->monitor{'0'}->status == 2) {
       $status = 'Up';
-      $score += 2;
     }
     if ($uptr->monitors->monitor{'0'}->status == 0) {
       $status = 'Paused';
@@ -217,6 +221,8 @@ while ($row = pg_fetch_assoc($result)) {
     $masterversion = $dmasterversion;
   } elseif ($softwarename === 'friendica') {
     $masterversion = $fmasterversion;
+  } elseif ($softwarename === 'redmatrix') {
+    $masterversion = $hmasterversion;
   }
   $hidden = $score <= 70;
   _debug('Hidden', $hidden ? 'yes' : 'no');
@@ -231,7 +237,7 @@ while ($row = pg_fetch_assoc($result)) {
 
   $timenow = date('Y-m-d H:i:s');
   $sql_set     = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, uptime_custom = $37, dnssec = $38, sslexpire = $39 WHERE domain = $1';
-  $result_set  = pg_query_params($dbh, $sql_set, [$domain, 1, (int) $hidden, $ip, (int) $ipv6, $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $admin_rating, $country, $city, $state, $lat, $long, $user_rating, $shortversion, $masterversion, (int) $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, (int) $service_facebook, (int) $service_tumblr, (int) $service_twitter, (int) $service_wordpress, $weightedscore, (int) $service_xmpp, $softwarename, $outputsslerror, $uptime_custom, (int) $dnssec, $sslexpire]);
+  $result_set  = pg_query_params($dbh, $sql_set, [$domain, 1, (int) $hidden, $ip, (int) $ipv6, $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $admin_rating, $country, $city, $state, $lat, $long, $user_rating, $shortversion, $masterversion, $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, (int) $service_facebook, (int) $service_tumblr, (int) $service_twitter, (int) $service_wordpress, $weightedscore, (int) $service_xmpp, $softwarename, $outputsslerror, $uptime_custom, (int) $dnssec, $sslexpire]);
   $result_set || die('Error in SQL query3: ' . pg_last_error());
 
   _debug('Score out of 100', $score);

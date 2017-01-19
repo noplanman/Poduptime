@@ -53,7 +53,7 @@ curl_setopt($chss, CURLOPT_NOBODY, 0);
 $outputssl = curl_exec($chss);
 curl_close($chss);
 
-if (stristr($outputssl, 'nodeName')) {
+if (stristr($outputssl, 'openRegistrations')) {
   $log->lwrite('Your pod has ssl and is valid ' . $_domain);
   echo 'Your pod has ssl and is valid<br>';
 
