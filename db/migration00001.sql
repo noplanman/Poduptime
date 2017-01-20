@@ -40,5 +40,6 @@ CREATE TABLE checks (
  domain text,
  online boolean,
  error text,
+ ttl numeric(8,6),
  date_checked timestamp DEFAULT current_timestamp
 );

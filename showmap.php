@@ -69,7 +69,7 @@ EOF;
     maxZoom: 18,
     attribution: '<a href="https://www.mapbox.com/about/maps/" target="_blank">&copy; Mapbox &copy; OpenStreetMap</a> <a class="mapbox-improve-map" href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a>'
   });
-  var map = L.map('map', {zoom: 5, center: [<?php echo $lat; ?>, <?php echo $long; ?>]}).addLayer(tiles);
+  var map = L.map('map', {zoom: 3, center: [<?php echo $lat; ?>, <?php echo $long; ?>]}).addLayer(tiles);
   var markers = L.markerClusterGroup({
     maxClusterRadius: 2, animateAddingMarkers: true, iconCreateFunction: function (cluster) {
       return new L.DivIcon({html: '<b class="icon">' + cluster.getChildCount() + '</b>', className: 'mycluster', iconSize: L.point(35, 35)});
