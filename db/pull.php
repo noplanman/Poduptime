@@ -170,13 +170,8 @@ while ($row = pg_fetch_assoc($result)) {
   $statslastdate = date('Y-m-d H:i:s');
   $ping          = curl_init();
   curl_setopt($ping, CURLOPT_URL, 'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=' . $row['stats_apikey']);
-  curl_setopt($ping, CURLOPT_POST, 0);
-  curl_setopt($ping, CURLOPT_HEADER, 0);
   curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($ping, CURLOPT_CONNECTTIMEOUT, 8);
-  curl_setopt($ping, CURLOPT_NOBODY, 0);
-  curl_setopt($ping, CURLOPT_MAXCONNECTS, 5);
-  curl_setopt($ping, CURLOPT_FOLLOWLOCATION, true);
   $uptr = json_decode(curl_exec($ping));
   curl_close($ping);
   _debug('Uptime Robot', $uptr, true);
