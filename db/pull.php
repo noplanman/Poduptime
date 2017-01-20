@@ -158,14 +158,12 @@ while ($row = pg_fetch_assoc($result)) {
 
   $location = geoip_record_by_name($ip);
   _debug('Location', $location, true);
-
-  if ($location) {
-    $country = !empty($location['country_code']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_code']) : null;
-    $city    = !empty($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : null;
-    $state   = !empty($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : null;
-    $lat     = !empty($location['latitude']) ? $location['latitude'] : null;
-    $long    = !empty($location['longitude']) ? $location['longitude'] : null;
-  }
+  $country = !empty($location['country_code']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_code']) : null;
+  $city    = !empty($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : null;
+  $state   = !empty($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : null;
+  $lat     = !empty($location['latitude']) ? $location['latitude'] : null;
+  $long    = !empty($location['longitude']) ? $location['longitude'] : null;
+  
   echo $newline;
   $statslastdate = date('Y-m-d H:i:s');
   $ping          = curl_init();
