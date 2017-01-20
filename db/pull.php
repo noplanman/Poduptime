@@ -16,8 +16,7 @@ curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
 curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
 $outputmv = curl_exec($mv);
 curl_close($mv);
-preg_match('/number:.*"(.*)"/', $outputmv, $version);
-$dmasterversion = $version[1];
+$dmasterversion = preg_match('/number:.*"(.*)"/', $outputmv, $version) ? $version[1] : '';
 _debug('Diaspora Masterversion', $dmasterversion);
 
 //get master code version for friendica pods
@@ -27,8 +26,7 @@ curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
 curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
 $outputmv = curl_exec($mv);
 curl_close($mv);
-preg_match('/define.*\'FRIENDICA_VERSION\'.*\'(.*)\'/', $outputmv, $version);
-$fmasterversion = $version[1];
+$fmasterversion = preg_match('/define.*\'FRIENDICA_VERSION\'.*\'(.*)\'/', $outputmv, $version) ? $version[1] : '';
 _debug('Friendica Masterversion: ' . $fmasterversion);
 
 //get master code version for hubzilla pods
@@ -38,8 +36,7 @@ curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
 curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
 $outputmv = curl_exec($mv);
 curl_close($mv);
-preg_match('/define.*\'STD_VERSION\'.*\'(.*)\'/', $outputmv, $version);
-$hmasterversion = $version[1];
+$hmasterversion = preg_match('/define.*\'STD_VERSION\'.*\'(.*)\'/', $outputmv, $version) ? $version[1] : '' ;
 _debug('Hubzilla Masterversion: ' . $hmasterversion);
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
