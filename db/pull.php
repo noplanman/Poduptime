@@ -12,11 +12,8 @@ require_once __DIR__ . '/../config.php';
 //get master code version for diaspora pods
 $mv = curl_init();
 curl_setopt($mv, CURLOPT_URL, 'https://raw.githubusercontent.com/diaspora/diaspora/master/config/defaults.yml');
-curl_setopt($mv, CURLOPT_POST, 0);
-curl_setopt($mv, CURLOPT_HEADER, 0);
 curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
 curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($mv, CURLOPT_NOBODY, 0);
 $outputmv = curl_exec($mv);
 curl_close($mv);
 preg_match('/number:.*"(.*)"/', $outputmv, $version);
@@ -26,11 +23,8 @@ _debug('Diaspora Masterversion', $dmasterversion);
 //get master code version for friendica pods
 $mv = curl_init();
 curl_setopt($mv, CURLOPT_URL, 'https://raw.githubusercontent.com/friendica/friendica/master/boot.php');
-curl_setopt($mv, CURLOPT_POST, 0);
-curl_setopt($mv, CURLOPT_HEADER, 0);
 curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
 curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($mv, CURLOPT_NOBODY, 0);
 $outputmv = curl_exec($mv);
 curl_close($mv);
 preg_match('/define.*\'FRIENDICA_VERSION\'.*\'(.*)\'/', $outputmv, $version);
@@ -40,11 +34,8 @@ _debug('Friendica Masterversion: ' . $fmasterversion);
 //get master code version for hubzilla pods
 $mv = curl_init();
 curl_setopt($mv, CURLOPT_URL, 'https://raw.githubusercontent.com/redmatrix/hubzilla/master/boot.php');
-curl_setopt($mv, CURLOPT_POST, 0);
-curl_setopt($mv, CURLOPT_HEADER, 0);
 curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
 curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($mv, CURLOPT_NOBODY, 0);
 $outputmv = curl_exec($mv);
 curl_close($mv);
 preg_match('/define.*\'STD_VERSION\'.*\'(.*)\'/', $outputmv, $version);
@@ -96,14 +87,10 @@ while ($row = pg_fetch_assoc($result)) {
 
   $chss = curl_init();
   curl_setopt($chss, CURLOPT_URL, 'https://' . $domain . '/nodeinfo/1.0');
-  curl_setopt($chss, CURLOPT_POST, 0);
-  curl_setopt($chss, CURLOPT_HEADER, 0);
   curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 9);
   curl_setopt($chss, CURLOPT_TIMEOUT, 9);
   curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
-  curl_setopt($chss, CURLOPT_NOBODY, 0);
   curl_setopt($chss, CURLOPT_CERTINFO, 1);
-  curl_setopt($chss, CURLOPT_VERBOSE, 0);
   $outputssl      = curl_exec($chss);
   $outputsslerror = curl_error($chss);
   $info           = curl_getinfo($chss, CURLINFO_CERTINFO);
@@ -123,13 +110,13 @@ while ($row = pg_fetch_assoc($result)) {
     _debug('Connection', 'Can not connect to pod');
 
     $sql_errors    = 'INSERT INTO checks (domain, online, error, ttl) VALUES ($1, $2, $3, $4)';
-    $result_errors = pg_query_params($dbh, $sql_errors, [$domain, (int) false, $outputsslerror, $ttl]);
+    $result_errors = pg_query_params($dbh, $sql_errors, [$domain, 0, $outputsslerror, $ttl]);
     $result_errors || die('Error in SQL query: ' . pg_last_error());
   }
 
   if ($jsonssl !== null) {
     $sql_checks    = 'INSERT INTO checks (domain, online, ttl) VALUES ($1, $2, $3)';
-    $result_checks = pg_query_params($dbh, $sql_checks, [$domain, (int) true, $ttl]);
+    $result_checks = pg_query_params($dbh, $sql_checks, [$domain, 1, $ttl]);
     $result_checks || die('Error in SQL query: ' . pg_last_error());
     
     (!$jsonssl->software->version) || $score += 1;
@@ -137,7 +124,7 @@ while ($row = pg_fetch_assoc($result)) {
     $dverr        = explode('-', trim($xdver));
     $shortversion = $dverr[0];
     _debug('Version code', $shortversion);
-    $signup                = ($jsonssl->openRegistrations === true) ? true : false;
+    $signup                = ($jsonssl->openRegistrations === true);
     $softwarename          = $jsonssl->software->name ?? 'null';
     $name                  = $jsonssl->metadata->nodeName ?? 'null';
     $total_users           = $jsonssl->usage->users->total ?? 0;
