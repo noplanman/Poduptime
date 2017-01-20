@@ -107,26 +107,29 @@ while ($row = pg_fetch_assoc($result)) {
   $outputssl      = curl_exec($chss);
   $outputsslerror = curl_error($chss);
   $info           = curl_getinfo($chss, CURLINFO_CERTINFO);
+  $ttl            = curl_getinfo($chss, CURLINFO_CONNECT_TIME);
   $sslexpire      = $info[0]['Expire date'] ?? null;
   curl_close($chss);
 
   _debug('Nodeinfo output', $outputssl, true);
   _debug('Nodeinfo output error', $outputsslerror, true);
-
+  _debug('Cert expire date', $sslexpire);
+  _debug('TTL', $ttl);
+  
   //get new json from nodeinfo
   $jsonssl = json_decode($outputssl);
 
   if (!$jsonssl) {    
     _debug('Connection', 'Can not connect to pod');
 
-    $sql_errors    = 'INSERT INTO checks (domain, online, error) VALUES ($1, $2, $3)';
-    $result_errors = pg_query_params($dbh, $sql_errors, [$domain, (int) false, $outputsslerror]);
+    $sql_errors    = 'INSERT INTO checks (domain, online, error, ttl) VALUES ($1, $2, $3, $4)';
+    $result_errors = pg_query_params($dbh, $sql_errors, [$domain, (int) false, $outputsslerror, $ttl]);
     $result_errors || die('Error in SQL query: ' . pg_last_error());
   }
 
   if ($jsonssl !== null) {
-    $sql_checks    = 'INSERT INTO checks (domain, online) VALUES ($1, $2)';
-    $result_checks = pg_query_params($dbh, $sql_checks, [$domain, (int) true]);
+    $sql_checks    = 'INSERT INTO checks (domain, online, ttl) VALUES ($1, $2, $3)';
+    $result_checks = pg_query_params($dbh, $sql_checks, [$domain, (int) true, $ttl]);
     $result_checks || die('Error in SQL query: ' . pg_last_error());
     
     (!$jsonssl->software->version) || $score += 1;
