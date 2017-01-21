@@ -27,7 +27,7 @@ curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
 $outputmv = curl_exec($mv);
 curl_close($mv);
 $fmasterversion = preg_match('/define.*\'FRIENDICA_VERSION\'.*\'(.*)\'/', $outputmv, $version) ? $version[1] : '';
-_debug('Friendica Masterversion: ' . $fmasterversion);
+_debug('Friendica Masterversion', $fmasterversion);
 
 //get master code version for hubzilla pods
 $mv = curl_init();
@@ -37,7 +37,7 @@ curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
 $outputmv = curl_exec($mv);
 curl_close($mv);
 $hmasterversion = preg_match('/define.*\'STD_VERSION\'.*\'(.*)\'/', $outputmv, $version) ? $version[1] : '' ;
-_debug('Hubzilla Masterversion: ' . $hmasterversion);
+_debug('Hubzilla Masterversion', $hmasterversion);
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
