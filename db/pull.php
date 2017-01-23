@@ -146,8 +146,8 @@ while ($row = pg_fetch_assoc($result)) {
   exec(escapeshellcmd('delv @74.82.42.42 ' . $domain), $iplookup);
   if ($iplookup) {
     _debug('Iplookup', $iplookup, true);
-    $dnssec = in_array('; fully validated', $iplookup) ?? false ;
-    $getaonly = array_values(preg_grep('/A\s.*/', $iplookup));
+    $dnssec = in_array('; fully validated', $iplookup, true) ?? false ;
+    $getaonly = array_values(preg_grep('/\s+IN\s+A\s+.*/', $iplookup));
     preg_match('/A\s(.*)/', $getaonly[0], $version);
     $ip   = trim($version[1]);
   }
