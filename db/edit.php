@@ -16,7 +16,7 @@ require_once __DIR__ . '/../config.php';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = 'SELECT domain,email,token,tokenexpire,stats_apikey,weight,terms FROM pods WHERE domain = $1';
+$sql    = 'SELECT domain,email,token,tokenexpire,weight,terms FROM pods WHERE domain = $1';
 $result = pg_query_params($dbh, $sql, [$_domain]);
 $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -37,8 +37,8 @@ while ($row = pg_fetch_array($result)) {
   if ('save' === $_action) {
     $_weight <= 10 || die('10 is max weight');
 
-    $sql    = 'UPDATE pods SET email = $1, stats_apikey = $2, weight = $3, terms = $4 WHERE domain = $5';
-    $result = pg_query_params($dbh, $sql, [$_email, $_stats_apikey, $_weight, $_terms, $_domain]);
+    $sql    = 'UPDATE pods SET email = $1, weight = $2, terms = $3 WHERE domain = $4';
+    $result = pg_query_params($dbh, $sql, [$_email, $_weight, $_terms, $_domain]);
     $result || die('Error in SQL query: ' . pg_last_error());
 
     $to      = $_email;
@@ -56,7 +56,6 @@ while ($row = pg_fetch_array($result)) {
   <form action="edit.php" method="get">
     <input type="hidden" name="domain" value="<?php echo $_domain; ?>">
     <input type="hidden" name="token" value="<?php echo $_token; ?>">
-    <label>Stats Key <input type="text" size="50" name="stats_apikey" value="<?php echo $row['stats_apikey']; ?>">Uptimerobot API key for this monitor</label><br>
     <label>Email <input type="text" size="20" name="email" value="<?php echo $row['email']; ?>"></label><br>
     <label>Terms Link <input type="text" size="20" name="terms" value="<?php echo $row['terms']; ?>"></label><br>
     <label>Weight <input type="text" size="2" name="weight" value="<?php echo $row['weight']; ?>"> This lets you weight your pod lower on the list if you have too much traffic coming in, 10 is the norm use lower to move down the list.</label><br>

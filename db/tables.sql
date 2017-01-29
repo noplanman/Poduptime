@@ -20,7 +20,6 @@ CREATE TABLE pods (
  ipv6 boolean,
  secure boolean,
  sslvalid text,
- stats_apikey text,
  monthsmonitored int,
  signup boolean,
  total_users int, 
@@ -28,7 +27,6 @@ CREATE TABLE pods (
  active_users_monthly int,
  local_posts int,
  uptime_alltime numeric(5,2),
- uptime_custom text,
  status text,
  responsetime text,
  service_facebook boolean,
@@ -37,6 +35,7 @@ CREATE TABLE pods (
  service_wordpress boolean,
  service_xmpp boolean,
  token text,
+ publickey text,
  tokenexpire timestamp,
  terms text,
  sslexpire timestamp,
@@ -77,6 +76,16 @@ CREATE TABLE checks (
  online boolean,
  error text,
  ttl numeric(8,6),
+ total_users int,
+ local_posts int,
+ comment_counts int,
+ shortversion text,
+ date_checked timestamp DEFAULT current_timestamp
+);
+
+CREATE TABLE masterversions (
+ software text,
+ version text,
  date_checked timestamp DEFAULT current_timestamp
 );
 

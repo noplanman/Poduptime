@@ -1,4 +1,4 @@
-ALTER TABLE pods ADD terms text, ADD sslexpire timestamp, ADD uptime_custom text, ADD dnssec boolean, ADD masterversion text, ADD shortversion text;
+ALTER TABLE pods ADD terms text, ADD sslexpire timestamp, ADD dnssec boolean, ADD masterversion text, ADD shortversion text, ADD publickey text;
 ALTER TABLE pods DROP Hgitdate, DROP Hgitref, DROP Hruntime, DROP Hencoding, DROP longversion, DROP ptr, DROP whois, DROP postalcode, DROP connection, DROP pingdomlast;
 
 ALTER TABLE pods RENAME COLUMN pingdomurl TO stats_apikey;
@@ -41,5 +41,15 @@ CREATE TABLE checks (
  online boolean,
  error text,
  ttl numeric(8,6),
+ total_users int,
+ local_posts int,
+ comment_counts int,
+ shortversion text,
+ date_checked timestamp DEFAULT current_timestamp
+);
+
+CREATE TABLE masterversions (
+ software text,
+ version text,
  date_checked timestamp DEFAULT current_timestamp
 );

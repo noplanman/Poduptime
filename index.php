@@ -3,9 +3,10 @@ $lastfile     = 'db/last.data';
 $advancedview = isset($_GET['advancedview']);
 $mapview      = isset($_GET['mapview']);
 $cleanup      = isset($_GET['cleanup']);
+$statsview    = isset($_GET['statsview']);
 $podmin       = isset($_GET['podmin']);
 $podminedit   = isset($_GET['podminedit']);
-$simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedit);
+$simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedit || $statsview);
 ?>
 <!doctype html>
 <html>
@@ -35,6 +36,7 @@ $simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedi
       <a class="nav-item nav-link<?php $simpleview && print ' active'; ?>" href="/">Simple View</a>
       <a class="nav-item nav-link<?php $advancedview && print ' active'; ?>" href="/?advancedview">Advanced View</a>
       <a class="nav-item nav-link<?php $mapview && print ' active'; ?>" href="/?mapview">Map View</a>
+      <a class="nav-item nav-link<?php $statsview && print ' active'; ?>" href="/?statsview">Network Stats</a>
     </nav>
   </div>
 </nav>
@@ -45,6 +47,7 @@ $simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedi
         <li<?php $simpleview && print ' class="active"'; ?>><a href="/">Simple View<?php $simpleview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
         <li<?php $advancedview && print ' class="active"'; ?>><a href="/?advancedview">Advanced View<?php $advancedview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
         <li<?php $mapview && print ' class="active"'; ?>><a href="/?mapview">Map View<?php $mapview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
+        <li<?php $statsview && print ' class="active"'; ?>><a href="/?statsview">Network Stats<?php $statsview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
       </ul>
       <ul class="nav nav-sidebar">
         <li<?php $podmin && print ' class="active"'; ?>><a href="/?podmin">Add a pod<?php $podmin && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
@@ -75,6 +78,8 @@ $simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedi
           include_once __DIR__ . '/showfull.php';
         } elseif ($mapview) {
           include_once __DIR__ . '/showmap.php';
+        } elseif ($statsview) {
+          include_once __DIR__ . '/statsview.php';
         } elseif ($podmin) {
           include_once __DIR__ . '/podmin.php';
         } elseif ($podminedit) {
@@ -96,5 +101,7 @@ $simpleview   = !($advancedview || $mapview || $cleanup || $podmin || $podminedi
 <script src="bower_components/facebox/src/facebox.js"></script>
 <script src="bower_components/tablesorter/dist/js/jquery.tablesorter.min.js"></script>
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+<script src="bower_components/chart.js/dist/Chart.min.js"></script>
+<?php $statsview && include_once __DIR__ . '/statsviewjs.php'; ?>
 </body>
 </html>

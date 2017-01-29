@@ -9,36 +9,6 @@ $_domain = $_GET['domain'] ?? '';
 
 require_once __DIR__ . '/../config.php';
 
-//get master code version for diaspora pods
-$mv = curl_init();
-curl_setopt($mv, CURLOPT_URL, 'https://raw.githubusercontent.com/diaspora/diaspora/master/config/defaults.yml');
-curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
-curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
-$outputmv = curl_exec($mv);
-curl_close($mv);
-$dmasterversion = preg_match('/number:.*"(.*)"/', $outputmv, $version) ? $version[1] : '';
-_debug('Diaspora Masterversion', $dmasterversion);
-
-//get master code version for friendica pods
-$mv = curl_init();
-curl_setopt($mv, CURLOPT_URL, 'https://raw.githubusercontent.com/friendica/friendica/master/boot.php');
-curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
-curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
-$outputmv = curl_exec($mv);
-curl_close($mv);
-$fmasterversion = preg_match('/define.*\'FRIENDICA_VERSION\'.*\'(.*)\'/', $outputmv, $version) ? $version[1] : '';
-_debug('Friendica Masterversion', $fmasterversion);
-
-//get master code version for hubzilla pods
-$mv = curl_init();
-curl_setopt($mv, CURLOPT_URL, 'https://raw.githubusercontent.com/redmatrix/hubzilla/master/boot.php');
-curl_setopt($mv, CURLOPT_CONNECTTIMEOUT, 5);
-curl_setopt($mv, CURLOPT_RETURNTRANSFER, 1);
-$outputmv = curl_exec($mv);
-curl_close($mv);
-$hmasterversion = preg_match('/define.*\'STD_VERSION\'.*\'(.*)\'/', $outputmv, $version) ? $version[1] : '' ;
-_debug('Hubzilla Masterversion', $hmasterversion);
-
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
@@ -112,10 +82,6 @@ while ($row = pg_fetch_assoc($result)) {
   }
 
   if ($jsonssl !== null) {
-    $sql_checks    = 'INSERT INTO checks (domain, online, ttl) VALUES ($1, $2, $3)';
-    $result_checks = pg_query_params($dbh, $sql_checks, [$domain, 1, $ttl]);
-    $result_checks || die('Error in SQL query: ' . pg_last_error());
-    
     (!$jsonssl->software->version) || $score += 1;
     $xdver        = $jsonssl->software->version ?? 0;
     $dverr        = explode('-', trim($xdver));
@@ -134,6 +100,12 @@ while ($row = pg_fetch_assoc($result)) {
     $service_tumblr        = in_array('tumblr', $jsonssl->services->outbound, true);
     $service_wordpress     = in_array('wordpress', $jsonssl->services->outbound, true);
     $service_xmpp          = $jsonssl->metadata->xmppChat === true ?? false;
+    $status                = 'Up';
+    
+    $sql_checks    = 'INSERT INTO checks (domain, online, ttl, total_users, local_posts, comment_counts, shortversion) VALUES ($1, $2, $3, $4, $5, $6, $7)';
+    $result_checks = pg_query_params($dbh, $sql_checks, [$domain, 1, $ttl, $total_users, $local_posts, $comment_counts, $shortversion]);
+    $result_checks || die('Error in SQL query: ' . pg_last_error());
+    
   } else {
     $score -= 1;
     $dver         = '.connect error';
@@ -141,20 +113,20 @@ while ($row = pg_fetch_assoc($result)) {
   }
 
   _debug('Signup Open', $signup);
-  $ip6 = exec(escapeshellcmd('dig @74.82.42.42 +nocmd ' . $domain . ' aaaa +noall +short'));
+
+  $ip   = dns_get_record($_domain, DNS_A)[0]['ip'] ?? null;
+  $ipv6 = dns_get_record($_domain, DNS_AAAA)[0]['ipv6'] ?? null;
+
   $iplookup = [];
-  exec(escapeshellcmd('delv @74.82.42.42 ' . $domain), $iplookup);
+  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain), $iplookup);
   if ($iplookup) {
     _debug('Iplookup', $iplookup, true);
-    $dnssec = in_array('; fully validated', $iplookup, true) ?? false ;
-    $getaonly = array_values(preg_grep('/\s+IN\s+A\s+.*/', $iplookup));
-    preg_match('/A\s(.*)/', $getaonly[0], $version);
-    $ip   = trim($version[1]);
+    $dnssec = in_array('; fully validated', $iplookup, true) ?? false;
   }
   $ip || $score -= 2;
-  $ipv6 = strpos($ip6, ':') !== false;
-  _debug('IP', $ip);
-  _debug('IPv6', $ip6);
+
+  _debug('IPv4', $ip);
+  _debug('IPv6', $ipv6);
 
   $location = geoip_record_by_name($ip);
   _debug('Location', $location, true);
@@ -166,46 +138,30 @@ while ($row = pg_fetch_assoc($result)) {
   
   echo $newline;
   $statslastdate = date('Y-m-d H:i:s');
-  $ping          = curl_init();
-  curl_setopt($ping, CURLOPT_URL, 'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&responseTimes=1&responseTimesAverage=86400&apiKey=' . $row['stats_apikey']);
-  curl_setopt($ping, CURLOPT_RETURNTRANSFER, 1);
-  curl_setopt($ping, CURLOPT_CONNECTTIMEOUT, 8);
-  $uptr = json_decode(curl_exec($ping));
-  curl_close($ping);
-  _debug('Uptime Robot', $uptr, true);
-  
-  if ($uptr->stat === 'ok') {
-    $responsetime    = $uptr->monitors->monitor{'0'}->responsetime{'0'}->value ?? 'n/a';
-    $uptimerobotstat = $uptr->stat;
-    $uptime          = $uptr->monitors->monitor{'0'}->alltimeuptimeratio;
-    $uptime_custom   = $uptr->monitors->monitor{'0'}->customuptimeratio;
+
+
     $diff            = (new DateTime())->diff(new DateTime($dateadded));
     $months          = $diff->m + ($diff->y * 12);
-    if ($uptr->monitors->monitor{'0'}->status == 2) {
-      $status = 'Up';
-    }
-    if ($uptr->monitors->monitor{'0'}->status == 0) {
-      $status = 'Paused';
-    }
-    if ($uptr->monitors->monitor{'0'}->status == 1) {
-      $status = 'Not Checked Yet';
-    }
-    if ($uptr->monitors->monitor{'0'}->status == 8) {
-      $status = 'Seems Down';
-    }
-    if ($uptr->monitors->monitor{'0'}->status == 9) {
-      $status = 'Down';
-    }
-      $statslastdate = date('Y-m-d H:i:s');
-  }
+    
+  $responsetime = 0;
+  $sqlttl       = 'SELECT round(avg(ttl) * 1000) AS ttl FROM checks WHERE domain = $1';
+  $resultttl    = pg_query_params($dbh, $sqlttl, [$domain]);
+  $resultttl    || die('Error in SQL query resultchecks: ' . pg_last_error());
+  $responsetime = pg_fetch_result($resultttl, 0);
 
-  if ($softwarename === 'diaspora') {
-    $masterversion = $dmasterversion;
-  } elseif ($softwarename === 'friendica') {
-    $masterversion = $fmasterversion;
-  } elseif ($softwarename === 'redmatrix') {
-    $masterversion = $hmasterversion;
-  }
+  $uptime       = 0;
+  $sqlonline    = 'SELECT round(avg(online::int),2) * 100 AS online FROM checks WHERE domain = $1';
+  $resultonline = pg_query_params($dbh, $sqlonline, [$domain]);
+  $resultonline || die('Error in SQL query resultchecks: ' . pg_last_error());
+  $uptime       = pg_fetch_result($resultonline, 0);
+
+  $sqlmasters    = 'SELECT version FROM masterversions WHERE software = $1 ORDER BY date_checked LIMIT 1';
+  $resultmasters = pg_query_params($dbh, $sqlmasters, [$softwarename]);
+  $resultmasters || die('Error in SQL query: ' . pg_last_error());
+  $masterversion = pg_fetch_result($resultmasters, 0);
+
+  _debug('Masterversion', $masterversion);
+  
   $hidden = $score <= 70;
   _debug('Hidden', $hidden ? 'yes' : 'no');
   // lets cap the scores or you can go too high or too low to never be effected by them
@@ -217,9 +173,9 @@ while ($row = pg_fetch_assoc($result)) {
   $weightedscore = ($uptime + $score + ($active_users_monthly / 19999) - ((10 - $weight) * .12));
   //sql it
 
-  $timenow = date('Y-m-d H:i:s');
-  $sql_set     = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, uptime_custom = $37, dnssec = $38, sslexpire = $39 WHERE domain = $1';
-  $result_set  = pg_query_params($dbh, $sql_set, [$domain, 1, (int) $hidden, $ip, (int) $ipv6, $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $admin_rating, $country, $city, $state, $lat, $long, $user_rating, $shortversion, $masterversion, (int) $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, (int) $service_facebook, (int) $service_tumblr, (int) $service_twitter, (int) $service_wordpress, $weightedscore, (int) $service_xmpp, $softwarename, $outputsslerror, $uptime_custom, (int) $dnssec, $sslexpire]);
+  $timenow    = date('Y-m-d H:i:s');
+  $sql_set    = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, dnssec = $37, sslexpire = $38 WHERE domain = $1';
+  $result_set = pg_query_params($dbh, $sql_set, [$domain, 1, (int) $hidden, $ip, (int) ($ipv6 !== null), $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $admin_rating, $country, $city, $state, $lat, $long, $user_rating, $shortversion, $masterversion, (int) $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, (int) $service_facebook, (int) $service_tumblr, (int) $service_twitter, (int) $service_wordpress, $weightedscore, (int) $service_xmpp, $softwarename, $outputsslerror, (int) $dnssec, $sslexpire]);
   $result_set || die('Error in SQL query3: ' . pg_last_error());
 
   _debug('Score out of 100', $score);

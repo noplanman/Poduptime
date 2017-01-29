@@ -33,7 +33,9 @@ while ($row = pg_fetch_array($result)) {
     $headers[] = 'Bcc: ' . $adminemail;
     $expire    = time() + 2700;
     $output    = 'Link sent to your email';
-  } else {
+  } elseif (!$row['email']) {
+      echo "domain is registered but no email associated, to add an email use the add a pod feature";die;  
+    } else {
     $to              = $adminemail;
     $subject         = 'FORWARD REQUEST: Temporary edit key for ' . $_SERVER['HTTP_HOST'];
     $message_lines[] = 'User trying to edit pod without email address.';
@@ -43,7 +45,7 @@ while ($row = pg_fetch_array($result)) {
   }
 
     $sql    = 'UPDATE pods SET token = $1, tokenexpire = $2 WHERE domain = $3';
-  $result = pg_query_params($dbh, $sql, [$uuid, date('Y-m-d H:i:s', $expire), $_domain]);
+    $result = pg_query_params($dbh, $sql, [$uuid, date('Y-m-d H:i:s', $expire), $_domain]);
     $result || die('Error in SQL query: ' . pg_last_error());
 
   $message_lines[] = 'Link: ' . $link;

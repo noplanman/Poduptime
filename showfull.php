@@ -80,7 +80,7 @@ $numrows = pg_num_rows($result);
     echo '<td>' . $row['local_posts'] . '</td>';
     echo '<td>' . $row['comment_counts'] . '</td>';
     $moreurl = '/showstats.php?domain=' . $row['domain'];
-    echo '<td><div title="Last Check ' . $row['date_updated'] . '" data-toggle="tooltip" data-placement="bottom"><a rel="facebox" href="' . $moreurl . '">' . $row['monthsmonitored'] . '</a></div></td>';
+    echo '<td><div title="Last Check ' . $row['date_updated'] . '" data-toggle="tooltip" data-placement="bottom">' . $row['monthsmonitored'] . '</div></td>';
     echo '<td><a rel="facebox" href="rate.php?domain=' . $row['domain'] . '">' . $row['userrating'];
     echo '</a></td>';
     echo '<td>' . $row['score'] . '</td>';

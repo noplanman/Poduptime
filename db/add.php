@@ -4,42 +4,55 @@ require_once __DIR__ . '/../logging.php';
 require_once __DIR__ . '/../config.php';
 $log = new Logging();
 $log->lfile(__DIR__ . '/../' . $log_dir . '/add.log');
-if (!($_domain = $_POST['domain'] ?? null)) {
+if (!($_domain = $_GET['domain'] ?? null)) {
   $log->lwrite('no domain given');
   die('no pod domain given');
 }
-if (!($_stats_apikey = $_POST['stats_apikey'] ?? null)) {
-  $log->lwrite('no api given ' . $_domain);
-  die('no API key for your stats');
-}
-if (strlen($_stats_apikey) < 14) {
-  $log->lwrite('api key too short ' . $_domain);
-  die('API key bad needs to be like m58978-80abdb799f6ccf15e3e3787ee');
-}
-if (!($_email = $_POST['email'] ?? null)) {
-  $log->lwrite('no email given ' . $_domain);
-  die('no email given');
-}
-if (!($_terms = $_POST['terms'] ?? null)) {
-  $log->lwrite('terms link required ' . $_domain);
-  die('no terms link');
+
+$_domain = strtolower($_domain);
+if (!filter_var(gethostbyname($_domain), FILTER_VALIDATE_IP)) {
+  die('Could not validate the domain name, be sure to enter it as "domain.com" (no caps, no slashes, no extras)');
 }
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = 'SELECT domain, stats_apikey FROM pods';
+$sql    = 'SELECT domain, stats_apikey, publickey, email FROM pods';
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
 
 while ($row = pg_fetch_array($result)) {
-  if ($row['domain'] === $_domain) {
-    $log->lwrite('domain already exists ' . $_domain);
-    die('domain already exists');
-  }
-  if ($row['stats_apikey'] === $_stats_apikey) {
-    $log->lwrite('API key already exists ' . $_domain);
-    die('API key already exists');
+  if ($row['domain'] === $_domain ) {
+    if ($row['email']) {
+      $log->lwrite('domain already exists and is registered to an owner' . $_domain);
+      die('domain already exists and is registered to an owner, use the edit function to modify');
+    }
+
+    $digtxt = exec(escapeshellcmd('dig ' . $_domain . ' TXT +short'));
+    if (strpos($digtxt, $row['publickey']) !== false) {
+      echo 'domain validated, you can now add details '; 
+      $uuid     = md5(uniqid($_domain, true));
+      $expire   = time() + 2700;
+      $sql      = 'UPDATE pods SET token = $1, tokenexpire = $2 WHERE domain = $3';
+      $result   = pg_query_params($dbh, $sql, [$uuid, date('Y-m-d H:i:s', $expire), $_domain]);
+      $result   || die('Error in SQL query: ' . pg_last_error());
+      
+      echo <<<EOF
+      <form action="edit.php" method="get">
+      <input type="hidden" name="domain" value="{$_domain}">
+      <input type="hidden" name="token" value="{$uuid}">
+      <label>Email <input type="text" size="20" name="email"></label><br>
+      <label>Terms Link <input type="text" size="20" name="terms"></label><br>
+      <label>Weight <input type="text" size="2" name="weight"> This lets you weight your pod lower on the list if you have too much traffic coming in, 10 is the norm use lower to move down the list.</label><br>
+      <input type="submit" name="action" value="save">
+      </form>
+EOF;
+      
+      die;
+    } else {
+      $log->lwrite('domain already exists and can be registered' . $_domain);
+      die('domain already exists, you can claim the domain by adding a DNS TXT record that states<br><b> ' . $_domain . ' IN TXT "' . $row['publickey'] . '"</b>');
+    }
   }
 }
 
@@ -57,8 +70,9 @@ if (stristr($outputssl, 'openRegistrations')) {
   $log->lwrite('Your pod has ssl and is valid ' . $_domain);
   echo 'Your pod has ssl and is valid<br>';
 
-  $sql    = 'INSERT INTO pods (domain, stats_apikey, email, terms) VALUES ($1, $2, $3, $4)';
-  $result = pg_query_params($dbh, $sql, [$_domain, $_stats_apikey, $_email, $_terms]);
+  $publickey = md5(uniqid($domain, true));
+  $sql    = 'INSERT INTO pods (domain, email, terms, publickey) VALUES ($1, $2, $3, $4, $5)';
+  $result = pg_query_params($dbh, $sql, [$_domain, $_email, $_terms, $publickey]);
   $result || die('Error in SQL query: ' . pg_last_error());
 
   $to      = $adminemail;
