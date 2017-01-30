@@ -71,25 +71,26 @@ if (stristr($outputssl, 'openRegistrations')) {
   echo 'Your pod has ssl and is valid<br>';
 
   $publickey = md5(uniqid($domain, true));
-  $sql    = 'INSERT INTO pods (domain, email, terms, publickey) VALUES ($1, $2, $3, $4, $5)';
+  $sql    = 'INSERT INTO pods (domain, email, terms, publickey) VALUES ($1, $2, $3, $4)';
   $result = pg_query_params($dbh, $sql, [$_domain, $_email, $_terms, $publickey]);
   $result || die('Error in SQL query: ' . pg_last_error());
 
-  $to      = $adminemail;
-  $subject = 'New pod added to ' . $_SERVER['HTTP_HOST'];
-  $headers = ['From: ' . $_email, 'Reply-To: ' . $_email, 'Cc: ' . $_email];
+  if ($_email) {
+    $to      = $adminemail;
+    $subject = 'New pod added to ' . $_SERVER['HTTP_HOST'];
+    $headers = ['From: ' . $_email, 'Reply-To: ' . $_email, 'Cc: ' . $_email];
 
-  $message_lines = [
-    'https://' . $_SERVER['HTTP_HOST'],
-    'Stats Url: https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&apiKey=' . $_stats_apikey,
-    'Pod: https://' . $_SERVER['HTTP_HOST'] . '/db/pull.php?debug=1&domain=' . $_domain,
-    '',
-    'Your pod will not show up right away, as it needs to pass a few checks first.',
-    'Give it a few hours!',
-  ];
+    $message_lines = [
+      'https://' . $_SERVER['HTTP_HOST'],
+      'Pod: https://' . $_SERVER['HTTP_HOST'] . '/db/pull.php?debug=1&domain=' . $_domain,
+      '',
+      'Your pod will not show up right away, as it needs to pass a few checks first.',
+      'Give it a few hours!',
+    ];
 
-  @mail($to, $subject, implode("\r\n", $message_lines), implode("\r\n", $headers));
-
+    @mail($to, $subject, implode("\r\n", $message_lines), implode("\r\n", $headers));
+  }
+  
   echo 'Data successfully inserted! Your pod will be reviewed and live on the list in a few hours!';
 
 } else {

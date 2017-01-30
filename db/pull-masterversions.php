@@ -8,7 +8,7 @@ $dbh || die('Error in connection: ' . pg_last_error());
 $softwares = [
   'diaspora'  => ['url' => 'https://raw.githubusercontent.com/diaspora/diaspora/master/config/defaults.yml', 'regex' => '/number:.*"(.*)"/'],
   'friendica' => ['url' => 'https://raw.githubusercontent.com/friendica/friendica/master/boot.php', 'regex' => '/define.*\'FRIENDICA_VERSION\'.*\'(.*)\'/'],
-  'hubzilla'  => ['url' => 'https://raw.githubusercontent.com/redmatrix/hubzilla/master/boot.php', 'regex' => '/define.*\'STD_VERSION\'.*\'(.*)\'/'],
+  'redmatrix'  => ['url' => 'https://raw.githubusercontent.com/redmatrix/hubzilla/master/boot.php', 'regex' => '/define.*\'STD_VERSION\'.*\'(.*)\'/'],
 ];
 
 foreach ($softwares as $software => $details) {

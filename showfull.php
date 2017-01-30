@@ -97,7 +97,7 @@ $numrows = pg_num_rows($result);
     $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress" title="Publish to WordPress"></div>';
     $row['service_xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
     echo '</td>';
-    echo '<td><a href="https://' . $row['domain'] . $row['terms'] . '">&#128279;</a></td></tr>';
+    echo '<td>' . ($row['terms'] ? '<a href="https://' . $row['domain'] . $row['terms'] . '">&#128279;</a>' : '&nbsp;') . '</td></tr>';
   }
   ?>
   </tbody>

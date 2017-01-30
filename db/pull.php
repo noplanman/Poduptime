@@ -4,7 +4,6 @@
 $debug   = isset($_GET['debug']) || (isset($argv) && in_array('debug', $argv, true));
 $newline = PHP_SAPI === 'cli' ? "\n" : '<br>';
 
-// Other parameters.
 $_domain = $_GET['domain'] ?? '';
 
 require_once __DIR__ . '/../config.php';
@@ -70,7 +69,6 @@ while ($row = pg_fetch_assoc($result)) {
   _debug('Cert expire date', $sslexpire);
   _debug('TTL', $ttl);
   
-  //get new json from nodeinfo
   $jsonssl = json_decode($outputssl);
 
   if (!$jsonssl) {    
@@ -114,14 +112,22 @@ while ($row = pg_fetch_assoc($result)) {
 
   _debug('Signup Open', $signup);
 
-  $ip   = dns_get_record($_domain, DNS_A)[0]['ip'] ?? null;
-  $ipv6 = dns_get_record($_domain, DNS_AAAA)[0]['ipv6'] ?? null;
-
-  $iplookup = [];
-  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain), $iplookup);
-  if ($iplookup) {
-    _debug('Iplookup', $iplookup, true);
-    $dnssec = in_array('; fully validated', $iplookup, true) ?? false;
+  $iplookupv4 = [];
+  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain), $iplookupv4);
+  if ($iplookupv4) {
+    _debug('Iplookupv4', $iplookupv4, true);
+    $dnssec = in_array('; fully validated', $iplookupv4, true) ?? false;
+    $getaonly = array_values(preg_grep('/\s+IN\s+A\s+.*/', $iplookupv4));
+    preg_match('/A\s(.*)/', $getaonly[0], $aversion);
+    $ip   = trim($aversion[1]);
+  }
+  $iplookupv6 = [];
+  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain . ' AAAA '), $iplookupv6);
+  if ($iplookupv6) {
+    _debug('Iplookupv6', $iplookupv6, true);
+    $getaaaaonly = array_values(preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6));
+    preg_match('/A\s(.*)/', $getaaaaonly[0], $aaaaversion);
+    $ipv6   = trim($aaaaversion[1]);
   }
   $ip || $score -= 2;
 
@@ -133,15 +139,14 @@ while ($row = pg_fetch_assoc($result)) {
   $country = !empty($location['country_code']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_code']) : null;
   $city    = !empty($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : null;
   $state   = !empty($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : null;
-  $lat     = !empty($location['latitude']) ? $location['latitude'] : null;
-  $long    = !empty($location['longitude']) ? $location['longitude'] : null;
+  $lat     = !empty($location['latitude']) ? $location['latitude'] : 0;
+  $long    = !empty($location['longitude']) ? $location['longitude'] : 0;
   
   echo $newline;
   $statslastdate = date('Y-m-d H:i:s');
 
-
-    $diff            = (new DateTime())->diff(new DateTime($dateadded));
-    $months          = $diff->m + ($diff->y * 12);
+  $diff            = (new DateTime())->diff(new DateTime($dateadded));
+  $months          = $diff->m + ($diff->y * 12);
     
   $responsetime = 0;
   $sqlttl       = 'SELECT round(avg(ttl) * 1000) AS ttl FROM checks WHERE domain = $1';
@@ -164,14 +169,12 @@ while ($row = pg_fetch_assoc($result)) {
   
   $hidden = $score <= 70;
   _debug('Hidden', $hidden ? 'yes' : 'no');
-  // lets cap the scores or you can go too high or too low to never be effected by them
   if ($score > 100) {
     $score = 100;
   } elseif ($score < 0) {
     $score = 0;
   }
   $weightedscore = ($uptime + $score + ($active_users_monthly / 19999) - ((10 - $weight) * .12));
-  //sql it
 
   $timenow    = date('Y-m-d H:i:s');
   $sql_set    = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, dnssec = $37, sslexpire = $38 WHERE domain = $1';
