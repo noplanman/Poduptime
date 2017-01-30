@@ -1,5 +1,5 @@
-SCRIPT_DIR = "$( cd "$( dirname "$0" )" && pwd )"
-TIME       = `date +%k`
+SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
+TIME=`date +%k`
 
 if [ -s /tmp/index.google ];then
   echo "already running die"
