@@ -112,14 +112,23 @@ while ($row = pg_fetch_assoc($result)) {
 
   _debug('Signup Open', $signup);
 
-  $ip   = dns_get_record($_domain, DNS_A)[0]['ip'] ?? null;
-  $ipv6 = dns_get_record($_domain, DNS_AAAA)[0]['ipv6'] ?? null;
-
-  $iplookup = [];
-  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain), $iplookup);
-  if ($iplookup) {
-    _debug('Iplookup', $iplookup, true);
-    $dnssec = in_array('; fully validated', $iplookup, true) ?? false;
+  $iplookupv4 = [];
+  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain), $iplookupv4);
+  if ($iplookupv4) {
+    _debug('Iplookupv4', $iplookupv4, true);
+    $dnssec = in_array('; fully validated', $iplookupv4, true) ?? false;
+    $getaonly = array_values(preg_grep('/\s+IN\s+A\s+.*/', $iplookupv4));
+    preg_match('/A\s(.*)/', $getaonly[0], $aversion);
+    $ip   = trim($aversion[1]);
+  }
+  $iplookupv6 = [];
+  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain . ' AAAA '), $iplookupv6);
+  if ($iplookupv6) {
+    _debug('Iplookupv6', $iplookupv6, true);
+    $dnssec = in_array('; fully validated', $iplookupv6, true) ?? false;
+    $getaaaaonly = array_values(preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6));
+    preg_match('/A\s(.*)/', $getaaaaonly[0], $aaaaversion);
+    $ipv6   = trim($aaaaversion[1]);
   }
   $ip || $score -= 2;
 
