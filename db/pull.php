@@ -125,7 +125,6 @@ while ($row = pg_fetch_assoc($result)) {
   exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain . ' AAAA '), $iplookupv6);
   if ($iplookupv6) {
     _debug('Iplookupv6', $iplookupv6, true);
-    $dnssec = in_array('; fully validated', $iplookupv6, true) ?? false;
     $getaaaaonly = array_values(preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6));
     preg_match('/A\s(.*)/', $getaaaaonly[0], $aaaaversion);
     $ipv6   = trim($aaaaversion[1]);
