@@ -9,6 +9,8 @@ $softwares = [
   'diaspora'  => ['url' => 'https://raw.githubusercontent.com/diaspora/diaspora/master/config/defaults.yml', 'regex' => '/number:.*"(.*)"/'],
   'friendica' => ['url' => 'https://raw.githubusercontent.com/friendica/friendica/master/boot.php', 'regex' => '/define.*\'FRIENDICA_VERSION\'.*\'(.*)\'/'],
   'redmatrix'  => ['url' => 'https://raw.githubusercontent.com/redmatrix/hubzilla/master/boot.php', 'regex' => '/define.*\'STD_VERSION\'.*\'(.*)\'/'],
+  'socialhome' => ['url' => 'https://raw.githubusercontent.com/jaywink/socialhome/master/bower.json', 'regex' => '/version":.*"(.*)"/'],
+  'social-relay' => ['url' => 'https://raw.githubusercontent.com/jaywink/social-relay/master/social_relay/config.py', 'regex' => '/VERSION.*"(.*)"/'],
 ];
 
 foreach ($softwares as $software => $details) {

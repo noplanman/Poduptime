@@ -77,6 +77,7 @@ while ($row = pg_fetch_assoc($result)) {
     $sql_errors    = 'INSERT INTO checks (domain, online, error, ttl) VALUES ($1, $2, $3, $4)';
     $result_errors = pg_query_params($dbh, $sql_errors, [$domain, 0, $outputsslerror, $ttl]);
     $result_errors || die('Error in SQL query: ' . pg_last_error());
+    continue;
   }
 
   if ($jsonssl !== null) {
@@ -97,7 +98,7 @@ while ($row = pg_fetch_assoc($result)) {
     $service_twitter       = in_array('twitter', $jsonssl->services->outbound, true);
     $service_tumblr        = in_array('tumblr', $jsonssl->services->outbound, true);
     $service_wordpress     = in_array('wordpress', $jsonssl->services->outbound, true);
-    $service_xmpp          = $jsonssl->metadata->xmppChat === true ?? false;
+    $service_xmpp          = ($jsonssl->metadata->xmppChat ?? false) === true;
     $status                = 'Up';
     
     $sql_checks    = 'INSERT INTO checks (domain, online, ttl, total_users, local_posts, comment_counts, shortversion) VALUES ($1, $2, $3, $4, $5, $6, $7)';
@@ -113,21 +114,23 @@ while ($row = pg_fetch_assoc($result)) {
   _debug('Signup Open', $signup);
 
   $iplookupv4 = [];
+  $ip = '';
   exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain), $iplookupv4);
+  _debug('Iplookupv4', $iplookupv4, true);
+  $dnssec = in_array('; fully validated', $iplookupv4, true) ?? false;
+  $getaonly = array_values(preg_grep('/\s+IN\s+A\s+.*/', $iplookupv4));
   if ($iplookupv4) {
-    _debug('Iplookupv4', $iplookupv4, true);
-    $dnssec = in_array('; fully validated', $iplookupv4, true) ?? false;
-    $getaonly = array_values(preg_grep('/\s+IN\s+A\s+.*/', $iplookupv4));
     preg_match('/A\s(.*)/', $getaonly[0], $aversion);
-    $ip   = trim($aversion[1]);
+    $ip   = trim($aversion[1]) ?? '';
   }
   $iplookupv6 = [];
+  $ipv6 = null;
   exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain . ' AAAA '), $iplookupv6);
-  if ($iplookupv6) {
-    _debug('Iplookupv6', $iplookupv6, true);
-    $getaaaaonly = array_values(preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6));
-    preg_match('/A\s(.*)/', $getaaaaonly[0], $aaaaversion);
-    $ipv6   = trim($aaaaversion[1]);
+  _debug('Iplookupv6', $iplookupv6, true);
+  $getaaaaonly = array_values(preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6));
+  if ($getaaaaonly) {
+    preg_match('/AAAA\s(.*)/', $getaaaaonly[0], $aaaaversion);
+    $ipv6   = trim($aaaaversion[1]) ?? '';
   }
   $ip || $score -= 2;
 

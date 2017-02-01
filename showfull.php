@@ -55,7 +55,7 @@ $numrows = pg_num_rows($result);
       $version = $row['shortversion'];
       $pre     = 'This pod runs pre release development code';
     } elseif (!$row['shortversion']) {
-      $version = '0';
+      $version = '';
       $pre     = 'This pod runs unknown code';
     } else {
       $version = $row['shortversion'];
@@ -70,15 +70,15 @@ $numrows = pg_num_rows($result);
     }
     echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
     echo '<td>' . $row['softwarename'] . '</td>';
-    echo '<td>' . $row['uptime_alltime'] . '%</td>';
+    echo '<td>' . ($row['uptime_alltime'] > 0 ? $row['uptime_alltime'].'%' : '') . '</td>';
     echo '<td>' . ($row['ipv6'] === 't' ? '&#10003;' : '') . '</td>';
-    echo '<td>' . $row['responsetime'] . '</td>';
+    echo '<td>' . ($row['responsetime'] > 0 ? $row['responsetime'] : '') . '</td>';
     echo '<td>' . ($row['signup'] === 't' ? '&#10003;' : '') . '</td>';
-    echo '<td>' . $row['total_users'] . '</td>';
-    echo '<td>' . $row['active_users_halfyear'] . '</td>';
-    echo '<td>' . $row['active_users_monthly'] . '</td>';
-    echo '<td>' . $row['local_posts'] . '</td>';
-    echo '<td>' . $row['comment_counts'] . '</td>';
+    echo '<td>' . ($row['total_users'] > 0 ? $row['total_users'] : '') . '</td>';
+    echo '<td>' . ($row['active_users_halfyear'] > 0 ? $row['active_users_halfyear'] : '') . '</td>';
+    echo '<td>' . ($row['active_users_monthly'] > 0 ? $row['active_users_monthly'] : '') . '</td>';
+    echo '<td>' . ($row['local_posts'] > 0 ? $row['local_posts'] : '') . '</td>';
+    echo '<td>' . ($row['comment_counts'] > 0 ? $row['comment_counts'] : '') . '</td>';
     $moreurl = '/showstats.php?domain=' . $row['domain'];
     echo '<td><div title="Last Check ' . $row['date_updated'] . '" data-toggle="tooltip" data-placement="bottom">' . $row['monthsmonitored'] . '</div></td>';
     echo '<td><a rel="facebox" href="rate.php?domain=' . $row['domain'] . '">' . $row['userrating'];

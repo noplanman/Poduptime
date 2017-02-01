@@ -56,4 +56,7 @@ background-size: 25px 37px;
 .icon {
 color: red;
 }
+table { 
+empty-cells: show; 
+}
 
