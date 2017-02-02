@@ -5,18 +5,17 @@
 strlen($_token) > 6 || die('bad token');
 
 // Other parameters.
-$_action       = $_GET['action'] ?? '';
-$_weight       = $_GET['weight'] ?? '';
-$_email        = $_GET['email'] ?? '';
-$_stats_apikey = $_GET['stats_apikey'] ?? '';
-$_terms        = $_GET['terms'] ?? '';
+$_action           = $_GET['action'] ?? '';
+$_weight           = $_GET['weight'] ?? '';
+$_email            = $_GET['email'] ?? '';
+$_podmin_statement = $_GET['podmin_statement'] ?? '';
 
 require_once __DIR__ . '/../config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = 'SELECT domain,email,token,tokenexpire,weight,terms FROM pods WHERE domain = $1';
+$sql    = 'SELECT domain,email,token,tokenexpire,weight,podmin_statement FROM pods WHERE domain = $1';
 $result = pg_query_params($dbh, $sql, [$_domain]);
 $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -37,8 +36,8 @@ while ($row = pg_fetch_array($result)) {
   if ('save' === $_action) {
     $_weight <= 10 || die('10 is max weight');
 
-    $sql    = 'UPDATE pods SET email = $1, weight = $2, terms = $3 WHERE domain = $4';
-    $result = pg_query_params($dbh, $sql, [$_email, $_weight, $_terms, $_domain]);
+    $sql    = 'UPDATE pods SET email = $1, weight = $2, podmin_statement = $3 WHERE domain = $4';
+    $result = pg_query_params($dbh, $sql, [$_email, $_weight, $_podmin_statement, $_domain]);
     $result || die('Error in SQL query: ' . pg_last_error());
 
     $to      = $_email;
@@ -57,7 +56,7 @@ while ($row = pg_fetch_array($result)) {
     <input type="hidden" name="domain" value="<?php echo $_domain; ?>">
     <input type="hidden" name="token" value="<?php echo $_token; ?>">
     <label>Email <input type="text" size="20" name="email" value="<?php echo $row['email']; ?>"></label><br>
-    <label>Terms Link <input type="text" size="20" name="terms" value="<?php echo $row['terms']; ?>"></label><br>
+    <label>Podmin Statement (You can include links to your terms and policies and information about your pod you wish to share with users.) <textbox cols="100" rows="7" name="podmin_statement"><?php echo $row['podmin_statement']; ?></textbox></label><br>
     <label>Weight <input type="text" size="2" name="weight" value="<?php echo $row['weight']; ?>"> This lets you weight your pod lower on the list if you have too much traffic coming in, 10 is the norm use lower to move down the list.</label><br>
     <input type="submit" name="action" value="save">
   </form>

@@ -8,7 +8,7 @@ $country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql = 'SELECT domain,dnssec,terms,sslexpire,masterversion,shortversion,softwarename,monthsmonitored,score,signup,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp,responsetime,date_updated,ipv6,total_users,local_posts,comment_counts,stats_apikey,userrating FROM pods pods ORDER BY uptime_alltime DESC';
+$sql = 'SELECT domain,dnssec,podmin_statement,sslexpire,masterversion,shortversion,softwarename,monthsmonitored,score,signup,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp,responsetime,date_updated,ipv6,total_users,local_posts,comment_counts,stats_apikey,userrating FROM pods pods ORDER BY uptime_alltime DESC';
 
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
@@ -39,7 +39,7 @@ $numrows = pg_num_rows($result);
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this domain use DNSSEC.">DNSSEC</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation.">Country</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to.">Services</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Terms page for this pod.">Terms</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Click for more information about this pod from the pod host (podmin).">Info</a></th>
   </tr>
   </thead>
   <tbody>
@@ -97,7 +97,8 @@ $numrows = pg_num_rows($result);
     $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress" title="Publish to WordPress"></div>';
     $row['service_xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
     echo '</td>';
-    echo '<td>' . ($row['terms'] ? '<a href="https://' . $row['domain'] . $row['terms'] . '">&#128279;</a>' : '&nbsp;') . '</td></tr>';
+    
+    echo '<td>' . ($row['podmin_statement'] ? '<a tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="left" title="Podmin Statement" data-html="true" data-content="' . htmlentities($row['podmin_statement'], ENT_QUOTES) . '">&#8505;</a>' : '&nbsp;') . '</td></tr>';
   }
   ?>
   </tbody>

@@ -37,7 +37,7 @@ CREATE TABLE pods (
  token text,
  publickey text,
  tokenexpire timestamp,
- terms text,
+ podmin_statement text,
  sslexpire timestamp,
  dnssec boolean,
  comment_counts int,

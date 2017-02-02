@@ -9,6 +9,9 @@ if (!($_domain = $_GET['domain'] ?? null)) {
   die('no pod domain given');
 }
 
+$_email            = $_GET['email'] ?? '';
+$_podmin_statement = $_GET['podmin_statement'] ?? '';
+
 $_domain = strtolower($_domain);
 if (!filter_var(gethostbyname($_domain), FILTER_VALIDATE_IP)) {
   die('Could not validate the domain name, be sure to enter it as "domain.com" (no caps, no slashes, no extras)');
@@ -42,7 +45,7 @@ while ($row = pg_fetch_array($result)) {
       <input type="hidden" name="domain" value="{$_domain}">
       <input type="hidden" name="token" value="{$uuid}">
       <label>Email <input type="text" size="20" name="email"></label><br>
-      <label>Terms Link <input type="text" size="20" name="terms"></label><br>
+      <label>Podmin Statement (You can include links to your terms and policies and information about your pod you wish to share with users.) <textarea cols="100" rows="7" name="podmin_statement"></textarea></label><br>
       <label>Weight <input type="text" size="2" name="weight"> This lets you weight your pod lower on the list if you have too much traffic coming in, 10 is the norm use lower to move down the list.</label><br>
       <input type="submit" name="action" value="save">
       </form>
@@ -71,8 +74,8 @@ if (stristr($outputssl, 'openRegistrations')) {
   echo 'Your pod has ssl and is valid<br>';
 
   $publickey = md5(uniqid($domain, true));
-  $sql    = 'INSERT INTO pods (domain, email, terms, publickey) VALUES ($1, $2, $3, $4)';
-  $result = pg_query_params($dbh, $sql, [$_domain, $_email, $_terms, $publickey]);
+  $sql    = 'INSERT INTO pods (domain, email, podmin_statement, publickey) VALUES ($1, $2, $3, $4)';
+  $result = pg_query_params($dbh, $sql, [$_domain, $_email, $_podmin_statement, $publickey]);
   $result || die('Error in SQL query: ' . pg_last_error());
 
   if ($_email) {

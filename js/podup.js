@@ -4,5 +4,12 @@ $.facebox.settings.loadingImage = 'bower_components/facebox/src/loading.gif'
   $('a[rel*=facebox]').facebox()
   $('#myTable').tablesorter()
   $('[data-toggle="tooltip"]').tooltip()
+  $(function () {
+    $('[data-toggle="popover"]').popover()
+  })
+  $('.popover-dismiss').popover({
+    trigger: 'focus'
+  })
 });
+
 
