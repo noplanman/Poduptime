@@ -11,7 +11,7 @@ if (!($_domain = $_GET['domain'] ?? null)) {
 
 $_email            = $_GET['email'] ?? '';
 $_podmin_statement = $_GET['podmin_statement'] ?? '';
-$_podmin_notify    = $_GET['podmin_notify'] ?? '';
+$_podmin_notify    = $_GET['podmin_notify'] ?? 0;
 
 $_domain = strtolower($_domain);
 if (!filter_var(gethostbyname($_domain), FILTER_VALIDATE_IP)) {
@@ -75,7 +75,7 @@ if (stristr($outputssl, 'openRegistrations')) {
   echo 'Your pod has ssl and is valid<br>';
 
   $publickey = md5(uniqid($domain, true));
-  $sql    = 'INSERT INTO pods (domain, email, podmin_statement, $podmin_notify, publickey) VALUES ($1, $2, $3, $4, $5)';
+  $sql    = 'INSERT INTO pods (domain, email, podmin_statement, podmin_notify, publickey) VALUES ($1, $2, $3, $4, $5)';
   $result = pg_query_params($dbh, $sql, [$_domain, $_email, $_podmin_statement, $_podmin_notify, $publickey]);
   $result || die('Error in SQL query: ' . pg_last_error());
 
