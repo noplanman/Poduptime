@@ -13,10 +13,10 @@ $dbh || die('Error in connection: ' . pg_last_error());
 
 //foreach pod check it and update db
 if ($_domain) {
-  $sql = 'SELECT domain,stats_apikey,score,date_created,adminrating,weight FROM pods WHERE domain = $1';
+  $sql = 'SELECT domain,score,date_created,adminrating,weight,hidden,podmin_notify,email FROM pods WHERE domain = $1';
   $result = pg_query_params($dbh, $sql, [$_domain]);
 } elseif (PHP_SAPI === 'cli') {
-  $sql = 'SELECT domain,stats_apikey,score,date_created,adminrating,weight FROM pods';
+  $sql = 'SELECT domain,score,date_created,adminrating,weight,hidden,podmin_notify,email FROM pods';
   $result = pg_query($dbh, $sql);
 } else {
   die('No valid input');
@@ -29,6 +29,9 @@ while ($row = pg_fetch_assoc($result)) {
   $dateadded = $row['date_created'];
   $admindb   = (int) $row['adminrating'];
   $weight    = $row['weight'];
+  $hiddennow = $row['hidden'];
+  $email     = $row['email'];
+  $notify    = $row['podmin_notify'];
   $sqlforr   = 'SELECT admin,rating FROM rating_comments WHERE domain = $1';
   $ratings   = pg_query_params($dbh, $sqlforr, [$domain]);
   $ratings || die('Error in SQL query2: ' . pg_last_error());
@@ -158,10 +161,12 @@ while ($row = pg_fetch_assoc($result)) {
   $responsetime = pg_fetch_result($resultttl, 0);
 
   $uptime       = 0;
-  $sqlonline    = 'SELECT round(avg(online::int),2) * 100 AS online FROM checks WHERE domain = $1';
+  $sqlonline    = 'SELECT avg(online::int) * 100 AS online FROM checks WHERE domain = $1';
   $resultonline = pg_query_params($dbh, $sqlonline, [$domain]);
   $resultonline || die('Error in SQL query resultchecks: ' . pg_last_error());
-  $uptime       = pg_fetch_result($resultonline, 0);
+  $uptime       = round(pg_fetch_result($resultonline, 0),2);
+  
+  _debug('Uptime', $uptime);
 
   $sqlmasters    = 'SELECT version FROM masterversions WHERE software = $1 ORDER BY date_checked LIMIT 1';
   $resultmasters = pg_query_params($dbh, $sqlmasters, [$softwarename]);
@@ -172,6 +177,15 @@ while ($row = pg_fetch_assoc($result)) {
   
   $hidden = $score <= 70;
   _debug('Hidden', $hidden ? 'yes' : 'no');
+
+  if ($hiddennow === 'f' && $hidden && $notify === 't') {
+    $to      = $email;
+    $headers = ['From: ' . $adminemail, 'Bcc: ' . $adminemail];
+    $subject = 'Monitoring notice from poduptime';
+    $message = 'Notice for ' . $domain . '. Your score fell to ' . $score . ' and your pod is now marked as hidden.';
+    @mail($to, $subject, $message, implode("\r\n", $headers));
+    _debug('Mail Notice', 'sent to '.$email);
+  }
   if ($score > 100) {
     $score = 100;
   } elseif ($score < 0) {

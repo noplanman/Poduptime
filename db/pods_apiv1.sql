@@ -21,6 +21,6 @@ ALTER TABLE pods_apiv1 ALTER COLUMN signup TYPE text USING signup::text;
 
 ALTER TABLE pods_apiv1 ADD Hgitdate text, ADD Hgitref text, ADD Hruntime text, ADD Hencoding text, ADD longversion text, ADD ptr text, ADD whois text, ADD postalcode text, ADD connection text, ADD pingdomlast text;
   
-ALTER TABLE pods_apiv1 DROP terms, DROP sslexpire, DROP dnssec, DROP masterversion, DROP shortversion, DROP publickey;
+ALTER TABLE pods_apiv1 DROP podmin_statement, DROP sslexpire, DROP dnssec, DROP publickey, DROP podmin_notify;
 
 UPDATE pods_apiv1 SET hgitdate = 'unsupported';

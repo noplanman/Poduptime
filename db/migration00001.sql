@@ -1,4 +1,4 @@
-ALTER TABLE pods ADD podmin_statement text, ADD sslexpire timestamp, ADD dnssec boolean, ADD masterversion text, ADD shortversion text, ADD publickey text;
+ALTER TABLE pods ADD podmin_statement text, ADD sslexpire timestamp, ADD dnssec boolean, ADD masterversion text, ADD shortversion text, ADD publickey text, ADD podmin_notify boolean;
 ALTER TABLE pods DROP Hgitdate, DROP Hgitref, DROP Hruntime, DROP Hencoding, DROP longversion, DROP ptr, DROP whois, DROP postalcode, DROP connection, DROP pingdomlast;
 
 ALTER TABLE pods RENAME COLUMN pingdomurl TO stats_apikey;

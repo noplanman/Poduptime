@@ -18,7 +18,6 @@ foreach ($csv as $cords) {
 <script src="bower_components/leaflet/dist/leaflet.js"></script>
 <script type="text/javascript" src="bower_components/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 <div id="map"></div>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <script type="text/javascript">
   var geoJsonData = {
     'type': 'FeatureCollection',
@@ -29,7 +28,7 @@ foreach ($csv as $cords) {
       $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
       $dbh || die('Error in connection: ' . pg_last_error());
 
-      $sql = "SELECT domain,signup,name,lat,long,uptime_alltime,active_users_halfyear,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp FROM pods WHERE NOT hidden";
+      $sql = "SELECT domain,signup,name,lat,long,softwarename,uptime_alltime,active_users_halfyear,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp FROM pods WHERE NOT hidden";
       $result = pg_query($dbh, $sql);
       $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -53,7 +52,7 @@ foreach ($csv as $cords) {
   'type': 'Feature',
   'id': '1',
   'properties' : {
-    'html': '{$pod_name}<br><a href="/go.php?domain={$row['domain']}">Visit</a><br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptime_alltime']}%<br> Services:{$feat}'
+    'html': '<a href="/go.php?domain={$row['domain']}">{$pod_name}</a><br>Software: {$row['softwarename']}<br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptime_alltime']}%<br> Services:{$feat}'
   },
   'geometry': {
     'type': 'Point',
