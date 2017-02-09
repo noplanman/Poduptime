@@ -18,7 +18,11 @@ ALTER TABLE pods ALTER COLUMN hidden TYPE boolean USING hidden::boolean;
 ALTER TABLE pods ALTER COLUMN secure TYPE boolean USING secure::boolean;
 ALTER TABLE pods ALTER COLUMN signup TYPE boolean USING signup::boolean;
 
-
+ALTER TABLE pods ALTER weight SET DEFAULT 10;
+ALTER TABLE pods ALTER score SET DEFAULT 50;
+ALTER TABLE pods ALTER adminrating SET DEFAULT 0;
+ALTER TABLE pods ALTER userrating SET DEFAULT 0;
+ALTER TABLE pods ALTER weightedscore SET DEFAULT 0;
 
 DROP TABLE users;
 

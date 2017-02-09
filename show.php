@@ -46,7 +46,11 @@ $numrows = pg_num_rows($result);
     echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="text-success url" target="_self" href="/go.php?domain=' . $row['domain'] . '">' . $row['domain'] . '</a></div></td>';
 
     echo '<td>' . $row['uptime_alltime'] . '%</td>';
+    if ($row['active_users_halfyear'] > 0) {
     echo '<td data-toggle="tooltip" data-placement="bottom" title="Active users six months: ' . $row['active_users_halfyear'] . ', Active users one month: ' . $row['active_users_monthly'] . '">' . $row['active_users_halfyear'] . '</td>';
+    } else {
+    echo '<td data-toggle="tooltip" data-placement="bottom" title="Pod does not share user data."></td>';
+    }
     if ($country_code === $row['country']) {
       echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: ' . ($row['city'] ?? 'n/a') . ' State: ' . ($row['state'] ?? 'n/a') . '"><b>' . $row['country'] . '</b></td>';
     } else {
