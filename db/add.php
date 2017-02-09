@@ -46,7 +46,7 @@ while ($row = pg_fetch_array($result)) {
       <input type="hidden" name="domain" value="{$_domain}">
       <input type="hidden" name="token" value="{$uuid}">
       <label>Email <input type="text" size="20" name="email"></label><br>
-      <label>Podmin Statement (You can include links to your terms and policies and information about your pod you wish to share with users.) <textarea cols="100" rows="7" name="podmin_statement"></textarea></label><br>
+      <label>Podmin Statement (You can include links to your terms and policies and information about your pod you wish to share with users.) <br><textarea cols="100" rows="7" name="podmin_statement"></textarea></label><br>
       <label>Weight <input type="text" size="2" name="weight"> This lets you weight your pod lower on the list if you have too much traffic coming in, 10 is the norm use lower to move down the list.</label><br>
       <input type="submit" name="action" value="save">
       </form>

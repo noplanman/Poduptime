@@ -6,9 +6,10 @@ strlen($_token) > 6 || die('bad token');
 
 // Other parameters.
 $_action           = $_GET['action'] ?? '';
-$_weight           = $_GET['weight'] ?? '';
+$_weight           = $_GET['weight'] ?? 10;
 $_email            = $_GET['email'] ?? '';
 $_podmin_statement = $_GET['podmin_statement'] ?? '';
+$_podmin_notify    = $_GET['podmin_notify'] ?? 0;
 
 require_once __DIR__ . '/../config.php';
 
