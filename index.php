@@ -28,10 +28,12 @@ $simpleview   = !($detailedview || $mapview || $cleanup || $podmin || $podminedi
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 </head>
 <body>
-<nav class="navbar navbar-dark navbar-fixed-top bg-primary">
-  <button type="button" class="navbar-toggler hidden-sm-up" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation"></button>
+<nav class="navbar navbar-inverse bg-primary fixed-top">
+  <button class="navbar-toggler navbar-toggler-right hidden-md-up" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
   <a class="navbar-brand" href="#">Poduptime</a>
-  <div id="navbar" class="text-muted collapse">
+  <div class="collapse navbar-toggleable hidden-md-up" id="navbar">
     <nav class="nav navbar-nav float-xs-left">
       <a class="nav-item nav-link<?php $simpleview && print ' active'; ?>" href="/">Simple View</a>
       <a class="nav-item nav-link<?php $detailedview && print ' active'; ?>" href="/?detailedview">Detailed View</a>
