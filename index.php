@@ -34,34 +34,36 @@ $simpleview   = !($detailedview || $mapview || $cleanup || $podmin || $podminedi
   </button>
   <a class="navbar-brand" href="#">Poduptime</a>
   <div class="collapse navbar-toggleable hidden-md-up" id="navbar">
-    <nav class="nav navbar-nav float-xs-left">
-      <a class="nav-item nav-link<?php $simpleview && print ' active'; ?>" href="/">Simple View</a>
-      <a class="nav-item nav-link<?php $detailedview && print ' active'; ?>" href="/?detailedview">Detailed View</a>
-      <a class="nav-item nav-link<?php $mapview && print ' active'; ?>" href="/?mapview">Map View</a>
-      <a class="nav-item nav-link<?php $statsview && print ' active'; ?>" href="/?statsview">Network Stats</a>
-    </nav>
+    <ul class="navbar-nav">
+      <li class="nav-item"><a class="nav-link<?php $simpleview && print ' active'; ?>" href="/">Simple View</a></li>
+      <li class="nav-item"><a class="nav-link<?php $detailedview && print ' active'; ?>" href="/?detailedview">Detailed View</a></li>
+      <li class="nav-item"><a class="nav-link<?php $mapview && print ' active'; ?>" href="/?mapview">Map View</a></li>
+      <li class="nav-item"><a class="nav-link<?php $statsview && print ' active'; ?>" href="/?statsview">Network Stats</a></li>
+    </ul>
   </div>
 </nav>
 <div class="container-fluid">
   <div class="row">
-    <div class="sidebar col-md-3">
-      <div class="list-group">
-        <a class="list-group-item<?php $simpleview && print ' active'; ?>" href="/">Simple View<?php $simpleview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
-        <a class="list-group-item<?php $detailedview && print ' active'; ?>" href="/?detailedview">Detailed View<?php $detailedview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
-        <a class="list-group-item<?php $mapview && print ' active'; ?>" href="/?mapview">Map View<?php $mapview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
-        <a class="list-group-item<?php $statsview && print ' active'; ?>" href="/?statsview">Network Stats<?php $statsview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
-      </div>
-      <div class="list-group">
-        <a class="list-group-item<?php $podmin && print ' active'; ?>" href="/?podmin">Add a pod<?php $podmin && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
-        <a class="list-group-item<?php $podminedit && print ' active'; ?>" href="/?podminedit">Edit a pod<?php $podminedit && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
-        <a class="list-group-item" href="https://diasporafoundation.org/">Host a pod</a>
-      </div>
-      <div class="list-group">
-        <a class="list-group-item" href="https://github.com/diasporg/Poduptime">Github</a>
-        <a class="list-group-item" href="https://dia.so/support">Contact</a>
-        <a class="list-group-item" href="https://github.com/diasporg/Poduptime/wiki">Wiki</a>
-        <a class="list-group-item" href="https://github.com/diasporg/Poduptime/wiki/API">API</a>
-      </div>
+    <div class="sidebar col-md-3 col-lg-2 hidden-sm-down">
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a class="nav-link<?php $simpleview && print ' active'; ?>" href="/">Simple View<?php $simpleview && print ' <span class="sr-only">(current)</span>'; ?></a></li>
+        <li class="nav-item"><a class="nav-link<?php $detailedview && print ' active'; ?>" href="/?detailedview">Detailed View<?php $detailedview && print ' <span class="sr-only">(current)</span>'; ?></a></li>
+        <li class="nav-item"><a class="nav-link<?php $mapview && print ' active'; ?>" href="/?mapview">Map View<?php $mapview && print ' <span class="sr-only">(current)</span>'; ?></a></li>
+        <li class="nav-item"><a class="nav-link<?php $statsview && print ' active'; ?>" href="/?statsview">Network Stats<?php $statsview && print ' <span class="sr-only">(current)</span>'; ?></a></li>
+      </ul>
+      <hr>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a class="nav-link<?php $podmin && print ' active'; ?>" href="/?podmin">Add a pod<?php $podmin && print ' <span class="sr-only">(current)</span>'; ?></a></li>
+        <li class="nav-item"><a class="nav-link<?php $podminedit && print ' active'; ?>" href="/?podminedit">Edit a pod<?php $podminedit && print ' <span class="sr-only">(current)</span>'; ?></a></li>
+        <li class="nav-item"><a class="nav-link" href="https://diasporafoundation.org/">Host a pod</a></li>
+      </ul>
+      <hr>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a class="nav-link" href="https://github.com/diasporg/Poduptime">Github</a></li>
+        <li class="nav-item"><a class="nav-link" href="https://dia.so/support">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="https://github.com/diasporg/Poduptime/wiki">Wiki</a></li>
+        <li class="nav-item"><a class="nav-link" href="https://github.com/diasporg/Poduptime/wiki/API">API</a></li>
+      </ul>
       <p><small>Data refreshed: <br><?php echo date('M d y H:i', filemtime($lastfile)); ?> EST</small></p><br>
       <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
       <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3662181805557062" data-ad-slot="2195215834" data-ad-format="auto"></ins>
