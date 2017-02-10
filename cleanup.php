@@ -4,7 +4,7 @@ require_once __DIR__ . '/config.php';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = "SELECT domain,masterversion,shortversion,softwarename,monthsmonitored,score,signup,secure,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp,responsetime,date_updated,ipv6,total_users,local_posts,comment_counts,stats_apikey,userrating,sslvalid FROM pods WHERE score < 50 ORDER BY weightedscore";
+$sql    = "SELECT domain,masterversion,shortversion,softwarename,monthsmonitored,score,signup,secure,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp,latency,date_updated,ipv6,total_users,local_posts,comment_counts,stats_apikey,userrating,sslvalid FROM pods WHERE score < 50 ORDER BY weightedscore";
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
 $numrows = pg_num_rows($result);
@@ -44,7 +44,7 @@ $numrows = pg_num_rows($result);
       'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of -20 to +20 this pod is a %6$s right now',
       $pod_name,
       $row['monthsmonitored'],
-      $row['responsetime'],
+      $row['latency'],
       $row['uptime_alltime'],
       $row['date_updated'],
       $row['score']
@@ -71,7 +71,7 @@ $numrows = pg_num_rows($result);
     }
     echo '<td class="' . $classver . '"><div title="' . $pre . ' codename: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" class="tipsy">' . $version . '</div></td>';
     echo '<td>' . $row['uptime_alltime'] . '</td>';
-    echo '<td>' . $row['responsetime'] . '</td>';
+    echo '<td>' . $row['latency'] . '</td>';
     echo '<td>' . ($row['signup'] === 't' ? 'Open' : 'Closed') . '</td>';
     echo '<td>' . $row['total_users'] . '</td>';
     echo '<td>' . $row['active_users_halfyear'] . '</td>';

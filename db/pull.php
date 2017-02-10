@@ -59,17 +59,18 @@ while ($row = pg_fetch_assoc($result)) {
   curl_setopt($chss, CURLOPT_TIMEOUT, 9);
   curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($chss, CURLOPT_CERTINFO, 1);
+  curl_setopt($chss, CURLOPT_CAINFO, $cafullpath);
   $outputssl      = curl_exec($chss);
   $outputsslerror = curl_error($chss);
   $info           = curl_getinfo($chss, CURLINFO_CERTINFO);
-  $ttl            = curl_getinfo($chss, CURLINFO_CONNECT_TIME);
+  $latency        = curl_getinfo($chss, CURLINFO_CONNECT_TIME);
   $sslexpire      = $info[0]['Expire date'] ?? null;
   curl_close($chss);
 
   _debug('Nodeinfo output', $outputssl, true);
   _debug('Nodeinfo output error', $outputsslerror, true);
   _debug('Cert expire date', $sslexpire);
-  _debug('TTL', $ttl);
+  _debug('Latency', $latency);
   
   $jsonssl = json_decode($outputssl);
 
@@ -85,10 +86,10 @@ while ($row = pg_fetch_assoc($result)) {
   $local_posts           = $jsonssl->usage->localPosts ?? 0;
   $comment_counts        = $jsonssl->usage->localComments ?? 0;
   $service_xmpp          = ($jsonssl->metadata->xmppChat ?? false) === true;
-  $service_facebook      = 'false';
-  $service_twitter       = 'false';
-  $service_tumblr        = 'false';
-  $service_wordpress     = 'false';
+  $service_facebook      = false;
+  $service_twitter       = false;
+  $service_tumblr        = false;
+  $service_wordpress     = false;
   if (json_last_error() === 0) {
     (!$jsonssl->software->version) || $score += 1;
     $service_facebook      = in_array('facebook', $jsonssl->services->outbound, true);
@@ -99,15 +100,15 @@ while ($row = pg_fetch_assoc($result)) {
     
   if ($jsonssl !== null) {
     $status        = 'Up';
-    $sql_checks    = 'INSERT INTO checks (domain, online, ttl, total_users, local_posts, comment_counts, shortversion) VALUES ($1, $2, $3, $4, $5, $6, $7)';
-    $result_checks = pg_query_params($dbh, $sql_checks, [$domain, 1, $ttl, $total_users, $local_posts, $comment_counts, $shortversion]);
+    $sql_checks    = 'INSERT INTO checks (domain, online, latency, total_users, local_posts, comment_counts, shortversion) VALUES ($1, $2, $3, $4, $5, $6, $7)';
+    $result_checks = pg_query_params($dbh, $sql_checks, [$domain, 1, $latency, $total_users, $local_posts, $comment_counts, $shortversion]);
     $result_checks || die('Error in SQL query: ' . pg_last_error());
   }
   
   if (!$jsonssl) {    
     _debug('Connection', 'Can not connect to pod');
-    $sql_errors    = 'INSERT INTO checks (domain, online, error, ttl) VALUES ($1, $2, $3, $4)';
-    $result_errors = pg_query_params($dbh, $sql_errors, [$domain, 0, $outputsslerror, $ttl]);
+    $sql_errors    = 'INSERT INTO checks (domain, online, error, latency) VALUES ($1, $2, $3, $4)';
+    $result_errors = pg_query_params($dbh, $sql_errors, [$domain, 0, $outputsslerror, $latency]);
     $result_errors || die('Error in SQL query: ' . pg_last_error());
     $score         -= 1;
     $shortversion  = '0.error';
@@ -155,11 +156,11 @@ while ($row = pg_fetch_assoc($result)) {
   $diff         = (new DateTime())->diff(new DateTime($dateadded));
   $months       = $diff->m + ($diff->y * 12);
     
-  $responsetime = 0;
-  $sqlttl       = 'SELECT round(avg(ttl) * 1000) AS ttl FROM checks WHERE domain = $1';
-  $resultttl    = pg_query_params($dbh, $sqlttl, [$domain]);
-  $resultttl    || die('Error in SQL query resultchecks: ' . pg_last_error());
-  $responsetime = pg_fetch_result($resultttl, 0);
+  $avglatency     = 0;
+  $sqllatency     = 'SELECT round(avg(latency) * 1000) AS latency FROM checks WHERE domain = $1';
+  $resultlatency  = pg_query_params($dbh, $sqllatency, [$domain]);
+  $resultlatency  || die('Error in SQL query resultchecks: ' . pg_last_error());
+  $avglatency     = pg_fetch_result($resultlatency, 0);
 
   $uptime       = 0;
   $sqlonline    = 'SELECT avg(online::int) * 100 AS online FROM checks WHERE domain = $1';
@@ -195,8 +196,8 @@ while ($row = pg_fetch_assoc($result)) {
   $weightedscore = ($uptime + $score + ($active_users_monthly / 19999) - ((10 - $weight) * .12));
 
   $timenow    = date('Y-m-d H:i:s');
-  $sql_set    = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, responsetime = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, dnssec = $37, sslexpire = $38 WHERE domain = $1';
-  $result_set = pg_query_params($dbh, $sql_set, [$domain, 1, (int) $hidden, $ip, (int) ($ipv6 !== null), $months, $uptime, $status, $statslastdate, $timenow, $responsetime, $score, $admin_rating, $country, $city, $state, $lat, $long, $user_rating, $shortversion, $masterversion, (int) $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, (int) $service_facebook, (int) $service_tumblr, (int) $service_twitter, (int) $service_wordpress, $weightedscore, (int) $service_xmpp, $softwarename, $outputsslerror, (int) $dnssec, $sslexpire]);
+  $sql_set    = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, latency = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, dnssec = $37, sslexpire = $38 WHERE domain = $1';
+  $result_set = pg_query_params($dbh, $sql_set, [$domain, 1, (int) $hidden, $ip, (int) ($ipv6 !== null), $months, $uptime, $status, $statslastdate, $timenow, $avglatency, $score, $admin_rating, $country, $city, $state, $lat, $long, $user_rating, $shortversion, $masterversion, (int) $signup, $total_users, $active_users_halfyear, $active_users_monthly, $local_posts, $name, $comment_counts, (int) $service_facebook, (int) $service_tumblr, (int) $service_twitter, (int) $service_wordpress, $weightedscore, (int) $service_xmpp, $softwarename, $outputsslerror, (int) $dnssec, $sslexpire]);
   $result_set || die('Error in SQL query3: ' . pg_last_error());
 
   _debug('Score out of 100', $score);
