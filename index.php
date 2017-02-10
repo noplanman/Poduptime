@@ -42,24 +42,24 @@ $simpleview   = !($detailedview || $mapview || $cleanup || $podmin || $podminedi
 </nav>
 <div class="container-fluid">
   <div class="row">
-    <div class="sidebar">
-      <ul class="nav nav-sidebar">
-        <li<?php $simpleview && print ' class="active"'; ?>><a href="/">Simple View<?php $simpleview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
-        <li<?php $detailedview && print ' class="active"'; ?>><a href="/?detailedview">Detailed View<?php $detailedview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
-        <li<?php $mapview && print ' class="active"'; ?>><a href="/?mapview">Map View<?php $mapview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
-        <li<?php $statsview && print ' class="active"'; ?>><a href="/?statsview">Network Stats<?php $statsview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
-      </ul>
-      <ul class="nav nav-sidebar">
-        <li<?php $podmin && print ' class="active"'; ?>><a href="/?podmin">Add a pod<?php $podmin && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
-        <li<?php $podminedit && print ' class="active"'; ?>><a href="/?podminedit">Edit a pod<?php $podminedit && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a></li>
-        <li><a href="https://diasporafoundation.org/">Host a pod</a></li>
-      </ul>
-      <ul class="nav nav-sidebar">
-        <li><a href="https://github.com/diasporg/Poduptime">Github</a></li>
-        <li><a href="https://dia.so/support">Contact</a></li>
-        <li><a href="https://github.com/diasporg/Poduptime/wiki">Wiki</a></li>
-        <li><a href="https://github.com/diasporg/Poduptime/wiki/API">API</a></li>
-      </ul>
+    <div class="sidebar col-md-3">
+      <div class="list-group">
+        <a class="list-group-item<?php $simpleview && print ' active'; ?>" href="/">Simple View<?php $simpleview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
+        <a class="list-group-item<?php $detailedview && print ' active'; ?>" href="/?detailedview">Detailed View<?php $detailedview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
+        <a class="list-group-item<?php $mapview && print ' active'; ?>" href="/?mapview">Map View<?php $mapview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
+        <a class="list-group-item<?php $statsview && print ' active'; ?>" href="/?statsview">Network Stats<?php $statsview && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
+      </div>
+      <div class="list-group">
+        <a class="list-group-item<?php $podmin && print ' active'; ?>" href="/?podmin">Add a pod<?php $podmin && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
+        <a class="list-group-item<?php $podminedit && print ' active'; ?>" href="/?podminedit">Edit a pod<?php $podminedit && print ' <span class="sr-only bg-dark">(current)</span>'; ?></a>
+        <a class="list-group-item" href="https://diasporafoundation.org/">Host a pod</a>
+      </div>
+      <div class="list-group">
+        <a class="list-group-item" href="https://github.com/diasporg/Poduptime">Github</a>
+        <a class="list-group-item" href="https://dia.so/support">Contact</a>
+        <a class="list-group-item" href="https://github.com/diasporg/Poduptime/wiki">Wiki</a>
+        <a class="list-group-item" href="https://github.com/diasporg/Poduptime/wiki/API">API</a>
+      </div>
       <p><small>Data refreshed: <br><?php echo date('M d y H:i', filemtime($lastfile)); ?> EST</small></p><br>
       <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
       <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3662181805557062" data-ad-slot="2195215834" data-ad-format="auto"></ins>
@@ -67,7 +67,7 @@ $simpleview   = !($detailedview || $mapview || $cleanup || $podmin || $podminedi
         (adsbygoogle = window.adsbygoogle || []).push({});
       </script>
     </div>
-    <div class="main offset-md-1">
+    <div class="main offset-md-3">
       <a href="go.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
       <div class="row placeholders">
       </div>
