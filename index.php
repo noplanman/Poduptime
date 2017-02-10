@@ -92,6 +92,7 @@ $navs = [
           }
           ?>
         </ul>
+        <hr>
       <?php endforeach; ?>
 
       <p>
