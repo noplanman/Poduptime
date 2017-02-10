@@ -28,6 +28,29 @@ $simpleview   = !($detailedview || $mapview || $cleanup || $podmin || $podminedi
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 </head>
 <body>
+
+<?php
+$navs = [
+  'views'  => [
+    ['text' => 'Simple View', 'href' => '/', 'active' => $simpleview],
+    ['text' => 'Detailed View', 'href' => '/?detailedview', 'active' => $detailedview],
+    ['text' => 'Map View', 'href' => '/?mapview', 'active' => $mapview],
+    ['text' => 'Network Stats', 'href' => '/?statsview', 'active' => $statsview],
+  ],
+  'podmin' => [
+    ['text' => 'Add a pod', 'href' => '/?podmin', 'active' => $podmin],
+    ['text' => 'Edit a pod', 'href' => '/?podminedit', 'active' => $podminedit],
+    ['text' => 'Host a pod', 'href' => 'https://diasporafoundation.org/', 'active' => false],
+  ],
+  'links'  => [
+    ['text' => 'Github', 'href' => 'https://github.com/diasporg/Poduptime', 'active' => false],
+    ['text' => 'Contact', 'href' => 'https://dia.so/support', 'active' => false],
+    ['text' => 'Wiki', 'href' => 'https://github.com/diasporg/Poduptime/wiki', 'active' => false],
+    ['text' => 'API', 'href' => 'https://github.com/diasporg/Poduptime/wiki/API', 'active' => false],
+  ],
+];
+?>
+
 <nav class="navbar navbar-inverse bg-primary fixed-top">
   <button class="navbar-toggler navbar-toggler-right hidden-md-up" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -35,36 +58,46 @@ $simpleview   = !($detailedview || $mapview || $cleanup || $podmin || $podminedi
   <a class="navbar-brand" href="#">Poduptime</a>
   <div class="collapse navbar-toggleable hidden-md-up" id="navbar">
     <ul class="navbar-nav">
-      <li class="nav-item"><a class="nav-link<?php $simpleview && print ' active'; ?>" href="/">Simple View</a></li>
-      <li class="nav-item"><a class="nav-link<?php $detailedview && print ' active'; ?>" href="/?detailedview">Detailed View</a></li>
-      <li class="nav-item"><a class="nav-link<?php $mapview && print ' active'; ?>" href="/?mapview">Map View</a></li>
-      <li class="nav-item"><a class="nav-link<?php $statsview && print ' active'; ?>" href="/?statsview">Network Stats</a></li>
+      <?php
+      foreach ($navs['views'] as $nav_item) {
+        printf(
+          '<li class="nav-item"><a class="nav-link%1$s" href="%2$s">%3$s%4$s</a></li>',
+          $nav_item['active'] ? ' active' : '',
+          $nav_item['href'],
+          $nav_item['text'],
+          $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
+        );
+      }
+      ?>
     </ul>
   </div>
 </nav>
 <div class="container-fluid">
   <div class="row">
     <div class="sidebar col-md-3 col-lg-2 hidden-sm-down">
-      <ul class="nav nav-pills flex-column">
-        <li class="nav-item"><a class="nav-link<?php $simpleview && print ' active'; ?>" href="/">Simple View<?php $simpleview && print ' <span class="sr-only">(current)</span>'; ?></a></li>
-        <li class="nav-item"><a class="nav-link<?php $detailedview && print ' active'; ?>" href="/?detailedview">Detailed View<?php $detailedview && print ' <span class="sr-only">(current)</span>'; ?></a></li>
-        <li class="nav-item"><a class="nav-link<?php $mapview && print ' active'; ?>" href="/?mapview">Map View<?php $mapview && print ' <span class="sr-only">(current)</span>'; ?></a></li>
-        <li class="nav-item"><a class="nav-link<?php $statsview && print ' active'; ?>" href="/?statsview">Network Stats<?php $statsview && print ' <span class="sr-only">(current)</span>'; ?></a></li>
-      </ul>
-      <hr>
-      <ul class="nav nav-pills flex-column">
-        <li class="nav-item"><a class="nav-link<?php $podmin && print ' active'; ?>" href="/?podmin">Add a pod<?php $podmin && print ' <span class="sr-only">(current)</span>'; ?></a></li>
-        <li class="nav-item"><a class="nav-link<?php $podminedit && print ' active'; ?>" href="/?podminedit">Edit a pod<?php $podminedit && print ' <span class="sr-only">(current)</span>'; ?></a></li>
-        <li class="nav-item"><a class="nav-link" href="https://diasporafoundation.org/">Host a pod</a></li>
-      </ul>
-      <hr>
-      <ul class="nav nav-pills flex-column">
-        <li class="nav-item"><a class="nav-link" href="https://github.com/diasporg/Poduptime">Github</a></li>
-        <li class="nav-item"><a class="nav-link" href="https://dia.so/support">Contact</a></li>
-        <li class="nav-item"><a class="nav-link" href="https://github.com/diasporg/Poduptime/wiki">Wiki</a></li>
-        <li class="nav-item"><a class="nav-link" href="https://github.com/diasporg/Poduptime/wiki/API">API</a></li>
-      </ul>
-      <p><small>Data refreshed: <br><?php echo date('M d y H:i', filemtime($lastfile)); ?> EST</small></p><br>
+
+      <?php foreach ($navs as $nav) : ?>
+        <ul class="nav nav-pills flex-column">
+          <?php
+          /** @var array $nav */
+          /** @var array $nav_item */
+          foreach ($nav as $nav_item) {
+            printf(
+              '<li class="nav-item"><a class="nav-link%1$s" href="%2$s">%3$s%4$s</a></li>',
+              $nav_item['active'] ? ' active' : '',
+              $nav_item['href'],
+              $nav_item['text'],
+              $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
+            );
+          }
+          ?>
+        </ul>
+      <?php endforeach; ?>
+
+      <p>
+        <small>Data refreshed: <br><?php echo date('M d y H:i', filemtime($lastfile)); ?> EST</small>
+      </p>
+      <br>
       <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
       <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3662181805557062" data-ad-slot="2195215834" data-ad-format="auto"></ins>
       <script>
