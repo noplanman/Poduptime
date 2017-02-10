@@ -55,7 +55,7 @@ $navs = [
   <button class="navbar-toggler navbar-toggler-right hidden-md-up" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" href="#">Poduptime</a>
+  <a class="navbar-brand" href="/">Poduptime</a>
   <div class="collapse navbar-toggleable hidden-md-up" id="navbar">
     <ul class="navbar-nav">
       <?php
