@@ -71,7 +71,7 @@ $simpleview   = !($detailedview || $mapview || $cleanup || $podmin || $podminedi
         (adsbygoogle = window.adsbygoogle || []).push({});
       </script>
     </div>
-    <div class="main offset-md-3">
+    <div class="main col offset-md-3 offset-lg-2">
       <a href="go.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
       <div class="row placeholders">
       </div>

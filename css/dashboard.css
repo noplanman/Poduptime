@@ -46,13 +46,6 @@ body {
 .main {
   padding: 20px;
 }
-@media (min-width: 768px) {
-  .main {
-    padding-right: 40px;
-    padding-left: 80px;
-  }
-}
-
 
 /*
  * Placeholder dashboard ideas
