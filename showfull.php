@@ -8,7 +8,7 @@ $country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql = 'SELECT domain,dnssec,podmin_statement,sslexpire,masterversion,shortversion,softwarename,monthsmonitored,score,signup,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp,responsetime,date_updated,ipv6,total_users,local_posts,comment_counts,stats_apikey,userrating FROM pods pods ORDER BY uptime_alltime DESC';
+$sql = 'SELECT domain,dnssec,podmin_statement,sslexpire,masterversion,shortversion,softwarename,monthsmonitored,score,signup,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp,latency,date_updated,ipv6,total_users,local_posts,comment_counts,stats_apikey,userrating FROM pods pods ORDER BY uptime_alltime DESC';
 
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
@@ -26,7 +26,7 @@ $numrows = pg_num_rows($result);
     <th><a data-toggle="tooltip" data-placement="bottom" title="Type of software this pod runs">Software</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online.">Uptime</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod offer ipv6 connection.">IPv6</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Average response/ping time in ms.">Ping</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Average connection latency time in ms.">Latency</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod allow new users.">Signups</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total users on this pod.">Users</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 6 months on this pod.">Active 6m</a></th>
@@ -46,7 +46,7 @@ $numrows = pg_num_rows($result);
   <?php
   while ($row = pg_fetch_array($result)) {
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
-    $tip = "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an overall uptime of {$row['uptime_alltime']}% and a response time average today of {$row['responsetime']}ms was last checked on {$row['date_updated']}. ";
+    $tip = "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an overall uptime of {$row['uptime_alltime']}% and a response time average today of {$row['latency']}ms was last checked on {$row['date_updated']}. ";
     $tip .= "On a scale of 100 this pod is a {$row['score']} right now";
 
     echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $row['domain'] . '">' . $row['domain'] . '</a><span class="text-success" " data-toggle="tooltip" title="This site is SSL/TLS encrypted with a cert that expires: ' . $row['sslexpire'] . '"> &#128274;</span></td>';
@@ -72,7 +72,7 @@ $numrows = pg_num_rows($result);
     echo '<td>' . $row['softwarename'] . '</td>';
     echo '<td>' . ($row['uptime_alltime'] > 0 ? $row['uptime_alltime'].'%' : '') . '</td>';
     echo '<td>' . ($row['ipv6'] === 't' ? '&#10003;' : '') . '</td>';
-    echo '<td>' . ($row['responsetime'] > 0 ? $row['responsetime'] : '') . '</td>';
+    echo '<td>' . ($row['latency'] > 0 ? $row['latency'] : '') . '</td>';
     echo '<td>' . ($row['signup'] === 't' ? '&#10003;' : '') . '</td>';
     echo '<td>' . ($row['total_users'] > 0 ? $row['total_users'] : '') . '</td>';
     echo '<td>' . ($row['active_users_halfyear'] > 0 ? $row['active_users_halfyear'] : '') . '</td>';
