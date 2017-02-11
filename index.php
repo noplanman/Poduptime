@@ -105,7 +105,7 @@ $navs = [
         (adsbygoogle = window.adsbygoogle || []).push({});
       </script>
     </div>
-    <div class="main col offset-md-3 offset-lg-2">
+    <div class="main col-md-9 col-lg-10 offset-md-3 offset-lg-2">
       <a href="go.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
       <div class="row placeholders">
       </div>
