@@ -109,7 +109,6 @@ $navs = [
       <a href="go.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
       <div class="row placeholders">
       </div>
-      <div class="table-responsive">
         <?php
         if ($detailedview) {
           include_once __DIR__ . '/showfull.php';
@@ -127,7 +126,6 @@ $navs = [
           include_once __DIR__ . '/show.php';
         }
         ?>
-      </div>
     </div>
   </div>
 </div>
