@@ -20,6 +20,8 @@ else
   if [ $TIME = 6 ];then
     echo "Pulling in master versions";
     php pull-masterversions.php
+    echo "Update CA"
+    wget https://curl.haxx.se/ca/cacert.pem -O ../cacert.pem
   fi
   echo "Pulling in new pod data";
   php pull.php

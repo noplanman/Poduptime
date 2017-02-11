@@ -86,10 +86,10 @@ while ($row = pg_fetch_assoc($result)) {
   $local_posts           = $jsonssl->usage->localPosts ?? 0;
   $comment_counts        = $jsonssl->usage->localComments ?? 0;
   $service_xmpp          = ($jsonssl->metadata->xmppChat ?? false) === true;
-  $service_facebook      = false;
-  $service_twitter       = false;
-  $service_tumblr        = false;
-  $service_wordpress     = false;
+  $service_facebook      = 0;
+  $service_twitter       = 0;
+  $service_tumblr        = 0;
+  $service_wordpress     = 0;
   if (json_last_error() === 0) {
     (!$jsonssl->software->version) || $score += 1;
     $service_facebook      = in_array('facebook', $jsonssl->services->outbound, true);
