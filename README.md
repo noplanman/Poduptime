@@ -4,12 +4,13 @@ Poduptime is software to get live stats and data on listed Diaspora Pods.
 
 Dependencies:
 ```
-php7.0 php7.0-curl php7.0-pgsql php-geoip php7.0-cli php7.0-common php7.0-json php7.0-readline
+php7.0 php7.0-curl php7.0-pgsql php-geoip php7.0-cli php7.0-common php7.0-json php7.0-readline php-cgi
 git
 curl
 postgresql postgresql-contrib
 wget
 dnsutils
+bind9
 npm
 nodejs nodejs-legacy
 ```
@@ -42,10 +43,11 @@ psql -u podupuser podupdb < db/tables.sql
 Edit `config.php` to add your DB and file settings.
 touch add.log in location you configured in config.php
 
+run db/pull.sh manually or with cron to update your data
 
 ============================
 
-Source for https://podupti.me
+Source for Diaspora Pod Uptime
 
   Poduptime is software to get live stats and data on listed Diaspora Pods.
   Copyright (C) 2011 David Morley

@@ -1,6 +1,5 @@
 <?php
-$_GET['domain'] || die('domain not specified');
-$domain = $_GET['domain'];
+($_domain = $_GET['domain'] ?? null) || die('domain not specified');
 ?>
 <html>
 <head>
@@ -23,7 +22,7 @@ $domain = $_GET['domain'];
         $('#ratings').hide('slow');
       });
       $('#submitrating').click(function () {
-        var domain = '<?php echo $domain; ?>';
+        var domain = '<?php echo $_domain; ?>';
         $.ajax({
           type: 'POST',
           url: 'db/saverating.php',
@@ -57,22 +56,22 @@ $domain = $_GET['domain'];
   $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
   $dbh || die('Error in connection: ' . pg_last_error());
 
-  $sql    = "SELECT * FROM rating_comments WHERE domain = $1";
-  $result = pg_query_params($dbh, $sql, [$domain]);
+  $sql    = 'SELECT admin,username,userurl,rating,comment,date_created,id FROM rating_comments WHERE domain = $1';
+  $result = pg_query_params($dbh, $sql, [$_domain]);
   $result || die('Error in SQL query: ' . pg_last_error());
 
   $numrows = pg_num_rows($result);
-  echo '<input id="addrating" class="btn primary" style="float:right;margin-right:15px;" type="submit" value="Add a Rating"><h3>Podupti.me ratings for ' . $domain . ' pod</h3><div id="ratings"><hr>';
+  echo '<input id="addrating" class="btn primary" style="float:right;margin-right:15px;" type="submit" value="Add a Rating"><h3>Podupti.me ratings for ' . $_domain . ' pod</h3><div id="ratings"><hr>';
   if (!$numrows) {
     echo '<b>This pod has no rating yet!</b>';
   }
   while ($row = pg_fetch_array($result)) {
     if ($row['admin'] === '1') {
       echo 'Poduptime Approved Comment - User: <b>' . $row['username'] . '</b> Url: <a href="' . $row['userurl'] . '">' . $row['userurl'] . '</a> Rating: <b>' . $row['rating'] . '</b> <br>';
-      echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date'] . '</span><hr>';
-    } elseif ($row['admin'] === '0') {
+      echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date_created'] . '</span><hr>';
+    } else {
       echo 'User Comment - User: <b>' . $row['username'] . '</b> Url: <a href="' . $row['userurl'] . '">' . $row['userurl'] . '</a> Rating: <b>' . $row['rating'] . '</b> <br>';
-      echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date'] . '</span><hr style="margin-top:0;margin-bottom:15px;">';
+      echo '<i>' . $row['comment'] . '</i><span class="label" title="id: ' . $row['id'] . '" style="float:right;margin-right:115px;">' . $row['date_created'] . '</span><hr style="margin-top:0;margin-bottom:15px;">';
     }
   }
   ?>
@@ -91,5 +90,3 @@ $domain = $_GET['domain'];
   </div>
 </div>
 <?php
-pg_free_result($result);
-pg_close($dbh);

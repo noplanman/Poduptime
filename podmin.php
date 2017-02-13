@@ -1,11 +1,43 @@
 <br>
-Want your pod listed?<br>
-Its easy start monitoring on your pod with a free <a href="https://uptimerobot.com" target="_blank">Uptime Robot</a> account.<br>
-Create a monitor for your pod, then in "My Settings" create a monitor-specific API key and paste below.<br>
+Want your pod listed? Or to claim a listed pod?<br>
 <br>
-<form action="https://podupti.me/db/add.php" method="post">
-  <label>Monitor API Key: <input type="text" name="url" class="xlarge span8" placeholder="m58978-80abdb799f6ccf15e3e4ttwe"> (don't copy the period on the end)</label><br>
-  <label>Pod Domain Name: <input type="text" name="domain" class="xlarge span4" placeholder="domain.com"></label><br>
-  <label>Your Email: <input type="text" name="email" class="xlarge span4" placeholder="user@domain.com"></label><br>
-  <input type="submit" value="submit">
+<form action="db/add.php" method="get">
+
+  <div class="form-group row">
+    <label for="domain-input" class="col-2 col-form-label">Pod Domain *</label>
+    <div class="col-10">
+      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+        <div class="input-group-addon">https://</div>
+        <input type="text" id="domain-input" name="domain" class="form-control" placeholder="domain.com" aria-describedby="domain-help" aria-required="true" required>
+      </div>
+      <small id="domain-help" class="form-text text-muted">The base domain name of your pod (without trailing slash).</small>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="email-input" class="col-2 col-form-label">Your Email</label>
+    <div class="col-10">
+      <input type="email" id="email-input" name="email" class="form-control" placeholder="user@domain.com" aria-describedby="email-help">
+      <small id="email-help" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="podmin-statement-textarea">Podmin Statement</label>
+    <textarea id="podmin-statement-textarea" name="podmin_statement" class="form-control" rows="7" aria-describedby="podmin-statement-help"></textarea>
+    <small id="podmin-statement-help" class="form-text text-muted">You can include links to your terms and policies and information about your pod you wish to share with users. HTML is ok.</small>
+  </div>
+
+  <div class="form-check">
+    <label class="custom-control custom-checkbox">
+      <input type="checkbox" name="podmin_notify" class="custom-control-input _form-check-input" aria-describedby="notify-hidden-help" checked>
+      <span class="custom-control-indicator"></span>
+      <span class="custom-control-description">Notify if pod falls to hidden status</span>
+    </label>
+    <small id="notify-hidden-help" class="form-text text-muted">You will get a notification if the pod gets hidden due to a bad score.</small>
+  </div>
+
+  <br>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>

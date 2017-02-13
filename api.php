@@ -1,22 +1,27 @@
 <?php
 //Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file.
-$_GET['key'] === '4r45tg' || die;
+($_GET['key'] ?? null) === '4r45tg' || die;
+
+// Other parameters.
+$_format   = $_GET['format'] ?? '';
+$_method   = $_GET['method'] ?? '';
+$_callback = $_GET['callback'] ?? '';
 
 require_once __DIR__ . '/config.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-if ($_GET['format'] === 'georss') {
+if ($_format === 'georss') {
   echo <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss.org/georss">
 <title>Diaspora Pods</title>
-<subtitle>IP Locations of Diaspora pods on podupti.me</subtitle>
-<link href="https://podupti.me/"/>
+<subtitle>IP Locations of Diaspora pods on {$_SERVER['HTTP_HOST']}</subtitle>
+<link href="https://{$_SERVER['HTTP_HOST']}/"/>
 
 EOF;
-  $sql    = "SELECT * FROM pods WHERE hidden <> 'yes'";
+  $sql    = "SELECT name,monthsmonitored,responsetimelast7,uptimelast7,dateupdated,score,domain,country,lat,long FROM pods_apiv1";
   $result = pg_query($dbh, $sql);
   $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -32,10 +37,9 @@ EOF;
       $row['dateupdated'],
       $row['score']
     );
-    $scheme   = $row['secure'] === 'true' ? 'https://' : 'http://';
     echo <<<EOF
 <entry>
-  <title>{$scheme}{$row['domain']}</title>
+  <title>https://{$row['domain']}</title>
   <link href="{$scheme}{$row['domain']}"/>
   <id>urn:{$row['domain']}</id>
   <summary>Pod Location is: {$row['country']}
@@ -48,8 +52,8 @@ EOF;
 EOF;
   }
   echo '</feed>';
-} elseif ($_GET['format'] === 'json') {
-  $sql    = 'SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,pingdomurl,monthsmonitored,uptimelast7,responsetimelast7,local_posts,comment_counts,dateCreated,dateUpdated,dateLaststats,hidden FROM pods';
+} elseif ($_format === 'json') {
+  $sql    = 'SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,pingdomurl,monthsmonitored,uptimelast7,responsetimelast7,local_posts,comment_counts,dateCreated,dateUpdated,dateLaststats,hidden FROM pods_apiv1';
   $result = pg_query($dbh, $sql);
   $result || die('Error in SQL query: ' . pg_last_error());
 
@@ -62,22 +66,19 @@ EOF;
     'podcount' => $numrows,
     'pods'     => $rows,
   ];
-  if ($_GET['method'] === 'jsonp') {
-    print $_GET['callback'] . '(' . json_encode($obj) . ')';
+  if ($_method === 'jsonp') {
+    print $_callback . '(' . json_encode($obj) . ')';
   } else {
     print json_encode($obj);
   }
 } else {
   $i      = 0;
-  $sql    = "SELECT * FROM pods WHERE hidden <> 'yes' ORDER BY uptimelast7 DESC";
+  $sql    = "SELECT domain,uptimelast7,country FROM pods_apiv1";
   $result = pg_query($dbh, $sql);
   $result || die('Error in SQL query: ' . pg_last_error());
 
   $numrows = pg_num_rows($result);
   while ($row = pg_fetch_array($result)) {
-//    $status = $row['status'] === 'up' ? 'Online' : 'Offline';
-//    $scheme = $row['secure'] === 'true' ? 'https://' : 'http://';
-//    $class  = $row['secure'] === 'true' ? 'green' : 'red';
 
     $i++ > 0 && print ',';
     printf(
@@ -87,7 +88,4 @@ EOF;
       $row['country']
     );
   }
-
-  pg_free_result($result);
-  pg_close($dbh);
 }

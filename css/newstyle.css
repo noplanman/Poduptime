@@ -1,18 +1,8 @@
-.db-wrapper {
-vertical-align: top;
-}
 .rating {
 font-size:9px;
 }
-.content {
-margin-left: 2px !important;
-width: 99%;
-}
 .tfont {
 font-size:12px;
-}
-#results {
-width: 750px;
 }
 .smlogo {
 width: 16px;
@@ -39,10 +29,6 @@ background: none;
 .smlogo-xmpp img {
 vertical-align: unset;
 }
-.morehover {
-display: inline-block;
-vertical-align: super;
-}
 #map { height: 580px; }
 .mycluster {
 width: 35px;
@@ -56,4 +42,12 @@ background-size: 25px 37px;
 .icon {
 color: red;
 }
-
+table { 
+empty-cells: show; 
+}
+#facebox {
+z-index: 1000 !important;
+}
+#facebox .content {
+width: 800px !important;
+}
