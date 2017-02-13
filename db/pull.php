@@ -79,7 +79,7 @@ while ($row = pg_fetch_assoc($result)) {
   $shortversion          = $dverr[0];
   $signup                = ($jsonssl->openRegistrations ?? false) === true;
   $softwarename          = $jsonssl->software->name ?? 'unknown';
-  $name                  = $jsonssl->metadata->nodeName ?? 'null';
+  $name                  = $jsonssl->metadata->nodeName ?? $softwarename;
   $total_users           = $jsonssl->usage->users->total ?? 0;
   $active_users_halfyear = $jsonssl->usage->users->activeHalfyear ?? 0;
   $active_users_monthly  = $jsonssl->usage->users->activeMonth ?? 0;
@@ -120,7 +120,7 @@ while ($row = pg_fetch_assoc($result)) {
 
   $iplookupv4 = [];
   $ip         = '';
-  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain), $iplookupv4);
+  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain . ' 2>&1'), $iplookupv4);
   $dnssec   = in_array('; fully validated', $iplookupv4, true) ?? false;
   $getaonly = array_values(preg_grep('/\s+IN\s+A\s+.*/', $iplookupv4));
   if ($getaonly) {
@@ -129,7 +129,7 @@ while ($row = pg_fetch_assoc($result)) {
   }
   $iplookupv6 = [];
   $ipv6 = null;
-  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain . ' AAAA '), $iplookupv6);
+  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain . ' AAAA 2>&1'), $iplookupv6);
   $getaaaaonly = array_values(preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6));
   if ($getaaaaonly) {
     preg_match('/AAAA\s(.*)/', $getaaaaonly[0], $aaaaversion);

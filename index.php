@@ -9,7 +9,7 @@ $podminedit   = isset($_GET['podminedit']);
 $simpleview   = !($detailedview || $mapview || $cleanup || $podmin || $podminedit || $statsview);
 ?>
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Open Source Social Network Pod Uptime Status</title>
@@ -98,12 +98,6 @@ $navs = [
       <p>
         <small>Data refreshed: <br><?php echo date('M d y H:i', filemtime($lastfile)); ?> EST</small>
       </p>
-      <br>
-      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3662181805557062" data-ad-slot="2195215834" data-ad-format="auto"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
     </div>
     <div class="main col-md-9 col-lg-10 offset-md-3 offset-lg-2">
       <a href="go.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>

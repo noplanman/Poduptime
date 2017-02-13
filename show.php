@@ -37,9 +37,7 @@ $numrows = pg_num_rows($result);
     $verdiff  = str_replace('.', '', $row['masterversion']) - str_replace('.', '', $row['shortversion']);
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
     $tip      = sprintf(
-      'This %1$s pod %2$s has been watched for %3$s months and with an uptime of %4$s%% this month. On a scale of 100 this pod is a %5$s right now',
-      $row['softwarename'],
-      $pod_name,
+      'Uptime %2$s%% over %1$s months, score is %3$s out of 100.',
       $row['monthsmonitored'],
       $row['uptime_alltime'],
       $row['score']

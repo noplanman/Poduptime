@@ -34,7 +34,7 @@ $numrows = pg_num_rows($result);
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 1 month on this pod.">Active 1m</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total posts on this pod.">Posts</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total comments on this pod.">Comments</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="How many months has this pod been online? Click number for more history.">Months</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="How many months has this pod been online.">Months</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="User rating for this pod.">Rating</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="System Score on a 100 point scale.">Score</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this domain use DNSSEC.">DNSSEC</a></th>
@@ -47,8 +47,7 @@ $numrows = pg_num_rows($result);
   <?php
   while ($row = pg_fetch_array($result)) {
     $pod_name = htmlentities($row['name'], ENT_QUOTES);
-    $tip = "\n This {$row['softwarename']} pod {$pod_name} has been watched for {$row['monthsmonitored']} months with an overall uptime of {$row['uptime_alltime']}% and a response time average today of {$row['latency']}ms was last checked on {$row['date_updated']}. ";
-    $tip .= "On a scale of 100 this pod is a {$row['score']} right now";
+    $tip = "\n Over {$row['monthsmonitored']} months uptime is {$row['uptime_alltime']}% and response time is {$row['latency']}ms, last check on {$row['date_updated']}. ";
 
     echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $row['domain'] . '">' . $row['domain'] . '</a><span class="text-success" " data-toggle="tooltip" title="This site is SSL/TLS encrypted with a cert that expires: ' . $row['sslexpire'] . '"> &#128274;</span></td>';
 
@@ -71,7 +70,7 @@ $numrows = pg_num_rows($result);
     }
     echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
     echo '<td>' . $row['softwarename'] . '</td>';
-    echo '<td>' . ($row['uptime_alltime'] > 0 ? $row['uptime_alltime'].'%' : '') . '</td>';
+    echo '<td>' . ($row['uptime_alltime'] > 0 ? $row['uptime_alltime'].'%' : '-') . '</td>';
     echo '<td>' . ($row['ipv6'] === 't' ? '&#10003;' : '') . '</td>';
     echo '<td>' . ($row['latency'] > 0 ? $row['latency'] : '') . '</td>';
     echo '<td>' . ($row['signup'] === 't' ? '&#10003;' : '') . '</td>';
