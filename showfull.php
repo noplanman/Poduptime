@@ -18,7 +18,8 @@ $numrows = pg_num_rows($result);
 
 <meta property="og:title" content="<?php echo $numrows; ?> Federated Pods listed, Come see the privacy aware social networks."/>
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
-<table id="myTable" class="table table-striped table-sm tablesorter table-hover tfont">
+<div class="table-responsive">
+<table class="table table-striped table-sm tablesorter table-hover tfont">
   <thead class="thead-inverse">
   <tr>
     <th><a data-toggle="tooltip" data-placement="bottom" title="A pod is a site for you to set up your account.">Pod</a></th>
@@ -102,3 +103,4 @@ $numrows = pg_num_rows($result);
   ?>
   </tbody>
 </table>
+</div>
