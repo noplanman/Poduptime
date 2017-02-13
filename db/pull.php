@@ -55,15 +55,15 @@ while ($row = pg_fetch_assoc($result)) {
 
   $chss = curl_init();
   curl_setopt($chss, CURLOPT_URL, 'https://' . $domain . '/nodeinfo/1.0');
-  curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 9);
-  curl_setopt($chss, CURLOPT_TIMEOUT, 9);
+  curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 10);
+  curl_setopt($chss, CURLOPT_TIMEOUT, 30);
   curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($chss, CURLOPT_CERTINFO, 1);
   curl_setopt($chss, CURLOPT_CAINFO, $cafullpath);
   $outputssl      = curl_exec($chss);
   $outputsslerror = curl_error($chss);
   $info           = curl_getinfo($chss, CURLINFO_CERTINFO);
-  $latency        = curl_getinfo($chss, CURLINFO_CONNECT_TIME);
+  $latency        = curl_getinfo($chss, CURLINFO_TOTAL_TIME);
   $sslexpire      = $info[0]['Expire date'] ?? null;
   curl_close($chss);
 
@@ -193,7 +193,8 @@ while ($row = pg_fetch_assoc($result)) {
   } elseif ($score < 0) {
     $score = 0;
   }
-  $weightedscore = ($uptime + $score + ($active_users_monthly / 19999) - ((10 - $weight) * .12));
+  $weightedscore = ($uptime + $score - (10 - $weight)) / 2;
+  _debug('Weighted Score', $weightedscore);
 
   $timenow    = date('Y-m-d H:i:s');
   $sql_set    = 'UPDATE pods SET secure = $2, hidden = $3, ip = $4, ipv6 = $5, monthsmonitored = $6, uptime_alltime = $7, status = $8, date_laststats = $9, date_updated = $10, latency = $11, score = $12, adminrating = $13, country = $14, city = $15, state = $16, lat = $17, long = $18, userrating = $19, shortversion = $20, masterversion = $21, signup = $22, total_users = $23, active_users_halfyear = $24, active_users_monthly = $25, local_posts = $26, name = $27, comment_counts = $28, service_facebook = $29, service_tumblr = $30, service_twitter = $31, service_wordpress = $32, weightedscore = $33, service_xmpp = $34, softwarename = $35, sslvalid = $36, dnssec = $37, sslexpire = $38 WHERE domain = $1';

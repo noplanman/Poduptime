@@ -16,7 +16,7 @@ require_once __DIR__ . '/../config.php';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql    = 'SELECT domain,email,token,tokenexpire,weight,podmin_statement FROM pods WHERE domain = $1';
+$sql    = 'SELECT domain,email,token,tokenexpire,weight,podmin_statement,podmin_notify FROM pods WHERE domain = $1';
 $result = pg_query_params($dbh, $sql, [$_domain]);
 $result || die('Error in SQL query: ' . pg_last_error());
 

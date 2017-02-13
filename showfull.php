@@ -8,7 +8,7 @@ $country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
 
-$sql = 'SELECT domain,dnssec,podmin_statement,sslexpire,masterversion,shortversion,softwarename,monthsmonitored,score,signup,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp,latency,date_updated,ipv6,total_users,local_posts,comment_counts,stats_apikey,userrating FROM pods pods ORDER BY uptime_alltime DESC';
+$sql = 'SELECT domain,dnssec,podmin_statement,sslexpire,masterversion,shortversion,softwarename,monthsmonitored,score,signup,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp,latency,date_updated,ipv6,total_users,local_posts,comment_counts,stats_apikey,userrating FROM pods pods ORDER BY weightedscore DESC';
 
 $result = pg_query($dbh, $sql);
 $result || die('Error in SQL query: ' . pg_last_error());
