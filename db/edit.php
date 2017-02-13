@@ -59,7 +59,7 @@ while ($row = pg_fetch_array($result)) {
     <label>Email <input type="text" size="20" name="email" value="<?php echo $row['email']; ?>"></label><br>
     <label>Podmin Statement (You can include links to your terms and policies and information about your pod you wish to share with users.) <br><textarea cols="100" rows="7" name="podmin_statement"><?php echo $row['podmin_statement']; ?></textarea></label><br>
     <label>Weight <input type="text" size="2" name="weight" value="<?php echo $row['weight']; ?>"> This lets you weight your pod lower on the list if you have too much traffic coming in, 10 is the norm use lower to move down the list.</label><br>
-    <label>Notify if pod falls to hidden status? <input type="checkbox" name="podmin_notify" <?php $row['podmin_notify'] ?? 'CHECKED' ?> ></label><br>
+    <label>Notify if pod falls to hidden status? <input type="checkbox" name="podmin_notify" <?php $row['podmin_notify'] === 't' ?? 'CHECKED' ?> ></label><br>
     <input type="submit" name="action" value="save">
   </form>
   <br>
