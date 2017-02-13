@@ -32,5 +32,5 @@ if ($_domain) {
   $result = pg_query_params($dbh, $sql, [$row[0]['domain'], '1']);
   $result || die('Error in SQL query: ' . pg_last_error());
   
-  header('Location: https://' . $row[0]['domain'] . '/users/sign_up');
+  header('Location: https://' . $row[0]['domain']);
 }
