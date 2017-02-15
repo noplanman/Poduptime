@@ -45,6 +45,14 @@ touch add.log in location you configured in config.php
 
 run db/pull.sh manually or with cron to update your data
 
+To Upgrade:
+```
+cd Poduptime
+git pull
+bower install
+psql -u podupuser podupdb < db/migrationx.sql (see db/version.md for proper migration version)
+```
+
 ============================
 
 Source for Diaspora Pod Uptime

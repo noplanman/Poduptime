@@ -27,7 +27,7 @@ $numrows = pg_num_rows($result);
     <th><a data-toggle="tooltip" data-placement="bottom" title="Type of software this pod runs">Software</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online.">Uptime</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod offer ipv6 connection.">IPv6</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Average connection latency time in ms.">Latency</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Average connection latency time in ms from Los Angeles.">Latency</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod allow new users.">Signups</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total users on this pod.">Users</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 6 months on this pod.">Active 6m</a></th>
