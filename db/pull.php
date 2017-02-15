@@ -63,13 +63,17 @@ while ($row = pg_fetch_assoc($result)) {
   $outputssl      = curl_exec($chss);
   $outputsslerror = curl_error($chss);
   $info           = curl_getinfo($chss, CURLINFO_CERTINFO);
-  $latency        = curl_getinfo($chss, CURLINFO_TOTAL_TIME);
+  $conntime       = curl_getinfo($chss, CURLINFO_CONNECT_TIME);
+  $nstime         = curl_getinfo($chss, CURLINFO_NAMELOOKUP_TIME);
+  $latency        = $conntime - $nstime;
   $sslexpire      = $info[0]['Expire date'] ?? null;
   curl_close($chss);
 
   _debug('Nodeinfo output', $outputssl, true);
   _debug('Nodeinfo output error', $outputsslerror, true);
   _debug('Cert expire date', $sslexpire);
+  _debug('Conntime', $conntime);
+  _debug('NStime', $nstime);
   _debug('Latency', $latency);
   
   $jsonssl = json_decode($outputssl);
