@@ -51,9 +51,9 @@ $numrows = pg_num_rows($result);
     echo '<td data-toggle="tooltip" data-placement="bottom" title="Pod does not share user data."></td>';
     }
     if ($country_code === $row['country']) {
-      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: ' . ($row['city'] ?? 'n/a') . ' State: ' . ($row['state'] ?? 'n/a') . '"><b>' . $row['country'] . '</b></td>';
+      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: ' . ($row['city'] ?? 'n/a') . ', State: ' . ($row['state'] ?? 'n/a') . '"><b>' . $row['country'] . '</b></td>';
     } else {
-      echo '<td data-toggle="tooltip" data-placement="bottom" title="City: ' . ($row['city'] ?? 'n/a') . ' State: ' . ($row['state'] ?? 'n/a') . '">' . $row['country'] . '</td>';
+      echo '<td data-toggle="tooltip" data-placement="bottom" title="City: ' . ($row['city'] ?? 'n/a') . ', State: ' . ($row['state'] ?? 'n/a') . '">' . $row['country'] . '</td>';
     }
     echo '<td>';
     $row['service_facebook'] === 't' && print '<div class="smlogo smlogo-facebook" title="Publish to Facebook"></div>';
@@ -61,7 +61,7 @@ $numrows = pg_num_rows($result);
     $row['service_tumblr'] === 't' && print '<div class="smlogo smlogo-tumblr" title="Publish to Tumblr"></div>';
     $row['service_wordpress'] === 't' && print '<div class="smlogo smlogo-wordpress"  title="Publish to WordPress"></div>';
     $row['service_xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div></td>';
-    echo '<td>' . ($row['podmin_statement'] ? '<a tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="left" title="Podmin Statement" data-html="true" data-content="' . htmlentities($row['podmin_statement'], ENT_QUOTES) . '">&#8505;</a>' : '&nbsp;') . '</td></tr>';
+    echo '<td>' . ($row['podmin_statement'] ? '<a tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="left" title="Podmin Statement" data-html="true" data-content="' . htmlentities($row['podmin_statement'], ENT_QUOTES) . '">&#128172;</a>' : '&nbsp;') . '</td></tr>';
   }
   ?>
   </tbody>

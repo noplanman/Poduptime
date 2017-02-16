@@ -34,7 +34,7 @@ $numrows = pg_num_rows($result);
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 1 month on this pod.">Active 1m</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total posts on this pod.">Posts</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total comments on this pod.">Comments</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="How many months has this pod been online.">Months</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="How many months have we been watching this pod.">Months</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="User rating for this pod.">Rating</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="System Score on a 100 point scale.">Score</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this domain use DNSSEC.">DNSSEC</a></th>
@@ -98,7 +98,7 @@ $numrows = pg_num_rows($result);
     $row['service_xmpp'] === 't' && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
     echo '</td>';
     
-    echo '<td>' . ($row['podmin_statement'] ? '<a tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="left" title="Podmin Statement" data-html="true" data-content="' . htmlentities($row['podmin_statement'], ENT_QUOTES) . '">&#8505;</a>' : '&nbsp;') . '</td></tr>';
+    echo '<td>' . ($row['podmin_statement'] ? '<a tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="left" title="Podmin Statement" data-html="true" data-content="' . htmlentities($row['podmin_statement'], ENT_QUOTES) . '">&#128172;</a>' : '&nbsp;') . '</td></tr>';
   }
   ?>
   </tbody>

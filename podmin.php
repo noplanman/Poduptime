@@ -25,7 +25,7 @@ Want your pod listed? Or to claim a listed pod?<br>
   <div class="form-group">
     <label for="podmin-statement-textarea">Podmin Statement</label>
     <textarea id="podmin-statement-textarea" name="podmin_statement" class="form-control" rows="7" aria-describedby="podmin-statement-help"></textarea>
-    <small id="podmin-statement-help" class="form-text text-muted">You can include links to your terms and policies and information about your pod you wish to share with users. HTML is ok.</small>
+    <small id="podmin-statement-help" class="form-text text-muted">You can use HTML to include links to your terms and policies and information about your pod you wish to share with users.</small>
   </div>
 
   <div class="form-check">
