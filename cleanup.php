@@ -14,7 +14,7 @@ $numrows = pg_num_rows($result);
 <meta charset="utf-8">
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
 <div class="table-responsive">
-<table class="table table-striped table-sm tablesorter table-hover tfont">
+<table class="table table-striped table-sm tablesorter-bootstrap table-hover tfont">
   <thead>
   <tr>
     <th>Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>

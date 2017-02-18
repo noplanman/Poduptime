@@ -1,3 +1,46 @@
+body {
+  padding-top: 54px;
+}
+.sub-header {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+.sidebar {
+  background-color: #f5f5f5;
+  border-right: 1px solid #eee;
+  bottom: 0;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  padding: 10px;
+  position: fixed;
+  top: 54px;
+  z-index: 1000;
+}
+.sidebar .nav {
+  margin-bottom: 20px;
+}
+.sidebar .nav .nav-link {
+  padding: .3em .7em;
+}
+.main {
+  padding: 20px;
+}
+
+.placeholders {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.placeholders h4 {
+  margin-bottom: 0;
+}
+.placeholder {
+  margin-bottom: 20px;
+}
+.placeholder img {
+  border-radius: 50%;
+  display: inline-block;
+}
 .rating {
 font-size:9px;
 }
@@ -51,3 +94,7 @@ z-index: 1000 !important;
 #facebox .content {
 width: 800px !important;
 }
+.tablesorter-header {
+background-size: 10px 15px !important;
+}
+

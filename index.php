@@ -16,10 +16,10 @@ $simpleview   = !($detailedview || $mapview || $cleanup || $podmin || $podminedi
   <meta name="keywords" content="diaspora, federated pods, <?php echo $_SERVER['HTTP_HOST'] ?>, friendica, hubzilla, open source social, open source social network"/>
   <meta name="description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!"/>
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/newstyle.css"/>
+  <link rel="stylesheet" href="css/poduptime.css"/>
   <link rel="stylesheet" href="bower_components/facebox/src/facebox.css"/>
-  <link rel="stylesheet" href="css/dashboard.css"/>
   <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.min.css"/>
+  <link rel="stylesheet" href="bower_components/tablesorter/dist/css/theme.bootstrap_4.min.css"/>
   <meta property="og:url" content="https://<?php echo $_SERVER['HTTP_HOST'] ?>"/>
   <meta property="og:title" content="Social Network Pod Finder"/>
   <meta property="og:type" content="website"/>
