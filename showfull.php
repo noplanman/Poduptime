@@ -70,7 +70,7 @@ $numrows = pg_num_rows($result);
     }
     echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
     echo '<td>' . $row['softwarename'] . '</td>';
-    echo '<td>' . ($row['uptime_alltime'] > 0 ? $row['uptime_alltime'].'%' : '-') . '</td>';
+    echo '<td><a rel="facebox" href="podstat.php?domain=' . $row['domain'] . '">' . ($row['uptime_alltime'] > 0 ? $row['uptime_alltime'].'%' : '') . '</a></td>';
     echo '<td>' . ($row['ipv6'] === 't' ? '&#10003;' : '') . '</td>';
     echo '<td>' . ($row['latency'] > 0 ? $row['latency'] : '') . '</td>';
     echo '<td>' . ($row['signup'] === 't' ? '&#10003;' : '') . '</td>';
@@ -79,7 +79,6 @@ $numrows = pg_num_rows($result);
     echo '<td>' . ($row['active_users_monthly'] > 0 ? $row['active_users_monthly'] : '') . '</td>';
     echo '<td>' . ($row['local_posts'] > 0 ? $row['local_posts'] : '') . '</td>';
     echo '<td>' . ($row['comment_counts'] > 0 ? $row['comment_counts'] : '') . '</td>';
-    $moreurl = '/showstats.php?domain=' . $row['domain'];
     echo '<td><div title="Last Check ' . $row['date_updated'] . '" data-toggle="tooltip" data-placement="bottom">' . $row['monthsmonitored'] . '</div></td>';
     echo '<td><a rel="facebox" href="rate.php?domain=' . $row['domain'] . '">' . $row['userrating'];
     echo '</a></td>';

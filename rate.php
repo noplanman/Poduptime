@@ -49,7 +49,7 @@
   </script>
 </head>
 <body>
-<div style="height:500px;width:900px;">
+<div>
   <?php
   require_once __DIR__ . '/config.php';
 

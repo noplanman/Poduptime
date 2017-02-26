@@ -12,4 +12,3 @@ $.facebox.settings.loadingImage = 'bower_components/facebox/src/loading.gif'
   })
 });
 
-
