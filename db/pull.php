@@ -7,6 +7,7 @@ $newline = PHP_SAPI === 'cli' ? "\n" : '<br>';
 $_domain = $_GET['domain'] ?? '';
 
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
 $dbh || die('Error in connection: ' . pg_last_error());
@@ -122,22 +123,24 @@ while ($row = pg_fetch_assoc($result)) {
   _debug('Version code', $shortversion);
   _debug('Signup Open', $signup);
 
-  $iplookupv4 = [];
+  $delv = new NPM\Xec\Command("delv @{$dnsserver} {$domain}");
+  $delv->throwExceptionOnError(false);
+
   $ip         = '';
-  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain . ' 2>&1'), $iplookupv4);
-  $dnssec   = in_array('; fully validated', $iplookupv4, true) ?? false;
-  $getaonly = array_values(preg_grep('/\s+IN\s+A\s+.*/', $iplookupv4));
+  $iplookupv4 = explode(PHP_EOL, trim($delv->execute([], null, 15)->stdout));
+  $dnssec     = in_array('; fully validated', $iplookupv4, true) ?? false;
+  $getaonly   = array_values(preg_grep('/\s+IN\s+A\s+.*/', $iplookupv4));
   if ($getaonly) {
     preg_match('/A\s(.*)/', $getaonly[0], $aversion);
     $ip = trim($aversion[1]) ?? '';
   }
-  $iplookupv6 = [];
-  $ipv6 = null;
-  exec(escapeshellcmd('delv @' . $dnsserver . ' ' . $domain . ' AAAA 2>&1'), $iplookupv6);
+
+  $ipv6        = false;
+  $iplookupv6  = explode(PHP_EOL, trim($delv->execute(['AAAA'], null, 15)->stdout));
   $getaaaaonly = array_values(preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6));
   if ($getaaaaonly) {
     preg_match('/AAAA\s(.*)/', $getaaaaonly[0], $aaaaversion);
-    $ipv6   = trim($aaaaversion[1]) ?? '';
+    $ipv6 = trim($aaaaversion[1]) ?? '';
   }
   $ip || $score -= 2;
 
