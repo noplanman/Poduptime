@@ -1,7 +1,14 @@
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
 <?php
+
+use RedBeanPHP\R;
+
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../logging.php';
 require_once __DIR__ . '/../config.php';
+
+define('PODUPTIME', microtime(true));
+
 $log = new Logging();
 $log->lfile(__DIR__ . '/../' . $log_dir . '/add.log');
 if (!($_domain = $_GET['domain'] ?? null)) {
@@ -9,6 +16,7 @@ if (!($_domain = $_GET['domain'] ?? null)) {
   die('no pod domain given');
 }
 
+// Other parameters.
 $_email            = $_GET['email'] ?? '';
 $_podmin_statement = $_GET['podmin_statement'] ?? '';
 $_podmin_notify    = $_GET['podmin_notify'] ?? 0;
@@ -18,29 +26,41 @@ if (!filter_var(gethostbyname($_domain), FILTER_VALIDATE_IP)) {
   die('Could not validate the domain name, be sure to enter it as "domain.com" (no caps, no slashes, no extras)');
 }
 
-$dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-$dbh || die('Error in connection: ' . pg_last_error());
+// Set up global DB connection.
+R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
+R::testConnection() || die('Error in DB connection');
 
-$sql    = 'SELECT domain, stats_apikey, publickey, email FROM pods';
-$result = pg_query($dbh, $sql);
-$result || die('Error in SQL query: ' . pg_last_error());
+try {
+  $pods = R::getAll('
+    SELECT id, domain, stats_apikey, publickey, email
+    FROM pods
+  ');
+} catch (\RedBeanPHP\RedException $e) {
+  die('Error in SQL query: ' . $e->getMessage());
+}
 
-while ($row = pg_fetch_array($result)) {
-  if ($row['domain'] === $_domain ) {
-    if ($row['email']) {
+foreach ($pods as $pod) {
+  if ($pod['domain'] === $_domain) {
+    if ($pod['email']) {
       $log->lwrite('domain already exists and is registered to an owner' . $_domain);
       die('domain already exists and is registered to an owner, use the edit function to modify');
     }
 
     $digtxt = exec(escapeshellcmd('dig ' . $_domain . ' TXT +short'));
-    if (strpos($digtxt, $row['publickey']) !== false) {
-      echo 'domain validated, you can now add details '; 
-      $uuid     = md5(uniqid($_domain, true));
-      $expire   = time() + 2700;
-      $sql      = 'UPDATE pods SET token = $1, tokenexpire = $2 WHERE domain = $3';
-      $result   = pg_query_params($dbh, $sql, [$uuid, date('Y-m-d H:i:s', $expire), $_domain]);
-      $result   || die('Error in SQL query: ' . pg_last_error());
-      
+    if (strpos($digtxt, $pod['publickey']) !== false) {
+      echo 'domain validated, you can now add details ';
+      $uuid   = md5(uniqid($_domain, true));
+      $expire = time() + 2700;
+
+      try {
+        $p                = R::findOne('pods', $pod['id']);
+        $p['token']       = $uuid;
+        $p['tokenexpire'] = date('Y-m-d H:i:s', $expire);
+        R::store($p);
+      } catch (\RedBeanPHP\RedException $e) {
+        die('Error in SQL query: ' . $e->getMessage());
+      }
+
       echo <<<EOF
       <form action="edit.php" method="get">
       <input type="hidden" name="domain" value="{$_domain}">
@@ -51,11 +71,11 @@ while ($row = pg_fetch_array($result)) {
       <input type="submit" name="action" value="save">
       </form>
 EOF;
-      
+
       die;
     } else {
       $log->lwrite('domain already exists and can be registered' . $_domain);
-      die('domain already exists, you can claim the domain by adding a DNS TXT record that states<br><b> ' . $_domain . ' IN TXT "' . $row['publickey'] . '"</b>');
+      die('domain already exists, you can claim the domain by adding a DNS TXT record that states<br><b> ' . $_domain . ' IN TXT "' . $pod['publickey'] . '"</b>');
     }
   }
 }
@@ -74,10 +94,19 @@ if (stristr($outputssl, 'openRegistrations')) {
   $log->lwrite('Your pod has ssl and is valid ' . $_domain);
   echo 'Your pod has ssl and is valid<br>';
 
-  $publickey = md5(uniqid($domain, true));
-  $sql    = 'INSERT INTO pods (domain, email, podmin_statement, podmin_notify, publickey) VALUES ($1, $2, $3, $4, $5)';
-  $result = pg_query_params($dbh, $sql, [$_domain, $_email, $_podmin_statement, $_podmin_notify, $publickey]);
-  $result || die('Error in SQL query: ' . pg_last_error());
+  $publickey = md5(uniqid($_domain, true));
+
+  try {
+    $p                     = R::dispense('pods');
+    $p['domain']           = $_domain;
+    $p['email']            = $_email;
+    $p['podmin_statement'] = $_podmin_statement;
+    $p['podmin_notify']    = $_podmin_notify;
+    $p['publickey']        = $publickey;
+    R::store($p);
+  } catch (\RedBeanPHP\RedException $e) {
+    die('Error in SQL query: ' . $e->getMessage());
+  }
 
   if ($_email) {
     $to      = $adminemail;
@@ -94,7 +123,7 @@ if (stristr($outputssl, 'openRegistrations')) {
 
     @mail($to, $subject, implode("\r\n", $message_lines), implode("\r\n", $headers));
   }
-  
+
   echo 'Data successfully inserted! Your pod will be reviewed and live on the list in a few hours!';
 
 } else {

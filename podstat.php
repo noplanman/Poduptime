@@ -1,13 +1,20 @@
 <?php
 
-require_once __DIR__ . '/config.php';
+use RedBeanPHP\R;
 
-$dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-$dbh || die('Error in connection: ' . pg_last_error());
-
+// Required parameters.
 ($_domain = $_GET['domain'] ?? null) || die('no domain given');
 
-$sql    = "
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config.php';
+
+define('PODUPTIME', microtime(true));
+
+// Set up global DB connection.
+R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
+R::testConnection() || die('Error in DB connection');
+
+$sql = "
   SELECT
     to_char(date_checked, 'yyyy MM') AS yymm,
     count(*) AS total_checks,
@@ -28,21 +35,24 @@ $sql    = "
       AND EXTRACT(MONTH FROM checks.date_checked) = EXTRACT(MONTH FROM clicks.date_clicked)
       AND EXTRACT(YEAR FROM checks.date_checked) = EXTRACT(YEAR FROM clicks.date_clicked)
   ) AS fpp ON TRUE
-  WHERE domain = $1
+  WHERE domain = ?
   GROUP BY yymm, fpp.manualclicks, fpp.autoclicks
   ORDER BY yymm
   LIMIT 24
 ";
-$result = pg_query_params($dbh, $sql, [$_domain]);
-$result || die('Error in SQL query: ' . pg_last_error());
-$totals = pg_fetch_all($result);
+
+try {
+  $totals = R::getAll($sql, [$_domain]);
+} catch (\RedBeanPHP\RedException $e) {
+  die('Error in SQL query: ' . $e->getMessage());
+}
 ?>
 <canvas id="pod_chart_responses"></canvas>
 <canvas id="pod_chart_counts"></canvas>
 <script>
   /**
    * Add a new chart for the passed data.
-   * 
+   *
    * @param id   HTML element ID to place the chart.
    * @param data Data to display on the chart.
    */

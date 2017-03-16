@@ -1,4 +1,19 @@
 <?php
+
+use RedBeanPHP\R;
+
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config.php';
+
+define('PODUPTIME', microtime(true));
+
+// Set up global DB connection.
+R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
+R::testConnection() || die('Error in DB connection');
+
+// CloudFlare country code pull.
+$country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
+
 $lastfile     = 'db/last.data';
 $detailedview = isset($_GET['detailedview']);
 $mapview      = isset($_GET['mapview']);

@@ -1,5 +1,8 @@
 <?php
 //Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file.
+
+use RedBeanPHP\R;
+
 ($_GET['key'] ?? null) === '4r45tg' || die;
 
 // Other parameters.
@@ -7,10 +10,14 @@ $_format   = $_GET['format'] ?? '';
 $_method   = $_GET['method'] ?? '';
 $_callback = $_GET['callback'] ?? '';
 
+require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
-$dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-$dbh || die('Error in connection: ' . pg_last_error());
+define('PODUPTIME', microtime(true));
+
+// Set up global DB connection.
+R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
+R::testConnection() || die('Error in DB connection');
 
 if ($_format === 'georss') {
   echo <<<EOF
@@ -21,50 +28,58 @@ if ($_format === 'georss') {
 <link href="https://{$_SERVER['HTTP_HOST']}/"/>
 
 EOF;
-  $sql    = "SELECT name,monthsmonitored,responsetimelast7,uptimelast7,dateupdated,score,domain,country,lat,long FROM pods_apiv1";
-  $result = pg_query($dbh, $sql);
-  $result || die('Error in SQL query: ' . pg_last_error());
 
-  $numrows = pg_num_rows($result);
-  while ($row = pg_fetch_array($result)) {
-    $pod_name = htmlentities($row['name'], ENT_QUOTES);
-    $summary  = sprintf(
+  try {
+    $pods = R::getAll('
+      SELECT name, monthsmonitored, responsetimelast7, uptimelast7, dateupdated, score, domain, country, lat, long
+      FROM pods_apiv1
+    ');
+  } catch (\RedBeanPHP\RedException $e) {
+    die('Error in SQL query: ' . $e->getMessage());
+  }
+
+  foreach ($pods as $pod) {
+    $summary = sprintf(
       'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of 100 this pod is a %6$s right now',
-      $pod_name,
-      $row['monthsmonitored'],
-      $row['responsetimelast7'],
-      $row['uptimelast7'],
-      $row['dateupdated'],
-      $row['score']
+      htmlentities($pod['name'], ENT_QUOTES),
+      $pod['monthsmonitored'],
+      $pod['responsetimelast7'],
+      $pod['uptimelast7'],
+      $pod['dateupdated'],
+      $pod['score']
     );
     echo <<<EOF
 <entry>
-  <title>https://{$row['domain']}</title>
-  <link href="{$scheme}{$row['domain']}"/>
-  <id>urn:{$row['domain']}</id>
-  <summary>Pod Location is: {$row['country']}
+  <title>https://{$pod['domain']}</title>
+  <link href="https://{$pod['domain']}"/>
+  <id>urn:{$pod['domain']}</id>
+  <summary>Pod Location is: {$pod['country']}
 	&#xA;
 {$summary}</summary>
-  <georss:point>{$row['lat']} {$row['long']}</georss:point>
-  <georss:featureName>{$row['domain']}</georss:featureName>
+  <georss:point>{$pod['lat']} {$pod['long']}</georss:point>
+  <georss:featureName>{$pod['domain']}</georss:featureName>
 </entry>
 
 EOF;
   }
   echo '</feed>';
 } elseif ($_format === 'json') {
-  $sql    = 'SELECT id,domain,status,secure,score,userrating,adminrating,city,state,country,lat,long,ip,ipv6,pingdomurl,monthsmonitored,uptimelast7,responsetimelast7,local_posts,comment_counts,dateCreated,dateUpdated,dateLaststats,hidden FROM pods_apiv1';
-  $result = pg_query($dbh, $sql);
-  $result || die('Error in SQL query: ' . pg_last_error());
+
+  try {
+    $pods = R::getAll('
+      SELECT id, domain, status, secure, score, userrating, adminrating, city, state, country, lat, long, ip, ipv6, pingdomurl, monthsmonitored, uptimelast7, responsetimelast7, local_posts, comment_counts, dateCreated, dateUpdated, dateLaststats, hidden
+      FROM pods_apiv1
+    ');
+  } catch (\RedBeanPHP\RedException $e) {
+    die('Error in SQL query: ' . $e->getMessage());
+  }
 
   //json output, thx Vipul A M for fixing this
   header('Content-type: application/json');
 
-  $numrows = pg_num_rows($result);
-  $rows    = array_values(pg_fetch_all($result));
-  $obj     = [
-    'podcount' => $numrows,
-    'pods'     => $rows,
+  $obj = [
+    'podcount' => count($pods),
+    'pods'     => allToString($pods),
   ];
   if ($_method === 'jsonp') {
     print $_callback . '(' . json_encode($obj) . ')';
@@ -72,20 +87,51 @@ EOF;
     print json_encode($obj);
   }
 } else {
-  $i      = 0;
-  $sql    = "SELECT domain,uptimelast7,country FROM pods_apiv1";
-  $result = pg_query($dbh, $sql);
-  $result || die('Error in SQL query: ' . pg_last_error());
+  try {
+    $pods = R::getAll('
+      SELECT domain, uptimelast7, country
+      FROM pods_apiv1
+    ');
+  } catch (\RedBeanPHP\RedException $e) {
+    die('Error in SQL query: ' . $e->getMessage());
+  }
 
-  $numrows = pg_num_rows($result);
-  while ($row = pg_fetch_array($result)) {
-
+  $i = 0;
+  foreach ($pods as $pod) {
     $i++ > 0 && print ',';
     printf(
       '%1$s Up %2$s%% This Month - Located in: %3$s',
-      $row['domain'],
-      $row['uptimelast7'],
-      $row['country']
+      $pod['domain'],
+      $pod['uptimelast7'],
+      $pod['country']
     );
   }
+}
+
+/**
+ * Convert all passed items to strings.
+ *
+ * This method is for backwards compatibility of APIv1 only!
+ * After v2 is released and stable, this can safely be removed.
+ *
+ * @param array $arr List of all elements to stringify.
+ *
+ * @return array
+ */
+function allToString(array $arr)
+{
+  $ret = $arr;
+  foreach ($ret as &$item) {
+    if (is_array($item)) {
+      /** @var array $item */
+      foreach ($item as &$field) {
+        $field !== null && $field = (string) $field;
+      }
+    } else {
+      $item !== null && $item = (string) $item;
+    }
+    unset($field, $item);
+  }
+
+  return $ret;
 }

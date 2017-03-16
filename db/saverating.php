@@ -1,5 +1,7 @@
 <?php
 
+use RedBeanPHP\R;
+
 // Required parameters.
 ($_username = $_POST['username'] ?? null) || die('no username given');
 ($_userurl = $_POST['userurl'] ?? null) || die('no userurl given');
@@ -10,14 +12,26 @@
 // Other parameters.
 $_email = $_POST['email'] ?? '';
 
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../config.php';
 
-$dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-$dbh || die('Error in connection: ' . pg_last_error());
+define('PODUPTIME', microtime(true));
 
-$sql    = 'INSERT INTO rating_comments (domain, comment, rating, username, userurl) VALUES($1, $2, $3, $4, $5)';
-$result = pg_query_params($dbh, $sql, [$_domain, $_comment, $_rating, $_username, $_userurl]);
-$result || die('Error in SQL query: ' . pg_last_error());
+// Set up global DB connection.
+R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
+R::testConnection() || die('Error in DB connection');
+
+try {
+  $r             = R::dispense('rating_comments');
+  $r['domain']   = $_domain;
+  $r['comment']  = $_comment;
+  $r['rating']   = $_rating;
+  $r['username'] = $_username;
+  $r['userurl']  = $_userurl;
+  R::store($r);
+} catch (\RedBeanPHP\RedException $e) {
+  die('Error in SQL query: ' . $e->getMessage());
+}
 
 $to      = $adminemail;
 $headers = ['From: ' . $_email];
