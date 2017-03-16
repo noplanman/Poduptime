@@ -56,6 +56,12 @@ foreach ($pods as $pod) {
         $p                = R::findOne('pods', $pod['id']);
         $p['token']       = $uuid;
         $p['tokenexpire'] = date('Y-m-d H:i:s', $expire);
+
+        // @todo Temporary fix! https://github.com/gabordemooij/redbean/issues/547
+        foreach ($p->getProperties() as $key => $value) {
+          $pod[$key] = $value;
+        }
+
         R::store($p);
       } catch (\RedBeanPHP\RedException $e) {
         die('Error in SQL query: ' . $e->getMessage());
@@ -103,6 +109,12 @@ if (stristr($outputssl, 'openRegistrations')) {
     $p['podmin_statement'] = $_podmin_statement;
     $p['podmin_notify']    = $_podmin_notify;
     $p['publickey']        = $publickey;
+
+    // @todo Temporary fix! https://github.com/gabordemooij/redbean/issues/547
+    foreach ($p->getProperties() as $key => $value) {
+      $pod[$key] = $value;
+    }
+
     R::store($p);
   } catch (\RedBeanPHP\RedException $e) {
     die('Error in SQL query: ' . $e->getMessage());

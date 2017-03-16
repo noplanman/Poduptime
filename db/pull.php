@@ -287,10 +287,11 @@ foreach ($pods as $pod) {
     $p['sslvalid']              = $outputsslerror;
     $p['dnssec']                = $dnssec;
     $p['sslexpire']             = $sslexpire;
-
-    // This is a silly fix which is necessary due to:
-    // https://github.com/gabordemooij/redbean/issues/547
-    $p['podmin_notify'] = $p['podmin_notify'];
+    
+    // @todo Temporary fix! https://github.com/gabordemooij/redbean/issues/547
+    foreach ($p->getProperties() as $key => $value) {
+      $pod[$key] = $value;
+    }
 
     R::store($p);
   } catch (\RedBeanPHP\RedException $e) {

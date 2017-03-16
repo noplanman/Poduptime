@@ -48,6 +48,12 @@ if ('save' === $_action) {
     $pod['weight']           = $_weight;
     $pod['podmin_statement'] = $_podmin_statement;
     $pod['podmin_notify']    = $_podmin_notify;
+
+    // @todo Temporary fix for RedBean property handling, hope this gets fixed soon!
+    foreach ($pod->getProperties() as $key => $value) {
+      $pod[$key] = $value;
+    }
+
     R::store($pod);
   } catch (\RedBeanPHP\RedException $e) {
     die('Error in SQL query: ' . $e->getMessage());

@@ -52,6 +52,12 @@ if ($_email) {
 try {
   $pod['token']       = $uuid;
   $pod['tokenexpire'] = date('Y-m-d H:i:s', $expire);
+
+  // @todo Temporary fix! https://github.com/gabordemooij/redbean/issues/547
+  foreach ($pod->getProperties() as $key => $value) {
+    $pod[$key] = $value;
+  }
+
   R::store($pod);
 } catch (\RedBeanPHP\RedException $e) {
   die('Error in SQL query: ' . $e->getMessage());
