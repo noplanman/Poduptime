@@ -139,11 +139,11 @@ $navs = [
   </div>
 </div>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/tablesorter/dist/js/jquery.tablesorter.min.js"></script>
+<script src="js/podup.js"></script>
 <script src="bower_components/tether/dist/js/tether.min.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="js/podup.js"></script>
 <script src="bower_components/facebox/src/facebox.js"></script>
-<script src="bower_components/tablesorter/dist/js/jquery.tablesorter.min.js"></script>
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
 <script src="bower_components/chart.js/dist/Chart.min.js"></script>
 <?php $statsview && include_once __DIR__ . '/statsviewjs.php'; ?>

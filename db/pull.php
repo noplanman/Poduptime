@@ -245,6 +245,7 @@ foreach ($pods as $pod) {
   } elseif ($score < 0) {
     $score = 0;
   }
+  _debug('Score', $score);
   $weightedscore = ($uptime + $score - (10 - $weight)) / 2;
   _debug('Weighted Score', $weightedscore);
 
@@ -297,8 +298,6 @@ foreach ($pods as $pod) {
   } catch (\RedBeanPHP\RedException $e) {
     die('Error in SQL query: ' . $e->getMessage());
   }
-
-  _debug('Score out of 100', $score);
 
   echo 'Success ' . $domain;
 
