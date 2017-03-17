@@ -59,6 +59,7 @@ CREATE TABLE rating_comments (
  date_created timestamp DEFAULT current_timestamp
 );
 CREATE TABLE apikeys (
+ id serial8 UNIQUE PRIMARY KEY,
  key text,
  email text,
  usage int,
@@ -66,6 +67,7 @@ CREATE TABLE apikeys (
 );
 
 CREATE TABLE clicks (
+ id serial8 UNIQUE PRIMARY KEY,
  domain text,
  manualclick int,
  autoclick int,
@@ -73,6 +75,7 @@ CREATE TABLE clicks (
 );
 
 CREATE TABLE checks (
+ id serial8 UNIQUE PRIMARY KEY,
  domain text,
  online boolean,
  error text,
@@ -85,8 +88,8 @@ CREATE TABLE checks (
 );
 
 CREATE TABLE masterversions (
+ id serial8 UNIQUE PRIMARY KEY,
  software text,
  version text,
  date_checked timestamp DEFAULT current_timestamp
 );
-

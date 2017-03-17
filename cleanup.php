@@ -1,20 +1,26 @@
 <?php
-require_once __DIR__ . '/config.php';
 
-$dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-$dbh || die('Error in connection: ' . pg_last_error());
+use RedBeanPHP\R;
 
-$sql    = "SELECT domain,masterversion,shortversion,softwarename,monthsmonitored,score,signup,secure,name,country,city,state,lat,long,uptime_alltime,active_users_halfyear,active_users_monthly,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp,latency,date_updated,ipv6,total_users,local_posts,comment_counts,stats_apikey,userrating,sslvalid FROM pods WHERE score < 50 ORDER BY weightedscore";
-$result = pg_query($dbh, $sql);
-$result || die('Error in SQL query: ' . pg_last_error());
-$numrows = pg_num_rows($result);
+defined('PODUPTIME') || die();
+
+try {
+  $pods = R::getAll('
+    SELECT domain, masterversion, shortversion, monthsmonitored, score, signup, name, uptime_alltime, active_users_halfyear, active_users_monthly, latency, date_updated, total_users, local_posts, comment_counts, stats_apikey, sslvalid
+    FROM pods
+    WHERE score < 50
+    ORDER BY weightedscore ASC
+  ');
+} catch (\RedBeanPHP\RedException $e) {
+  die('Error in SQL query: ' . $e->getMessage());
+}
 ?>
 
-<meta property="og:title" content="<?php echo $numrows; ?> #Diaspora Pods listed, Come see the privacy aware social network."/><?php echo $numrows; ?> pods that are open for signup now.
+<meta property="og:title" content="<?php echo count($pods); ?> #Diaspora Pods listed, Come see the privacy aware social network."/><?php echo count($pods); ?> pods that are open for signup now.
 <meta charset="utf-8">
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
 <div class="table-responsive">
-<table class="table table-striped table-sm tablesorter table-hover tfont">
+<table class="table table-striped table-sm tablesorter-bootstrap table-hover tfont">
   <thead>
   <tr>
     <th>Pod<a class="tipsy" title="A pod is a site for you to set up your account.">?</a></th>
@@ -36,59 +42,60 @@ $numrows = pg_num_rows($result);
   <tbody>
   <?php
   $tt = 0;
-  while ($row = pg_fetch_array($result)) {
-    $tt++;
-    $verdiff = str_replace('.', '', $row['masterversion']) - str_replace('.', '', $row['shortversion']);
 
-    $pod_name = htmlentities($row['name'], ENT_QUOTES);
+  foreach ($pods as $pod) {
+    $tt++;
+    $verdiff = (int) str_replace('.', '', $pod['masterversion']) - (int) str_replace('.', '', $pod['shortversion']);
+
+    $pod_name = htmlentities($pod['name'], ENT_QUOTES);
     $tip      = sprintf(
       'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of -20 to +20 this pod is a %6$s right now',
       $pod_name,
-      $row['monthsmonitored'],
-      $row['latency'],
-      $row['uptime_alltime'],
-      $row['date_updated'],
-      $row['score']
+      $pod['monthsmonitored'],
+      $pod['latency'],
+      $pod['uptime_alltime'],
+      $pod['date_updated'],
+      $pod['score']
     );
 
-    echo '<tr><td><a class="text-success" target="_self" href="https://' . $row['domain'] . '">' . $row['domain'] . '<div title="' . $tip . '" class="tipsy" style="display: inline-block">?</div></a></td>';
+    echo '<tr><td><a class="text-success" target="_self" href="https://' . $pod['domain'] . '">' . $pod['domain'] . '<div title="' . $tip . '" class="tipsy" style="display: inline-block">?</div></a></td>';
 
-    if (stristr($row['shortversion'], 'head')) {
+    if (stristr($pod['shortversion'], 'head')) {
       $version = '.dev';
       $pre     = 'This pod runs pre release development code';
-    } elseif (!$row['shortversion']) {
+    } elseif (!$pod['shortversion']) {
       $version = '0';
       $pre     = 'This pod runs unknown code';
     } else {
-      $version = $row['shortversion'];
+      $version = $pod['shortversion'];
       $pre     = 'This pod runs production code';
     }
-    if ($row['shortversion'] === $row['masterversion'] && $row['shortversion'] !== '') {
+    if ($pod['shortversion'] === $pod['masterversion'] && $pod['shortversion'] !== '') {
       $classver = 'text-success';
     } elseif ($verdiff > 6) {
       $classver = 'text-warning';
     } else {
       $classver = 'black';
     }
-    echo '<td class="' . $classver . '"><div title="' . $pre . ' codename: ' . $row['shortversion'] . ' master version is: ' . $row['masterversion'] . '" class="tipsy">' . $version . '</div></td>';
-    echo '<td>' . $row['uptime_alltime'] . '</td>';
-    echo '<td>' . $row['latency'] . '</td>';
-    echo '<td>' . ($row['signup'] === 't' ? 'Open' : 'Closed') . '</td>';
-    echo '<td>' . $row['total_users'] . '</td>';
-    echo '<td>' . $row['active_users_halfyear'] . '</td>';
-    echo '<td>' . $row['active_users_monthly'] . '</td>';
-    echo '<td>' . $row['local_posts'] . '</td>';
-    echo '<td>' . $row['comment_counts'] . '</td>';
-    $moreurl = 'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&apiKey=' . $row['stats_apikey'];
-    echo '<td><div title="Last Check ' . $row['date_updated'] . '" class="tipsy"><a target="_self" href="' . $moreurl . '">' . $row['monthsmonitored'] . '</a></div></td>';
-    echo '<td>' . $row['score'] . '</td>';
-    echo '<td><div class="tipsy" title="' . $row['sslvalid'] . '">con info</td>';
+    echo '<td class="' . $classver . '"><div title="' . $pre . ' codename: ' . $pod['shortversion'] . ' master version is: ' . $pod['masterversion'] . '" class="tipsy">' . $version . '</div></td>';
+    echo '<td>' . $pod['uptime_alltime'] . '</td>';
+    echo '<td>' . $pod['latency'] . '</td>';
+    echo '<td>' . ($pod['signup'] ? 'Open' : 'Closed') . '</td>';
+    echo '<td>' . $pod['total_users'] . '</td>';
+    echo '<td>' . $pod['active_users_halfyear'] . '</td>';
+    echo '<td>' . $pod['active_users_monthly'] . '</td>';
+    echo '<td>' . $pod['local_posts'] . '</td>';
+    echo '<td>' . $pod['comment_counts'] . '</td>';
+    $moreurl = 'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&apiKey=' . $pod['stats_apikey'];
+    echo '<td><div title="Last Check ' . $pod['date_updated'] . '" class="tipsy"><a target="_self" href="' . $moreurl . '">' . $pod['monthsmonitored'] . '</a></div></td>';
+    echo '<td>' . $pod['score'] . '</td>';
+    echo '<td><div class="tipsy" title="' . $pod['sslvalid'] . '">con info</td>';
     ?>
     <td>
       <form method="post" action="db/kill.php" target="_blank">
-        <input type="hidden" name="domain" value="<?php echo $row['domain']; ?>">
+        <input type="hidden" name="domain" value="<?php echo $pod['domain']; ?>">
         <input type="hidden" name="adminkey" value="<?php echo $_COOKIE['adminkey']; ?>">
-        <label>Comments<input name="comments" value="<?php echo $row['sslvalid']; ?>" size="10"></label>
+        <label>Comments<input name="comments" value="<?php echo $pod['sslvalid']; ?>" size="10"></label>
         <label><input type="radio" name="action" value="warn">warn</label>
         <label><input type="radio" name="action" value="delete">delete</label>
         <input type="submit" value="Process">

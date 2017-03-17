@@ -1,18 +1,28 @@
 <?php
-require_once __DIR__ . '/config.php';
 
-$dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-$dbh || die('Error in connection: ' . pg_last_error());
+use RedBeanPHP\R;
 
-$sql_totals    = 'SELECT softwarename, count(*) AS pods, sum(total_users) AS users, round(avg(uptime_alltime),2) AS uptime FROM pods GROUP BY softwarename';
-$result_totals = pg_query($dbh, $sql_totals);
-$result_totals || die('Error in SQL query: ' . pg_last_error());
-$totals = pg_fetch_all($result_totals);
+defined('PODUPTIME') || die();
+
+try {
+  $totals = R::getAll('
+    SELECT
+      softwarename,
+      count(*) AS pods,
+      sum(total_users) AS users,
+      round(avg(uptime_alltime),2) AS uptime
+    FROM pods
+    GROUP BY softwarename
+  ');
+} catch (\RedBeanPHP\RedException $e) {
+  die('Error in SQL query: ' . $e->getMessage());
+}
+
 ?>
 <script>
   /**
    * Add a new chart for the passed data.
-   * 
+   *
    * @param id   HTML element ID to place the chart.
    * @param data Data to display on the chart.
    */

@@ -1,7 +1,20 @@
 <?php
-//focus map to the users side of the globe
-// Cloudflare country code pull.
-$country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
+
+use RedBeanPHP\R;
+
+defined('PODUPTIME') || die();
+
+try {
+  $pods = R::getAll("
+    SELECT domain, signup, name, lat, long, softwarename, uptime_alltime, active_users_halfyear, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp
+    FROM pods
+    WHERE NOT hidden
+      AND lat != ''
+      AND long != ''
+  ");
+} catch (\RedBeanPHP\RedException $e) {
+  die('Error in SQL query: ' . $e->getMessage());
+}
 
 $csv = array_map('str_getcsv', file('db/country_latlon.csv'));
 foreach ($csv as $cords) {
@@ -23,40 +36,31 @@ foreach ($csv as $cords) {
     'type': 'FeatureCollection',
     'features': [
       <?php
-      require_once __DIR__ . '/config.php';
 
-      $dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-      $dbh || die('Error in connection: ' . pg_last_error());
-
-      $sql = "SELECT domain,signup,name,lat,long,softwarename,uptime_alltime,active_users_halfyear,service_facebook,service_twitter,service_tumblr,service_wordpress,service_xmpp FROM pods WHERE NOT hidden AND lat != '' AND long != ''";
-      $result = pg_query($dbh, $sql);
-      $result || die('Error in SQL query: ' . pg_last_error());
-
-      $numrows = pg_num_rows($result);
       $i = 0;
-      while ($row = pg_fetch_array($result)) {
+      foreach ($pods as $pod) {
         // If this isn't the first entry, put a comma to separate the entries.
         $i++ > 0 && print ',';
 
         $feat = '';
-        $row['service_facebook'] === 't' && $feat .= '<div class="smlogo smlogo-facebook" title="Publish to Facebook"></div>';
-        $row['service_twitter'] === 't' && $feat .= '<div class="smlogo smlogo-twitter" title="Publish to Twitter"></div>';
-        $row['service_tumblr'] === 't' && $feat .= '<div class="smlogo smlogo-tumblr" title="Publish to Tumblr"></div>';
-        $row['service_wordpress'] === 't' && $feat .= '<div class="smlogo smlogo-wordpress" title="Publish to WordPress"></div>';
-        $row['service_xmpp'] === 't' && $feat .= '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
+        $pod['service_facebook'] && $feat .= '<div class="smlogo smlogo-facebook" title="Publish to Facebook"></div>';
+        $pod['service_twitter'] && $feat .= '<div class="smlogo smlogo-twitter" title="Publish to Twitter"></div>';
+        $pod['service_tumblr'] && $feat .= '<div class="smlogo smlogo-tumblr" title="Publish to Tumblr"></div>';
+        $pod['service_wordpress'] && $feat .= '<div class="smlogo smlogo-wordpress" title="Publish to WordPress"></div>';
+        $pod['service_xmpp'] && $feat .= '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
 
-        $pod_name = htmlentities($row['name'], ENT_QUOTES);
-        $signup   = $row['signup'] === 't' ? 'yes' : 'no';
+        $pod_name = htmlentities($pod['name'], ENT_QUOTES);
+        $signup = $pod['signup'] ? 'yes' : 'no';
         echo <<<EOF
 {
   'type': 'Feature',
   'id': '1',
   'properties' : {
-    'html': '<a href="/go.php?domain={$row['domain']}">{$pod_name}</a><br>Software: {$row['softwarename']}<br> Open Signup: {$signup}<br> Users: {$row['active_users_halfyear']}<br> Uptime: {$row['uptime_alltime']}%<br> Services:{$feat}'
+    'html': '<a href="/go.php?domain={$pod['domain']}">{$pod_name}</a><br>Software: {$pod['softwarename']}<br> Open Signup: {$signup}<br> Users: {$pod['active_users_halfyear']}<br> Uptime: {$pod['uptime_alltime']}%<br> Services:{$feat}'
   },
   'geometry': {
     'type': 'Point',
-    'coordinates': [{$row['long']},{$row['lat']}]
+    'coordinates': [{$pod['long']},{$pod['lat']}]
   }
 }
 EOF;

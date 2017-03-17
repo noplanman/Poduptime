@@ -1,36 +1,44 @@
 <?php
 
+use RedBeanPHP\R;
+
 // Other parameters.
 $_domain = $_GET['domain'] ?? '';
 
+require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
-$dbh = pg_connect("dbname=$pgdb user=$pguser password=$pgpass");
-$dbh || die('Error in connection: ' . pg_last_error());
+define('PODUPTIME', microtime(true));
 
-if ($_domain) {
-  $sql    = 'SELECT domain FROM pods WHERE domain LIKE $1';
-  $result = pg_query_params($dbh, $sql, [$_domain]);
-  $result || die('Error in SQL query: ' . pg_last_error());
+// Set up global DB connection.
+R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
+R::testConnection() || die('Error in DB connection');
 
-  $row = pg_fetch_all($result);
-  $row || die('unknown domain');
+try {
+  if ($_domain) {
+    $click  = 'manualclick';
+    $domain = R::getCell('SELECT domain FROM pods WHERE domain LIKE ?', [$_domain]);
+    $domain || die('unknown domain');
+  } else {
+    $click  = 'autoclick';
+    $domain = R::getCell('
+      SELECT domain
+      FROM pods
+      WHERE signup
+        AND score > 90
+        AND pods.masterversion = shortversion
+      ORDER BY random()
+      LIMIT 1
+    ');
+    $domain || die('no domains exist');
+  }
 
-  $sql    = 'INSERT INTO clicks (domain, manualclick) VALUES ($1, $2)';
-  $result = pg_query_params($dbh, $sql, [$_domain, '1']);
-  $result || die('Error in SQL query: ' . pg_last_error());
-  
-  header('Location: https://' . $_domain);
-} else {
-  $sql    = 'SELECT domain FROM pods WHERE score > 90 AND masterversion = shortversion AND signup ORDER BY RANDOM() LIMIT 1';
-  $result = pg_query($dbh, $sql);
-  $result || die('Error in SQL query: ' . pg_last_error());
+  $c           = R::dispense('clicks');
+  $c['domain'] = $domain;
+  $c[$click]   = 1;
+  R::store($c);
 
-  $row    = pg_fetch_all($result);
-  
-  $sql    = 'INSERT INTO clicks (domain, autoclick) VALUES ($1, $2)';
-  $result = pg_query_params($dbh, $sql, [$row[0]['domain'], '1']);
-  $result || die('Error in SQL query: ' . pg_last_error());
-  
-  header('Location: https://' . $row[0]['domain']);
+  header('Location: https://' . $domain);
+} catch (\RedBeanPHP\RedException $e) {
+  die('Error in SQL query: ' . $e->getMessage());
 }

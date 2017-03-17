@@ -6,6 +6,8 @@ $backup_dir = '/backup';
 $log_dir = '/log';
 //location of pg dump
 $pg_dump_dir = '/usr/bin';
+//db host
+$pghost = 'localhost';
 //db username
 $pguser = '';
 //db password

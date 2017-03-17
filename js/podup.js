@@ -1,8 +1,8 @@
+$('.tablesorter-bootstrap').tablesorter()
 $(document).ready(function(){
 $.facebox.settings.closeImage = 'bower_components/facebox/src/closelabel.png'
 $.facebox.settings.loadingImage = 'bower_components/facebox/src/loading.gif'
   $('a[rel*=facebox]').facebox()
-  $('.tablesorter').tablesorter()
   $('[data-toggle="tooltip"]').tooltip()
   $(function () {
     $('[data-toggle="popover"]').popover()
@@ -11,5 +11,4 @@ $.facebox.settings.loadingImage = 'bower_components/facebox/src/loading.gif'
     trigger: 'focus'
   })
 });
-
 
