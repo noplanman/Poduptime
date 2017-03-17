@@ -211,7 +211,7 @@ foreach ($pods as $pod) {
         round(avg(online::INT) * 100, 2) AS online
       FROM checks
       WHERE domain = ?
-    ', [$_domain]);
+    ', [$domain]);
 
     $avglatency = $checks['latency'] ?? 0;
     $uptime     = $checks['online'] ?? 0;
@@ -291,7 +291,7 @@ foreach ($pods as $pod) {
     
     // @todo Temporary fix! https://github.com/gabordemooij/redbean/issues/547
     foreach ($p->getProperties() as $key => $value) {
-      $pod[$key] = $value;
+      $p[$key] = $value;
     }
 
     R::store($p);
