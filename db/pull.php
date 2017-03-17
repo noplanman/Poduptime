@@ -222,7 +222,7 @@ foreach ($pods as $pod) {
   _debug('Uptime', $uptime);
 
   try {
-    $masterversion = R::getCell('SELECT version FROM masterversions WHERE software = ?', [$softwarename]);
+    $masterversion = R::getCell('SELECT version FROM masterversions WHERE software = ? ORDER BY id DESC LIMIT 1', [$softwarename]);
   } catch (\RedBeanPHP\RedException $e) {
     die('Error in SQL query: ' . $e->getMessage());
   }
