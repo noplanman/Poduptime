@@ -13,6 +13,7 @@ dnsutils
 bind9
 npm
 nodejs nodejs-legacy
+composer
 ```
 
 To Install:
@@ -21,6 +22,7 @@ git clone https://github.com/diasporg/Poduptime.git
 cd Poduptime
 sudo npm install -g bower
 bower install
+composer install
 cp config.php.example config.php
 ```
 
@@ -50,6 +52,7 @@ To Upgrade:
 cd Poduptime
 git pull
 bower install
+composer install
 psql -u podupuser podupdb < db/migrationx.sql (see db/version.md for proper migration version)
 ```
 
