@@ -1,6 +1,7 @@
 <?php
 
 use RedBeanPHP\R;
+use Jaybizzle\CrawlerDetect\CrawlerDetect;
 
 // Other parameters.
 $_domain = $_GET['domain'] ?? '';
@@ -36,7 +37,9 @@ try {
   $c           = R::dispense('clicks');
   $c['domain'] = $domain;
   $c[$click]   = 1;
-  R::store($c);
+  if (!(new CrawlerDetect())->isCrawler()) {
+    R::store($c);
+  }
 
   header('Location: https://' . $domain);
 } catch (\RedBeanPHP\RedException $e) {
