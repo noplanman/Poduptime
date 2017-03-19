@@ -3,21 +3,17 @@
 
 use RedBeanPHP\R;
 
-($_GET['key'] ?? null) === '4r45tg' || die;
+if (($_GET['key'] ?? null) !== '4r45tg') {
+  echo 'Invalid API key';
+  return;
+}
 
 // Other parameters.
 $_format   = $_GET['format'] ?? '';
 $_method   = $_GET['method'] ?? '';
 $_callback = $_GET['callback'] ?? '';
 
-require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/config.php';
-
-define('PODUPTIME', microtime(true));
-
-// Set up global DB connection.
-R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
-R::testConnection() || die('Error in DB connection');
+require_once __DIR__ . '/loader.php';
 
 if ($_format === 'georss') {
   echo <<<EOF
