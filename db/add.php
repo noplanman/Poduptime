@@ -53,13 +53,13 @@ foreach ($pods as $pod) {
       $expire = time() + 2700;
 
       try {
-        $p                = R::findOne('pods', $pod['id']);
+        $p                = R::load('pods', $pod['id']);
         $p['token']       = $uuid;
         $p['tokenexpire'] = date('Y-m-d H:i:s', $expire);
 
         // @todo Temporary fix! https://github.com/gabordemooij/redbean/issues/547
         foreach ($p->getProperties() as $key => $value) {
-          $pod[$key] = $value;
+          $p[$key] = $value;
         }
 
         R::store($p);
@@ -112,7 +112,7 @@ if (stristr($outputssl, 'openRegistrations')) {
 
     // @todo Temporary fix! https://github.com/gabordemooij/redbean/issues/547
     foreach ($p->getProperties() as $key => $value) {
-      $pod[$key] = $value;
+      $p[$key] = $value;
     }
 
     R::store($p);
