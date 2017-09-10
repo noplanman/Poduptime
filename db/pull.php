@@ -228,6 +228,11 @@ foreach ($pods as $pod) {
   }
 
   _debug('Masterversion', $masterversion);
+  $masterversioncheck = explode('.',$masterversion);
+  $shortversioncheck = explode('.',$shortversion);
+  if (($masterversioncheck[1] - $shortversioncheck[1]) > 1) {
+    _debug('Outdated', 'Yes');$score -= 2;
+  }
 
   $hidden = $score <= 70;
   _debug('Hidden', $hidden ? 'yes' : 'no');
