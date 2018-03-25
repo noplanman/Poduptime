@@ -18,6 +18,7 @@ $softwares = [
   'redmatrix'    => ['url' => 'https://raw.githubusercontent.com/redmatrix/hubzilla/master/boot.php', 'regex' => '/define.*\'STD_VERSION\'.*\'(.*)\'/'],
   'socialhome'   => ['url' => 'https://raw.githubusercontent.com/jaywink/socialhome/master/socialhome/__init__.py', 'regex' => '/__version__ =.*"(.*)"/'],
   'social-relay' => ['url' => 'https://raw.githubusercontent.com/jaywink/social-relay/master/social_relay/config.py', 'regex' => '/VERSION.*"(.*)"/'],
+  'ganggo'       => ['url' => 'https://raw.githubusercontent.com/ganggo/ganggo/master/package.json', 'regex' => '/"version": "(.*)"/'],
 ];
 
 foreach ($softwares as $software => $details) {

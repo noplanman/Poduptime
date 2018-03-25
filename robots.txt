@@ -1,2 +1,9 @@
 User-agent: *
 Allow: /
+
+User-agent: *
+Disallow: /podstat.php
+
+User-agent: SemrushBot
+Disallow: /podstat.php
+
