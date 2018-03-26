@@ -27,7 +27,7 @@ CREATE TABLE pods (
  active_users_monthly int,
  local_posts int,
  uptime_alltime numeric(5,2),
- status text,
+ status smallint,
  latency smallint,
  service_facebook boolean,
  service_twitter boolean,

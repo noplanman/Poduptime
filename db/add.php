@@ -29,6 +29,7 @@ if (!filter_var(gethostbyname($_domain), FILTER_VALIDATE_IP)) {
 // Set up global DB connection.
 R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
 R::testConnection() || die('Error in DB connection');
+R::usePartialBeans(true);
 
 try {
   $pods = R::getAll('
@@ -56,11 +57,6 @@ foreach ($pods as $pod) {
         $p                = R::load('pods', $pod['id']);
         $p['token']       = $uuid;
         $p['tokenexpire'] = date('Y-m-d H:i:s', $expire);
-
-        // @todo Temporary fix! https://github.com/gabordemooij/redbean/issues/547
-        foreach ($p->getProperties() as $key => $value) {
-          $p[$key] = $value;
-        }
 
         R::store($p);
       } catch (\RedBeanPHP\RedException $e) {
@@ -109,11 +105,6 @@ if (stristr($outputssl, 'openRegistrations')) {
     $p['podmin_statement'] = $_podmin_statement;
     $p['podmin_notify']    = $_podmin_notify;
     $p['publickey']        = $publickey;
-
-    // @todo Temporary fix! https://github.com/gabordemooij/redbean/issues/547
-    foreach ($p->getProperties() as $key => $value) {
-      $p[$key] = $value;
-    }
 
     R::store($p);
   } catch (\RedBeanPHP\RedException $e) {

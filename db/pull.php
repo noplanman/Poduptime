@@ -19,10 +19,11 @@ define('PODUPTIME', microtime(true));
 // Set up global DB connection.
 R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
 R::testConnection() || die('Error in DB connection');
+R::usePartialBeans(true);
 
 try {
   $sql = '
-    SELECT domain, score, date_created, adminrating, weight, hidden, podmin_notify, email
+    SELECT domain, score, date_created, adminrating, weight, hidden, podmin_notify, email, masterversion, shortversion
     FROM pods
   ';
 
@@ -31,7 +32,8 @@ try {
     $sql .= ' WHERE domain = ?';
     $pods = R::getAll($sql, [$_domain]);
   } elseif (PHP_SAPI === 'cli') {
-    $pods = R::getAll($sql);
+    $sql .= ' WHERE status < ?';
+    $pods = R::getAll($sql, [PodStatus::Paused]);
   }
 } catch (\RedBeanPHP\RedException $e) {
   die('Error in SQL query: ' . $e->getMessage());
@@ -46,6 +48,8 @@ foreach ($pods as $pod) {
   $hiddennow = $pod['hidden'];
   $email     = $pod['email'];
   $notify    = $pod['podmin_notify'];
+  $masterv   = $pod['masterversion'];
+  $shortv    = $pod['shortversion'];
 
   try {
     $ratings = R::getAll('
@@ -125,7 +129,7 @@ foreach ($pods as $pod) {
   }
 
   if ($jsonssl !== null) {
-    $status = 'Up';
+    $status = PodStatus::Up;
 
     try {
       $c                   = R::dispense('checks');
@@ -158,7 +162,7 @@ foreach ($pods as $pod) {
 
     $score        -= 1;
     $shortversion = '0.error';
-    $status       = 'Down';
+    $status       = PodStatus::Down;
   }
 
   _debug('Version code', $shortversion);
@@ -228,6 +232,11 @@ foreach ($pods as $pod) {
   }
 
   _debug('Masterversion', $masterversion);
+  $masterversioncheck = explode('.',$masterversion);
+  $shortversioncheck = explode('.',$shortversion);
+  if (($masterversioncheck[1] - $shortversioncheck[1]) > 1) {
+    _debug('Outdated', 'Yes');$score -= 2;
+  }
 
   $hidden = $score <= 70;
   _debug('Hidden', $hidden ? 'yes' : 'no');
@@ -244,6 +253,9 @@ foreach ($pods as $pod) {
     $score = 100;
   } elseif ($score < 0) {
     $score = 0;
+    if ($masterv <> $shortv) {
+      $status = PodStatus::System_Deleted;
+    }
   }
   _debug('Score', $score);
   $weightedscore = ($uptime + $score - (10 - $weight)) / 2;
@@ -288,11 +300,6 @@ foreach ($pods as $pod) {
     $p['sslvalid']              = $outputsslerror;
     $p['dnssec']                = $dnssec;
     $p['sslexpire']             = $sslexpire;
-    
-    // @todo Temporary fix! https://github.com/gabordemooij/redbean/issues/547
-    foreach ($p->getProperties() as $key => $value) {
-      $p[$key] = $value;
-    }
 
     R::store($p);
   } catch (\RedBeanPHP\RedException $e) {

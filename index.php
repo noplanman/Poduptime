@@ -10,6 +10,7 @@ define('PODUPTIME', microtime(true));
 // Set up global DB connection.
 R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
 R::testConnection() || die('Error in DB connection');
+R::usePartialBeans(true);
 
 // CloudFlare country code pull.
 $country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
@@ -21,6 +22,7 @@ $cleanup      = isset($_GET['cleanup']);
 $statsview    = isset($_GET['statsview']);
 $podmin       = isset($_GET['podmin']);
 $podminedit   = isset($_GET['podminedit']);
+$edit         = isset($_GET['edit']);
 $simpleview   = !($detailedview || $mapview || $cleanup || $podmin || $podminedit || $statsview);
 ?>
 <!doctype html>
@@ -129,6 +131,8 @@ $navs = [
           include_once __DIR__ . '/podmin.php';
         } elseif ($podminedit) {
           include_once __DIR__ . '/podminedit.php';
+        } elseif ($edit) {
+          include_once __DIR__ . '/db/edit.php';
         } elseif ($cleanup) {
           include_once __DIR__ . '/cleanup.php';
         } else {

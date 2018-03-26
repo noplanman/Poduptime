@@ -12,6 +12,7 @@ try {
       sum(total_users) AS users,
       round(avg(uptime_alltime),2) AS uptime
     FROM pods
+    WHERE NOT hidden
     GROUP BY softwarename
   ');
 } catch (\RedBeanPHP\RedException $e) {

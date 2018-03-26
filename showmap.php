@@ -11,7 +11,8 @@ try {
     WHERE NOT hidden
       AND lat != ''
       AND long != ''
-  ");
+      AND status < ?
+  ", [PodStatus::Recheck]);
 } catch (\RedBeanPHP\RedException $e) {
   die('Error in SQL query: ' . $e->getMessage());
 }

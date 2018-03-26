@@ -11,13 +11,15 @@ define('PODUPTIME', microtime(true));
 // Set up global DB connection.
 R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
 R::testConnection() || die('Error in DB connection');
+R::usePartialBeans(true);
 
 $softwares = [
   'diaspora'     => ['url' => 'https://raw.githubusercontent.com/diaspora/diaspora/master/config/defaults.yml', 'regex' => '/number:.*"(.*)"/'],
   'friendica'    => ['url' => 'https://raw.githubusercontent.com/friendica/friendica/master/boot.php', 'regex' => '/define.*\'FRIENDICA_VERSION\'.*\'(.*)\'/'],
   'redmatrix'    => ['url' => 'https://raw.githubusercontent.com/redmatrix/hubzilla/master/boot.php', 'regex' => '/define.*\'STD_VERSION\'.*\'(.*)\'/'],
-  'socialhome'   => ['url' => 'https://raw.githubusercontent.com/jaywink/socialhome/master/bower.json', 'regex' => '/version":.*"(.*)"/'],
+  'socialhome'   => ['url' => 'https://raw.githubusercontent.com/jaywink/socialhome/master/socialhome/__init__.py', 'regex' => '/__version__ =.*"(.*)"/'],
   'social-relay' => ['url' => 'https://raw.githubusercontent.com/jaywink/social-relay/master/social_relay/config.py', 'regex' => '/VERSION.*"(.*)"/'],
+  'ganggo'       => ['url' => 'https://raw.githubusercontent.com/ganggo/ganggo/master/package.json', 'regex' => '/"version": "(.*)"/'],
 ];
 
 foreach ($softwares as $software => $details) {

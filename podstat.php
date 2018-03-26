@@ -13,6 +13,7 @@ define('PODUPTIME', microtime(true));
 // Set up global DB connection.
 R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
 R::testConnection() || die('Error in DB connection');
+R::usePartialBeans(true);
 
 $sql = "
   SELECT
@@ -22,21 +23,10 @@ $sql = "
     round(avg(online::INT),2)*100 AS uptime,
     round(avg(latency),2) * 1000 AS latency,
     round(avg(local_posts)) AS local_posts,
-    round(avg(comment_counts)) AS comment_counts,
-    fpp.manualclicks,
-    fpp.autoclicks
+    round(avg(comment_counts)) AS comment_counts
   FROM checks
-  LEFT JOIN LATERAL (
-    SELECT
-      count(manualclick) AS manualclicks,
-      count(autoclick) AS autoclicks
-    FROM clicks
-    WHERE checks.domain = clicks.domain
-      AND EXTRACT(MONTH FROM checks.date_checked) = EXTRACT(MONTH FROM clicks.date_clicked)
-      AND EXTRACT(YEAR FROM checks.date_checked) = EXTRACT(YEAR FROM clicks.date_clicked)
-  ) AS fpp ON TRUE
   WHERE domain = ?
-  GROUP BY yymm, fpp.manualclicks, fpp.autoclicks
+  GROUP BY yymm
   ORDER BY yymm
   LIMIT 24
 ";
@@ -140,28 +130,6 @@ try {
           backgroundColor: "#FFD700",
           borderWidth: 4,
           pointHoverRadius: 6,
-        },
-        {
-          data: <?php echo json_encode(array_column($totals, 'manualclicks')); ?>,
-          label: 'Manual Clicks',
-          fill: false,
-          yAxisID: "r2",
-          borderColor: "#8A2BE2",
-          backgroundColor: "#8A2BE2",
-          borderWidth: 4,
-          pointHoverRadius: 6,
-          pointStyle: 'rect',
-        },
-        {
-          data: <?php echo json_encode(array_column($totals, 'autoclicks')); ?>,
-          label: 'Auto Clicks',
-          fill: false,
-          yAxisID: "r2",
-          borderColor: "#FFA07A",
-          backgroundColor: "#FFA07A",
-          borderWidth: 4,
-          pointHoverRadius: 6,
-          pointStyle: 'rect',
         }
         ]
       },
