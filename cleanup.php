@@ -86,8 +86,7 @@ try {
     echo '<td>' . $pod['active_users_monthly'] . '</td>';
     echo '<td>' . $pod['local_posts'] . '</td>';
     echo '<td>' . $pod['comment_counts'] . '</td>';
-    $moreurl = 'https://api.uptimerobot.com/getMonitors?format=json&noJsonCallback=1&customUptimeRatio=7-30-60-90&apiKey=' . $pod['stats_apikey'];
-    echo '<td><div title="Last Check ' . $pod['date_updated'] . '" class="tipsy"><a target="_self" href="' . $moreurl . '">' . $pod['monthsmonitored'] . '</a></div></td>';
+    echo '<td><div title="Last Check ' . $pod['date_updated'] . '" class="tipsy">' . $pod['monthsmonitored'] . '</div></td>';
     echo '<td>' . $pod['score'] . '</td>';
     echo '<td><div class="tipsy" title="' . $pod['sslvalid'] . '">con info</td>';
     ?>

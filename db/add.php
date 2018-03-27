@@ -33,7 +33,7 @@ R::usePartialBeans(true);
 
 try {
   $pods = R::getAll('
-    SELECT id, domain, stats_apikey, publickey, email
+    SELECT id, domain, publickey, email
     FROM pods
   ');
 } catch (\RedBeanPHP\RedException $e) {

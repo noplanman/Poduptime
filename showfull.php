@@ -6,7 +6,7 @@ defined('PODUPTIME') || die();
 
 try {
   $pods = R::getAll('
-    SELECT domain, dnssec, podmin_statement, sslexpire, masterversion, shortversion, softwarename, monthsmonitored, score, signup, name, country, city, state, lat, long, uptime_alltime, active_users_halfyear, active_users_monthly, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp, latency, date_updated, ipv6, total_users, local_posts, comment_counts, stats_apikey, userrating, status
+    SELECT domain, dnssec, podmin_statement, sslexpire, masterversion, shortversion, softwarename, monthsmonitored, score, signup, name, country, city, state, lat, long, uptime_alltime, active_users_halfyear, active_users_monthly, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp, latency, date_updated, ipv6, total_users, local_posts, comment_counts, userrating, status
     FROM pods
     WHERE uptime_alltime > 50
     ORDER BY weightedscore DESC

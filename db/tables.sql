@@ -5,6 +5,7 @@ CREATE TABLE pods (
  softwarename text,
  masterversion text,
  shortversion text,
+ stats_apikey text,
  score int DEFAULT 50,
  weightedscore numeric(5,2) DEFAULT 0,
  adminrating decimal DEFAULT 0,
