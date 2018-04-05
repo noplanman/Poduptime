@@ -266,7 +266,7 @@ foreach ($pods as $pod) {
     $p['secure']                = true;
     $p['hidden']                = $hidden;
     $p['ip']                    = $ip;
-    $p['ipv6']                  = ($ipv6 !== null);
+    $p['ipv6']                  = $ipv6;
     $p['monthsmonitored']       = $months;
     $p['uptime_alltime']        = $uptime;
     $p['status']                = $status;
