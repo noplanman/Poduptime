@@ -48,6 +48,7 @@ CREATE TABLE pods (
  date_laststats timestamp DEFAULT current_timestamp,
  date_created timestamp DEFAULT current_timestamp
 );
+
 CREATE TABLE rating_comments (
  id serial8 UNIQUE PRIMARY KEY,
  domain text NOT NULL,
@@ -59,6 +60,7 @@ CREATE TABLE rating_comments (
  userurl text,
  date_created timestamp DEFAULT current_timestamp
 );
+
 CREATE TABLE apikeys (
  id serial8 UNIQUE PRIMARY KEY,
  key text,
@@ -92,5 +94,15 @@ CREATE TABLE masterversions (
  id serial8 UNIQUE PRIMARY KEY,
  software text,
  version text,
+ date_checked timestamp DEFAULT current_timestamp
+);
+
+CREATE TABLE monthlystats (
+ id serial8 UNIQUE PRIMARY KEY,
+ total_users int,
+ total_posts int,
+ total_comments int,
+ total_pods int,
+ total_uptime int,
  date_checked timestamp DEFAULT current_timestamp
 );

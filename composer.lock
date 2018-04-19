@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "b753491dc03e2084e9587d0bbafad98c",
@@ -46,16 +46,16 @@
         },
         {
             "name": "gabordemooij/redbean",
-            "version": "v5.0",
+            "version": "v5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gabordemooij/redbean.git",
-                "reference": "44229acdf493e2229c1e33e3add211f23c05ee4d"
+                "reference": "a02e58ad5519149f572559a8293b5dffea385956"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gabordemooij/redbean/zipball/44229acdf493e2229c1e33e3add211f23c05ee4d",
-                "reference": "44229acdf493e2229c1e33e3add211f23c05ee4d",
+                "url": "https://api.github.com/repos/gabordemooij/redbean/zipball/a02e58ad5519149f572559a8293b5dffea385956",
+                "reference": "a02e58ad5519149f572559a8293b5dffea385956",
                 "shasum": ""
             },
             "require": {
@@ -75,28 +75,28 @@
                 {
                     "name": "Gabor de Mooij",
                     "email": "gabor@redbeanphp.com",
-                    "homepage": "http://redbeanphp.com"
+                    "homepage": "https://redbeanphp.com"
                 }
             ],
             "description": "RedBeanPHP ORM",
-            "homepage": "http://redbeanphp.com/",
+            "homepage": "https://redbeanphp.com/",
             "keywords": [
                 "orm"
             ],
-            "time": "2017-10-19T21:38:38+00:00"
+            "time": "2018-04-01T11:51:37+00:00"
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.61",
+            "version": "v1.2.62",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "9f22764fa72f6a30211fe16cf28a1f43642136de"
+                "reference": "f9767578e00f87a081835b49adc7c71074a5b46c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/9f22764fa72f6a30211fe16cf28a1f43642136de",
-                "reference": "9f22764fa72f6a30211fe16cf28a1f43642136de",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/f9767578e00f87a081835b49adc7c71074a5b46c",
+                "reference": "f9767578e00f87a081835b49adc7c71074a5b46c",
                 "shasum": ""
             },
             "require": {
@@ -132,7 +132,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2018-03-19T20:27:17+00:00"
+            "time": "2018-03-27T18:25:43+00:00"
         },
         {
             "name": "noplanman/xec",

@@ -39,7 +39,7 @@ sudo nano /etc/postgresql/vx.x/main/pg_hba.conf
 # restart postgresql
 
 # import database structure
-psql -u podupuser podupdb < db/tables.sql
+psql -U podupuser podupdb < db/tables.sql
 ```
 
 Edit `config.php` to add your DB and file settings.
@@ -53,7 +53,7 @@ cd Poduptime
 git pull
 bower install
 composer install
-psql -u podupuser podupdb < db/migrationx.sql (see db/version.md for proper migration version)
+psql -u podupuser podupdb < db/migrationx.sql (see db/version.md for proper migration versions)
 ```
 
 ============================

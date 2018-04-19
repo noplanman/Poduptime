@@ -24,11 +24,16 @@ if ! wget -q --spider --tries=2 --timeout=15 https://www.google.com; then
 fi
 echo "$HAPPY"
 
-if [ "$HOUR" = 6 ]; then
+if [ "$HOUR" = 1 ]; then
   echo "Pulling in master versions...";
   php pull-masterversions.php
   echo
-
+  printf "%s" "Updating Monthy Stats Table..."
+  if php monthly_stats.php; then
+    echo "$HAPPY"
+  else
+    echo "$SAD"
+  fi
   printf "%s" "Updating CA..."
   if wget -q https://curl.haxx.se/ca/cacert.pem -O ../cacert.pem; then
     echo "$HAPPY"

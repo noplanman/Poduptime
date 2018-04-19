@@ -179,15 +179,10 @@ foreach ($pods as $pod) {
     preg_match('/A\s(.*)/', $getaonly[0], $aversion);
     $ip = trim($aversion[1]) ?? '';
   }
-
-  $ipv6        = false;
-  $iplookupv6  = explode(PHP_EOL, trim($delv->execute(['AAAA'], null, 15)->stdout));
-  $getaaaaonly = array_values(preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6));
-  if ($getaaaaonly) {
-    preg_match('/AAAA\s(.*)/', $getaaaaonly[0], $aaaaversion);
-    $ipv6 = trim($aaaaversion[1]) ?? '';
-  }
   $ip || $score -= 2;
+
+  $iplookupv6 = explode(PHP_EOL, trim($delv->execute(['AAAA'], null, 15)->stdout));
+  $ipv6       = (bool) preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6);
 
   _debug('IPv4', $ip);
   _debug('Iplookupv4', $iplookupv4, true);
