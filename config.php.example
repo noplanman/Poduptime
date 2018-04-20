@@ -16,8 +16,6 @@ $pgpass = '';
 $pgdb = '';
 //admin email for forms
 $adminemail = '';
-//admin key for deleting pods, set this as a cookie on your own
-$adminkey = '';
 //DNS server for dnssec testing
 $dnsserver = '';
 //CA for curl to use - suggest wget http://curl.haxx.se/ca/cacert.pem as they pull from mozilla if you use a system CA then certs like wosign and startssl will be valid but users will be unable to connect to them

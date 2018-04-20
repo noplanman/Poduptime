@@ -12,8 +12,8 @@
   </div>
   <br>
   <div class="row">
-      <div class="col-lg-12 text-center">Average Network User Growth<br>
-      <canvas id="user_growth" width="1000" height="100"></canvas>
+      <div class="col text-center">Average Network User Growth<br>
+      <center><canvas id="user_growth" width="1000" height="300"></canvas></center>
     </div>
   </div>
 </div>

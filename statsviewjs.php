@@ -12,9 +12,9 @@ try {
       sum(total_users) AS users,
       round(avg(uptime_alltime),2) AS uptime
     FROM pods
-    WHERE NOT hidden
+    WHERE status < ?
     GROUP BY softwarename
-  ');
+  ', [PodStatus::System_Deleted]);
 } catch (\RedBeanPHP\RedException $e) {
   die('Error in SQL query: ' . $e->getMessage());
 }
@@ -68,14 +68,14 @@ try {
           fill: false,
           borderColor: "#2ecc71",
           backgroundColor: "#2ecc71",
-          borderWidth: 4,
-          pointHoverRadius: 6
+          borderWidth: 2,
+          pointHoverRadius: 2
         }
         ]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: true
+        responsive: false,
+        maintainAspectRatio: false
       }
     });
   }

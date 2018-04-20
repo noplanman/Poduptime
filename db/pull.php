@@ -23,7 +23,7 @@ R::usePartialBeans(true);
 
 try {
   $sql = '
-    SELECT domain, score, date_created, adminrating, weight, hidden, podmin_notify, email, masterversion, shortversion
+    SELECT domain, score, date_created, adminrating, weight, hidden, podmin_notify, email, masterversion, shortversion, status
     FROM pods
   ';
 
@@ -50,6 +50,7 @@ foreach ($pods as $pod) {
   $notify    = $pod['podmin_notify'];
   $masterv   = $pod['masterversion'];
   $shortv    = $pod['shortversion'];
+  $dbstatus  = $pod['status'];
 
   try {
     $ratings = R::getAll('
@@ -122,14 +123,15 @@ foreach ($pods as $pod) {
   $service_wordpress     = false;
   if (json_last_error() === 0) {
     (!$jsonssl->software->version) || $score += 1;
-    $service_facebook  = in_array('facebook', $jsonssl->services->outbound, true);
-    $service_twitter   = in_array('twitter', $jsonssl->services->outbound, true);
-    $service_tumblr    = in_array('tumblr', $jsonssl->services->outbound, true);
-    $service_wordpress = in_array('wordpress', $jsonssl->services->outbound, true);
+    if (is_array($jsonssl->services->outbound)) {
+      $service_facebook  = in_array('facebook', $jsonssl->services->outbound, true);
+      $service_twitter   = in_array('twitter', $jsonssl->services->outbound, true);
+      $service_tumblr    = in_array('tumblr', $jsonssl->services->outbound, true);
+      $service_wordpress = in_array('wordpress', $jsonssl->services->outbound, true);
+      }
   }
 
   if ($jsonssl !== null) {
-    $status = PodStatus::Up;
 
     try {
       $c                   = R::dispense('checks');
@@ -144,6 +146,8 @@ foreach ($pods as $pod) {
     } catch (\RedBeanPHP\RedException $e) {
       die('Error in SQL query: ' . $e->getMessage());
     }
+    
+    $status = PodStatus::Up;
   }
 
   if (!$jsonssl) {
@@ -161,7 +165,6 @@ foreach ($pods as $pod) {
     }
 
     $score        -= 1;
-    $shortversion = '0.error';
     $status       = PodStatus::Down;
   }
 
@@ -229,7 +232,8 @@ foreach ($pods as $pod) {
   _debug('Masterversion', $masterversion);
   $masterversioncheck = explode('.',$masterversion);
   $shortversioncheck = explode('.',$shortversion);
-  if (($masterversioncheck[1] - $shortversioncheck[1]) > 1) {
+  if (($masterversioncheck[1] - $shortversioncheck[1]) > 1 && strpos($shortversion,'dev') !== false) {
+    //dev search added to address frendica using very odd versioning for dev code, we should look to pull dev versions and use them rather than assume dev is always ahead of prod code
     _debug('Outdated', 'Yes');$score -= 2;
   }
 
@@ -276,25 +280,27 @@ foreach ($pods as $pod) {
     $p['lat']                   = $lat;
     $p['long']                  = $long;
     $p['userrating']            = $user_rating;
-    $p['shortversion']          = $shortversion;
     $p['masterversion']         = $masterversion;
-    $p['signup']                = $signup;
-    $p['total_users']           = $total_users;
-    $p['active_users_halfyear'] = $active_users_halfyear;
-    $p['active_users_monthly']  = $active_users_monthly;
-    $p['local_posts']           = $local_posts;
-    $p['name']                  = $name;
-    $p['comment_counts']        = $comment_counts;
-    $p['service_facebook']      = $service_facebook;
-    $p['service_tumblr']        = $service_tumblr;
-    $p['service_twitter']       = $service_twitter;
-    $p['service_wordpress']     = $service_wordpress;
-    $p['service_xmpp']          = $service_xmpp;
     $p['weightedscore']         = $weightedscore;
-    $p['softwarename']          = $softwarename;
     $p['sslvalid']              = $outputsslerror;
     $p['dnssec']                = $dnssec;
     $p['sslexpire']             = $sslexpire;
+    if ($dbstatus == 1 & $status = PodStatus::Up) {
+      $p['shortversion']          = $shortversion;
+      $p['signup']                = $signup;
+      $p['total_users']           = $total_users;
+      $p['active_users_halfyear'] = $active_users_halfyear;
+      $p['active_users_monthly']  = $active_users_monthly;
+      $p['local_posts']           = $local_posts;
+      $p['name']                  = $name;
+      $p['comment_counts']        = $comment_counts;
+      $p['service_facebook']      = $service_facebook;
+      $p['service_tumblr']        = $service_tumblr;
+      $p['service_twitter']       = $service_twitter;
+      $p['service_wordpress']     = $service_wordpress;
+      $p['service_xmpp']          = $service_xmpp;
+      $p['softwarename']          = $softwarename;
+    }
 
     R::store($p);
   } catch (\RedBeanPHP\RedException $e) {

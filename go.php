@@ -27,7 +27,8 @@ try {
       SELECT domain
       FROM pods
       WHERE signup
-        AND score > 90
+        AND uptime_alltime > 96
+        AND monthsmonitored > 2
         AND pods.masterversion = shortversion
       ORDER BY random()
       LIMIT 1

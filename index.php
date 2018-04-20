@@ -18,12 +18,11 @@ $country_code = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? '';
 $lastfile     = 'db/last.data';
 $detailedview = isset($_GET['detailedview']);
 $mapview      = isset($_GET['mapview']);
-$cleanup      = isset($_GET['cleanup']);
 $statsview    = isset($_GET['statsview']);
 $podmin       = isset($_GET['podmin']);
 $podminedit   = isset($_GET['podminedit']);
 $edit         = isset($_GET['edit']);
-$simpleview   = !($detailedview || $mapview || $cleanup || $podmin || $podminedit || $statsview);
+$simpleview   = !($detailedview || $mapview || $podmin || $podminedit || $statsview);
 ?>
 <!doctype html>
 <html lang="en">
@@ -133,8 +132,6 @@ $navs = [
           include_once __DIR__ . '/podminedit.php';
         } elseif ($edit) {
           include_once __DIR__ . '/db/edit.php';
-        } elseif ($cleanup) {
-          include_once __DIR__ . '/cleanup.php';
         } else {
           include_once __DIR__ . '/show.php';
         }
