@@ -4,7 +4,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
 FLAG_FILE="/tmp/poduptime.pulling"
-HOUR=`date +%k`
+HOUR=`date +%H`
 HAPPY=" :-)"
 SAD=" :-("
 
@@ -24,7 +24,7 @@ if ! wget -q --spider --tries=2 --timeout=15 https://www.google.com; then
 fi
 echo "$HAPPY"
 
-if [ "$HOUR" = 1 ]; then
+if [ "$HOUR" = 01 ]; then
   echo "Pulling in master versions...";
   php pull-masterversions.php
   echo
