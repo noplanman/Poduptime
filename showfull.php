@@ -19,7 +19,7 @@ try {
 <meta property="og:title" content="<?php echo count($pods); ?> Federated Pods listed, Come see the privacy aware social networks."/>
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
 <div class="table-responsive">
-<table class="table table-striped table-sm tablesorter-bootstrap table-hover tfont">
+<table class="table table-striped table-bordered table-sm tablesorter-bootstrap table-hover tfont">
   <thead class="thead-inverse">
   <tr>
     <th><a data-toggle="tooltip" data-placement="bottom" title="A pod is a site for you to set up your account.">Pod</a></th>
@@ -28,18 +28,18 @@ try {
     <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online.">Uptime</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod offer ipv6 connection.">IPv6</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Average connection latency time in ms from Los Angeles.">Latency</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod allow new users.">Signups</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total users on this pod.">Users</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Does this pod allow new users.">Signup</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total users on this pod.">User</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 6 months on this pod.">6m</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 1 month on this pod.">1m</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total posts on this pod.">Posts</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total comments on this pod.">Comments</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="How many months have we been watching this pod.">Months</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total posts on this pod.">Post</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total comments on this pod.">Comment</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="How many months have we been watching this pod.">Month</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="User rating for this pod.">Rating</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="System Score on a 100 point scale.">Score</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this domain use DNSSEC.">DNSSEC</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation.">Country</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to.">Services</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to.">Service</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Click for more information about this pod from the pod host (podmin).">Info</a></th>
   </tr>
   </thead>
@@ -49,7 +49,7 @@ try {
     $pod_name = htmlentities($pod['name'], ENT_QUOTES);
     $tip = "\n Over {$pod['monthsmonitored']} months uptime is {$pod['uptime_alltime']}% and response time is {$pod['latency']}ms, last check on {$pod['date_updated']}. This site is SSL/TLS encrypted with a cert that expires: " . $pod['sslexpire'];
 
-    echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></td>';
+    echo '<tr><td><a title="' . $tip . '" class="text-success url" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></td>';
 
     if ($pod['shortversion'] > $pod['masterversion']) {
       $version = $pod['shortversion'];

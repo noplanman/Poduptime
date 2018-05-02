@@ -112,7 +112,7 @@ $navs = [
       <?php endforeach; ?>
 
       <p>
-        <small>Data refreshed: <br><?php echo date('M d y H:i', filemtime($lastfile)); ?> EST</small>
+        <small>Data refreshed: <br><?php echo date('M d Y H:i', filemtime($lastfile)); ?> EST</small>
       </p>
     </div>
     <div class="main col-md-9 col-lg-10 offset-md-3 offset-lg-2">

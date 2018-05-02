@@ -16,10 +16,10 @@ try {
   $monthly_totals = R::getAll("
     SELECT
       to_char(date_checked, 'yyyy-mm') AS yymm,
-      sum(total_users) / count(DISTINCT to_char(date_checked, 'HH24 yy')) / count(DISTINCT to_char(date_checked, 'dd yy')) as users,
-      sum(local_posts) / count(DISTINCT to_char(date_checked, 'HH24 yy')) / count(DISTINCT to_char(date_checked, 'dd yy')) as posts,
-      sum(comment_counts) / count(DISTINCT to_char(date_checked, 'HH24 yy')) / count(DISTINCT to_char(date_checked, 'dd yy')) as comments,
-      count(domain) / count(DISTINCT to_char(date_checked, 'HH24 yy')) / count(DISTINCT to_char(date_checked, 'dd yy')) as pods,
+      sum(total_users) / count(DISTINCT to_char(date_checked, 'HH24 dd')) as users,
+      sum(local_posts) / count(DISTINCT to_char(date_checked, 'HH24 dd')) as posts,
+      sum(comment_counts) / count(DISTINCT to_char(date_checked, 'HH24 dd')) as comments,
+      count(domain) / count(DISTINCT to_char(date_checked, 'HH24 dd')) as pods,
       count(nullif(online, false)) as uptime, 
       count(nullif(online, true)) as downtime
     FROM checks

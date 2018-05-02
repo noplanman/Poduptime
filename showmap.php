@@ -4,6 +4,8 @@ use RedBeanPHP\R;
 
 defined('PODUPTIME') || die();
 
+require_once __DIR__ . '/config.php';
+
 try {
   $pods = R::getAll("
     SELECT domain, signup, name, lat, long, softwarename, uptime_alltime, active_users_halfyear, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp
@@ -69,11 +71,11 @@ EOF;
       ?>
     ]
   };
-  var tiles = L.tileLayer('https://{s}.tiles.mapbox.com/v4/diasporg.l615e519/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZGlhc3BvcmciLCJhIjoibTVBaldtayJ9.HdGPBIFeZyNKKQqCmU11nA', {
+  var tiles = L.tileLayer('https://{s}.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.jpg70?access_token=<?php echo $mapboxkey; ?>', {
     maxZoom: 18,
     attribution: '<a href="https://www.mapbox.com/about/maps/" target="_blank">&copy; Mapbox &copy; OpenStreetMap</a> <a class="mapbox-improve-map" href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a>'
   });
-  var map = L.map('map', {zoom: 3, center: [<?php echo $lat; ?>, <?php echo $long; ?>]}).addLayer(tiles);
+  var map = L.map('map', {zoom: 4, center: [<?php echo $lat; ?>, <?php echo $long; ?>]}).addLayer(tiles);
   var markers = L.markerClusterGroup({
     maxClusterRadius: 2, animateAddingMarkers: true, iconCreateFunction: function (cluster) {
       return new L.DivIcon({html: '<b class="icon">' + cluster.getChildCount() + '</b>', className: 'mycluster', iconSize: L.point(35, 35)});

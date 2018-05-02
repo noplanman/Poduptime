@@ -171,6 +171,7 @@ foreach ($pods as $pod) {
   _debug('Version code', $shortversion);
   _debug('Signup Open', $signup);
 
+  $dnsserver = !empty($dnsserver) ? $dnsserver : '1.1.1.1';
   $delv = new NPM\Xec\Command("delv @{$dnsserver} {$domain}");
   $delv->throwExceptionOnError(false);
 

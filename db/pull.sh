@@ -24,12 +24,21 @@ if ! wget -q --spider --tries=2 --timeout=15 https://www.google.com; then
 fi
 echo "$HAPPY"
 
-if [ "$HOUR" = 01 ]; then
-  echo "Pulling in master versions...";
-  php pull-masterversions.php
-  echo
+if [ "$HOUR" = 23 ]; then
+  printf "%s" "Pulling in master versions..."
+  if php pull-masterversions.php; then
+    echo "$HAPPY"
+  else
+    echo "$SAD"
+  fi
   printf "%s" "Updating Monthy Stats Table..."
   if php monthly_stats.php; then
+    echo "$HAPPY"
+  else
+    echo "$SAD"
+  fi
+  printf "%s" "Crawling the federation..."
+  if php podcrawler.php; then
     echo "$HAPPY"
   else
     echo "$SAD"

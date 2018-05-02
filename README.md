@@ -4,16 +4,7 @@ Poduptime is software to get live stats and data on listed Diaspora Pods.
 
 Dependencies:
 ```
-php7.0 php7.0-curl php7.0-pgsql php-geoip php7.0-cli php7.0-common php7.0-json php7.0-readline php-cgi
-git
-curl
-postgresql postgresql-contrib
-wget
-dnsutils
-bind9
-npm
-nodejs nodejs-legacy
-composer
+php7.2 php7.2-curl php7.2-pgsql php-geoip php7.2-cli php7.2-common php7.2-json php7.2-readline php-cgi git curl postgresql postgresql-contrib wget dnsutils bind9 npm nodejs nodejs-legacy composer
 ```
 
 To Install:
@@ -53,7 +44,7 @@ cd Poduptime
 git pull
 bower install
 composer install
-psql -u podupuser podupdb < db/migrationx.sql (see db/version.md for proper migration versions)
+psql -U podupuser podupdb < db/migrationXXX.sql (see db/version.md for proper migration versions)
 ```
 
 ============================
