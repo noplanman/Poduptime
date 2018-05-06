@@ -286,7 +286,7 @@ foreach ($pods as $pod) {
     $p['sslvalid']              = $outputsslerror;
     $p['dnssec']                = $dnssec;
     $p['sslexpire']             = $sslexpire;
-    if ($dbstatus == 1 & $status = PodStatus::Up) {
+    if ($dbstatus == PodStatus::Up && $status == PodStatus::Up) {
       $p['shortversion']          = $shortversion;
       $p['signup']                = $signup;
       $p['total_users']           = $total_users;
