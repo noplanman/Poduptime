@@ -31,6 +31,9 @@ try {
   if ($_domain) {
     $sql .= ' WHERE domain = ?';
     $pods = R::getAll($sql, [$_domain]);
+  } elseif (PHP_SAPI === 'cli' && (isset($argv) && in_array('Check_System_Deleted', $argv, true))) {
+    $sql .= ' WHERE status = ?';
+    $pods = R::getAll($sql, [PodStatus::System_Deleted]);
   } elseif (PHP_SAPI === 'cli') {
     $sql .= ' WHERE status < ?';
     $pods = R::getAll($sql, [PodStatus::Paused]);
@@ -241,7 +244,7 @@ foreach ($pods as $pod) {
   $hidden = $score <= 70;
   _debug('Hidden', $hidden ? 'yes' : 'no');
 
-  if (!$hiddennow && $hidden && $notify) {
+  if (!$hiddennow && $hidden && $notify && !(isset($argv) && in_array('develop', $argv, true))) {
     $to      = $email;
     $headers = ['From: ' . $adminemail, 'Bcc: ' . $adminemail];
     $subject = 'Monitoring notice from poduptime';

@@ -36,7 +36,10 @@ psql -U podupuser podupdb < db/tables.sql
 Edit `config.php` to add your DB and file settings.
 touch add.log in location you configured in config.php
 
-run db/pull.sh manually or with cron to update your data
+run `db/pull.sh` manually or with cron to update your data
+run `db/pull.sh debug` to debug output
+run `db/pull.sh develop` to run without email alerts to end users
+run `db/pull.sh Check_System_Deleted` to re-check system deleted pods as needed
 
 To Upgrade:
 ```

@@ -52,7 +52,7 @@ if [ "$HOUR" = 23 ]; then
 fi
 
 echo "Pulling in new pod data...";
-php pull.php $1
+php pull.php $@
 touch last.data
 echo "Finished pull!"
 
