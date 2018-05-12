@@ -9,9 +9,10 @@ try {
     SELECT domain, masterversion, shortversion, softwarename, monthsmonitored, podmin_statement, score, signup, name, country, city, state, uptime_alltime, active_users_halfyear, active_users_monthly, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp
     FROM pods
     WHERE NOT hidden
+      AND status = ?
       AND signup
     ORDER BY weightedscore DESC
-  ');
+  ', [PodStatus::Up]);
 } catch (\RedBeanPHP\RedException $e) {
   die('Error in SQL query: ' . $e->getMessage());
 }
@@ -21,7 +22,7 @@ try {
 <meta property="og:title" content="<?php echo count($pods); ?> Federated Pods listed, Come see the privacy aware social networks."/>
 <div class="hidden-sm-up">Scroll right or rotate device for more</div>
 <div class="table-responsive">
-<table class="table table-striped table-sm tablesorter-bootstrap table-hover">
+<table class="table table-striped table-bordered table-sm tablesorter-bootstrap table-hover">
   <thead class="thead-inverse">
   <tr>
     <th><a data-toggle="tooltip" data-placement="bottom" title="A pod is a site for you to set up your account.">Pod</a></th>
@@ -39,9 +40,10 @@ try {
     $verdiff  = str_replace('.', '', $pod['masterversion']) - str_replace('.', '', $pod['shortversion']);
     $pod_name = htmlentities($pod['name'], ENT_QUOTES);
     $tip      = sprintf(
-      'Uptime %2$s%% over %1$s months.',
+      'This %3$s pod\'s uptime is %2$s%% over %1$s months.',
       $pod['monthsmonitored'],
-      $pod['uptime_alltime']
+      $pod['uptime_alltime'],
+      $pod['softwarename']
     );
     echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="text-success url" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></div></td>';
 

@@ -1,6 +1,7 @@
 <?php
 
 use RedBeanPHP\R;
+use Jaybizzle\CrawlerDetect\CrawlerDetect;
 
 // Other parameters.
 $_domain = $_GET['domain'] ?? '';
@@ -13,6 +14,7 @@ define('PODUPTIME', microtime(true));
 // Set up global DB connection.
 R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
 R::testConnection() || die('Error in DB connection');
+R::usePartialBeans(true);
 
 try {
   if ($_domain) {
@@ -25,7 +27,8 @@ try {
       SELECT domain
       FROM pods
       WHERE signup
-        AND score > 90
+        AND uptime_alltime > 96
+        AND monthsmonitored > 2
         AND pods.masterversion = shortversion
       ORDER BY random()
       LIMIT 1
@@ -36,7 +39,9 @@ try {
   $c           = R::dispense('clicks');
   $c['domain'] = $domain;
   $c[$click]   = 1;
-  R::store($c);
+  if (!(new CrawlerDetect())->isCrawler()) {
+    R::store($c);
+  }
 
   header('Location: https://' . $domain);
 } catch (\RedBeanPHP\RedException $e) {

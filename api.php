@@ -18,6 +18,7 @@ define('PODUPTIME', microtime(true));
 // Set up global DB connection.
 R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
 R::testConnection() || die('Error in DB connection');
+R::usePartialBeans(true);
 
 if ($_format === 'georss') {
   echo <<<EOF

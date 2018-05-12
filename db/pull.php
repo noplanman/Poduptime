@@ -19,10 +19,11 @@ define('PODUPTIME', microtime(true));
 // Set up global DB connection.
 R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
 R::testConnection() || die('Error in DB connection');
+R::usePartialBeans(true);
 
 try {
   $sql = '
-    SELECT domain, score, date_created, adminrating, weight, hidden, podmin_notify, email
+    SELECT domain, score, date_created, adminrating, weight, hidden, podmin_notify, email, masterversion, shortversion, status
     FROM pods
   ';
 
@@ -30,8 +31,12 @@ try {
   if ($_domain) {
     $sql .= ' WHERE domain = ?';
     $pods = R::getAll($sql, [$_domain]);
+  } elseif (PHP_SAPI === 'cli' && (isset($argv) && in_array('Check_System_Deleted', $argv, true))) {
+    $sql .= ' WHERE status = ?';
+    $pods = R::getAll($sql, [PodStatus::System_Deleted]);
   } elseif (PHP_SAPI === 'cli') {
-    $pods = R::getAll($sql);
+    $sql .= ' WHERE status < ?';
+    $pods = R::getAll($sql, [PodStatus::Paused]);
   }
 } catch (\RedBeanPHP\RedException $e) {
   die('Error in SQL query: ' . $e->getMessage());
@@ -46,6 +51,9 @@ foreach ($pods as $pod) {
   $hiddennow = $pod['hidden'];
   $email     = $pod['email'];
   $notify    = $pod['podmin_notify'];
+  $masterv   = $pod['masterversion'];
+  $shortv    = $pod['shortversion'];
+  $dbstatus  = $pod['status'];
 
   try {
     $ratings = R::getAll('
@@ -118,14 +126,15 @@ foreach ($pods as $pod) {
   $service_wordpress     = false;
   if (json_last_error() === 0) {
     (!$jsonssl->software->version) || $score += 1;
-    $service_facebook  = in_array('facebook', $jsonssl->services->outbound, true);
-    $service_twitter   = in_array('twitter', $jsonssl->services->outbound, true);
-    $service_tumblr    = in_array('tumblr', $jsonssl->services->outbound, true);
-    $service_wordpress = in_array('wordpress', $jsonssl->services->outbound, true);
+    if (is_array($jsonssl->services->outbound)) {
+      $service_facebook  = in_array('facebook', $jsonssl->services->outbound, true);
+      $service_twitter   = in_array('twitter', $jsonssl->services->outbound, true);
+      $service_tumblr    = in_array('tumblr', $jsonssl->services->outbound, true);
+      $service_wordpress = in_array('wordpress', $jsonssl->services->outbound, true);
+      }
   }
 
   if ($jsonssl !== null) {
-    $status = 'Up';
 
     try {
       $c                   = R::dispense('checks');
@@ -140,6 +149,8 @@ foreach ($pods as $pod) {
     } catch (\RedBeanPHP\RedException $e) {
       die('Error in SQL query: ' . $e->getMessage());
     }
+    
+    $status = PodStatus::Up;
   }
 
   if (!$jsonssl) {
@@ -157,13 +168,13 @@ foreach ($pods as $pod) {
     }
 
     $score        -= 1;
-    $shortversion = '0.error';
-    $status       = 'Down';
+    $status       = PodStatus::Down;
   }
 
   _debug('Version code', $shortversion);
   _debug('Signup Open', $signup);
 
+  $dnsserver = !empty($dnsserver) ? $dnsserver : '1.1.1.1';
   $delv = new NPM\Xec\Command("delv @{$dnsserver} {$domain}");
   $delv->throwExceptionOnError(false);
 
@@ -175,15 +186,10 @@ foreach ($pods as $pod) {
     preg_match('/A\s(.*)/', $getaonly[0], $aversion);
     $ip = trim($aversion[1]) ?? '';
   }
-
-  $ipv6        = false;
-  $iplookupv6  = explode(PHP_EOL, trim($delv->execute(['AAAA'], null, 15)->stdout));
-  $getaaaaonly = array_values(preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6));
-  if ($getaaaaonly) {
-    preg_match('/AAAA\s(.*)/', $getaaaaonly[0], $aaaaversion);
-    $ipv6 = trim($aaaaversion[1]) ?? '';
-  }
   $ip || $score -= 2;
+
+  $iplookupv6 = explode(PHP_EOL, trim($delv->execute(['AAAA'], null, 15)->stdout));
+  $ipv6       = (bool) preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6);
 
   _debug('IPv4', $ip);
   _debug('Iplookupv4', $iplookupv4, true);
@@ -230,14 +236,15 @@ foreach ($pods as $pod) {
   _debug('Masterversion', $masterversion);
   $masterversioncheck = explode('.',$masterversion);
   $shortversioncheck = explode('.',$shortversion);
-  if (($masterversioncheck[1] - $shortversioncheck[1]) > 1) {
+  if (($masterversioncheck[1] - $shortversioncheck[1]) > 1 && strpos($xdver,'dev') === false) {
+    //dev search added to address frendica using very odd versioning for dev code, we should look to pull dev versions and use them rather than assume dev is always ahead of prod code
     _debug('Outdated', 'Yes');$score -= 2;
   }
 
   $hidden = $score <= 70;
   _debug('Hidden', $hidden ? 'yes' : 'no');
 
-  if (!$hiddennow && $hidden && $notify) {
+  if (!$hiddennow && $hidden && $notify && !(isset($argv) && in_array('develop', $argv, true))) {
     $to      = $email;
     $headers = ['From: ' . $adminemail, 'Bcc: ' . $adminemail];
     $subject = 'Monitoring notice from poduptime';
@@ -249,6 +256,9 @@ foreach ($pods as $pod) {
     $score = 100;
   } elseif ($score < 0) {
     $score = 0;
+    if ($masterv <> $shortv) {
+      $status = PodStatus::System_Deleted;
+    }
   }
   _debug('Score', $score);
   $weightedscore = ($uptime + $score - (10 - $weight)) / 2;
@@ -259,7 +269,7 @@ foreach ($pods as $pod) {
     $p['secure']                = true;
     $p['hidden']                = $hidden;
     $p['ip']                    = $ip;
-    $p['ipv6']                  = ($ipv6 !== null);
+    $p['ipv6']                  = $ipv6;
     $p['monthsmonitored']       = $months;
     $p['uptime_alltime']        = $uptime;
     $p['status']                = $status;
@@ -274,29 +284,26 @@ foreach ($pods as $pod) {
     $p['lat']                   = $lat;
     $p['long']                  = $long;
     $p['userrating']            = $user_rating;
-    $p['shortversion']          = $shortversion;
     $p['masterversion']         = $masterversion;
-    $p['signup']                = $signup;
-    $p['total_users']           = $total_users;
-    $p['active_users_halfyear'] = $active_users_halfyear;
-    $p['active_users_monthly']  = $active_users_monthly;
-    $p['local_posts']           = $local_posts;
-    $p['name']                  = $name;
-    $p['comment_counts']        = $comment_counts;
-    $p['service_facebook']      = $service_facebook;
-    $p['service_tumblr']        = $service_tumblr;
-    $p['service_twitter']       = $service_twitter;
-    $p['service_wordpress']     = $service_wordpress;
-    $p['service_xmpp']          = $service_xmpp;
     $p['weightedscore']         = $weightedscore;
-    $p['softwarename']          = $softwarename;
     $p['sslvalid']              = $outputsslerror;
     $p['dnssec']                = $dnssec;
     $p['sslexpire']             = $sslexpire;
-    
-    // @todo Temporary fix! https://github.com/gabordemooij/redbean/issues/547
-    foreach ($p->getProperties() as $key => $value) {
-      $p[$key] = $value;
+    if ($dbstatus == PodStatus::Up && $status == PodStatus::Up) {
+      $p['shortversion']          = $shortversion;
+      $p['signup']                = $signup;
+      $p['total_users']           = $total_users;
+      $p['active_users_halfyear'] = $active_users_halfyear;
+      $p['active_users_monthly']  = $active_users_monthly;
+      $p['local_posts']           = $local_posts;
+      $p['name']                  = $name;
+      $p['comment_counts']        = $comment_counts;
+      $p['service_facebook']      = $service_facebook;
+      $p['service_tumblr']        = $service_tumblr;
+      $p['service_twitter']       = $service_twitter;
+      $p['service_wordpress']     = $service_wordpress;
+      $p['service_xmpp']          = $service_xmpp;
+      $p['softwarename']          = $softwarename;
     }
 
     R::store($p);

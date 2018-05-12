@@ -18,6 +18,7 @@ define('PODUPTIME', microtime(true));
 // Set up global DB connection.
 R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
 R::testConnection() || die('Error in DB connection');
+R::usePartialBeans(true);
 
 try {
   $pod = R::getRow('
@@ -32,7 +33,12 @@ try {
 if ($_format === 'json') {
   echo json_encode($pod);
 } else {
-  echo 'Status: ' . $pod['status'] . '<br>';
+  if ($pod['status'] === PodStatus::Up) {
+    echo 'Status: Up<br>';
+  }
+  if ($pod['status'] === PodStatus::Down) {
+    echo 'Status: Down<br>';
+  }
   echo 'Last Git Pull: ' . $pod['hgitdate'] . '<br>';
   echo 'Uptime This Month ' . $pod['uptimelast7'] . '<br>';
   echo 'Months Monitored: ' . $pod['monthsmonitored'] . '<br>';

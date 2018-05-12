@@ -6,11 +6,11 @@ defined('PODUPTIME') || die();
 
 try {
   $pods = R::getAll('
-    SELECT domain, dnssec, podmin_statement, sslexpire, masterversion, shortversion, softwarename, monthsmonitored, score, signup, name, country, city, state, lat, long, uptime_alltime, active_users_halfyear, active_users_monthly, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp, latency, date_updated, ipv6, total_users, local_posts, comment_counts, stats_apikey, userrating
+    SELECT domain, dnssec, podmin_statement, sslexpire, masterversion, shortversion, softwarename, monthsmonitored, score, signup, name, country, city, state, lat, long, uptime_alltime, active_users_halfyear, active_users_monthly, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp, latency, date_updated, ipv6, total_users, local_posts, comment_counts, userrating, status
     FROM pods
-    WHERE uptime_alltime > 50
+    WHERE status < ?
     ORDER BY weightedscore DESC
-  ');
+  ', [PodStatus::System_Deleted]);
 } catch (\RedBeanPHP\RedException $e) {
   die('Error in SQL query: ' . $e->getMessage());
 }
@@ -19,7 +19,7 @@ try {
 <meta property="og:title" content="<?php echo count($pods); ?> Federated Pods listed, Come see the privacy aware social networks."/>
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
 <div class="table-responsive">
-<table class="table table-striped table-sm tablesorter-bootstrap table-hover tfont">
+<table class="table table-striped table-bordered table-sm tablesorter-bootstrap table-hover tfont">
   <thead class="thead-inverse">
   <tr>
     <th><a data-toggle="tooltip" data-placement="bottom" title="A pod is a site for you to set up your account.">Pod</a></th>
@@ -49,7 +49,7 @@ try {
     $pod_name = htmlentities($pod['name'], ENT_QUOTES);
     $tip = "\n Over {$pod['monthsmonitored']} months uptime is {$pod['uptime_alltime']}% and response time is {$pod['latency']}ms, last check on {$pod['date_updated']}. This site is SSL/TLS encrypted with a cert that expires: " . $pod['sslexpire'];
 
-    echo '<tr><td><a title="' . $tip . '" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></td>';
+    echo '<tr><td><a title="' . $tip . '" class="text-success url" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></td>';
 
     if ($pod['shortversion'] > $pod['masterversion']) {
       $version = $pod['shortversion'];
@@ -81,7 +81,7 @@ try {
     echo '<td>' . ($pod['comment_counts'] > 0 ? $pod['comment_counts'] : '') . '</td>';
     echo '<td><div title="Last Check ' . $pod['date_updated'] . '" data-toggle="tooltip" data-placement="bottom">' . $pod['monthsmonitored'] . '</div></td>';
     echo '<td><a rel="facebox" href="rate.php?domain=' . $pod['domain'] . '">' . $pod['userrating'] . '</a></td>';
-    echo '<td>' . $pod['score'] . '</td>';
+    echo '<td><div title="Pod Status is: ' . PodStatus::getKey((int)$pod['status']) . '" data-toggle="tooltip" data-placement="bottom">' . $pod['score'] . '</div></td>';
     echo '<td>' . ($pod['dnssec'] ? '&#10003;' : '') . '</td>';
     if ($country_code === $pod['country']) {
       echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: ' . ($pod['city'] ?? 'n/a') . ' State: ' . ($pod['state'] ?? 'n/a') . '"><b>' . $pod['country'] . '</b></td>';

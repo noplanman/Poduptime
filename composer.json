@@ -1,6 +1,11 @@
 {
     "require": {
         "noplanman/xec": "0.1.0",
-        "gabordemooij/redbean": "^4.3"
+        "gabordemooij/redbean": "^5.0",
+        "jaybizzle/crawler-detect" :"1.*",
+        "commerceguys/enum": "^1.0"
+    },
+    "autoload": {
+        "classmap": ["lib"]
     }
 }
