@@ -90,7 +90,7 @@ $navs = [
 </nav>
 <div class="container-fluid">
   <div class="row">
-    <div class="sidebar col-md-3 col-lg-2 hidden-sm-down">
+    <div class="sidebar col-md-3 col-lg-1 hidden-sm-down">
 
       <?php foreach ($navs as $nav) : ?>
         <ul class="nav nav-pills flex-column">
@@ -115,7 +115,7 @@ $navs = [
         <small>Data refreshed: <br><?php echo date('M d Y H:i', filemtime($lastfile)); ?> EST</small>
       </p>
     </div>
-    <div class="main col-md-9 col-lg-10 offset-md-3 offset-lg-2">
+    <div class="main col-md-10 col-lg-11 offset-md-3 offset-lg-1">
       <a href="go.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
       <div class="row placeholders">
       </div>
