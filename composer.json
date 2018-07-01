@@ -3,7 +3,8 @@
         "noplanman/xec": "0.1.0",
         "gabordemooij/redbean": "^5.0",
         "jaybizzle/crawler-detect" :"1.*",
-        "commerceguys/enum": "^1.0"
+        "commerceguys/enum": "^1.0",
+        "patrickschur/language-detection": "^3.3"
     },
     "autoload": {
         "classmap": ["lib"]

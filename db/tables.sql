@@ -12,6 +12,7 @@ CREATE TABLE pods (
  userrating decimal DEFAULT 0,
  hidden boolean DEFAULT true,
  ip text,
+ detectedlanguage text,
  country text,
  city text,
  state text, 

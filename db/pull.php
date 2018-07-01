@@ -2,6 +2,7 @@
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
 
 use RedBeanPHP\R;
+use LanguageDetection\Language;
 
 $debug   = isset($_GET['debug']) || (isset($argv) && in_array('debug', $argv, true));
 $newline = PHP_SAPI === 'cli' ? "\n" : '<br>';
@@ -81,6 +82,16 @@ foreach ($pods as $pod) {
 
   if ($admindb == -1) {
     $admin_rating = -1;
+  }
+
+  $d = new DOMDocument;
+  libxml_use_internal_errors(true);
+  $d->loadHTMLFile('https://' . $domain);
+  $body = $d->getElementsByTagName('body')->item(0);
+  if ($body->nodeValue) {
+    $ld = new Language;
+    $detectedlanguage = strtoupper(key($ld->detect($body->nodeValue)->bestResults()->close()));
+    _debug('Detected Language', $detectedlanguage);
   }
 
   $chss = curl_init();
@@ -279,6 +290,7 @@ foreach ($pods as $pod) {
     $p['score']                 = $score;
     $p['adminrating']           = $admin_rating;
     $p['country']               = $country;
+    $p['detectedlanguage']     = $detectedlanguage;
     $p['city']                  = $city;
     $p['state']                 = $state;
     $p['lat']                   = $lat;
