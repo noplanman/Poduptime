@@ -1,3 +1,12 @@
+#2+
+
+## Podmins
+* Language is detected based on your homepage, edit your homepage to non-en if that is what you use
+
+# DB
+* Store detectedlanguage 
+* Migration needed see db/version.md
+
 # 2.2.0
 
 ## Podmins
