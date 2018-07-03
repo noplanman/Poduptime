@@ -7,6 +7,7 @@
 * Add development and release dates to masterversions table https://github.com/diasporg/Poduptime/issues/143
 * Store full country name, store days monitored each pod
 * DB migrations see db/version.md
+* rename table rating_comments to ratingcomments for redbean support
 
 ## Cleanup
 * Use the git API for release versions, check development releases on pods https://github.com/diasporg/Poduptime/issues/143

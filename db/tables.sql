@@ -51,7 +51,7 @@ CREATE TABLE pods (
  date_created timestamp DEFAULT current_timestamp
 );
 
-CREATE TABLE rating_comments (
+CREATE TABLE ratingcomments (
  id serial8 UNIQUE PRIMARY KEY,
  domain text NOT NULL,
  comment text,
