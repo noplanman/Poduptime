@@ -1,4 +1,10 @@
 <?php
+
+if (PHP_SAPI !== 'cli') {
+  header('HTTP/1.0 403 Forbidden');
+  exit;
+}
+
 require_once __DIR__ . '/../config.php';
 
 $keep      = (60 * 60 * 6) * 1;

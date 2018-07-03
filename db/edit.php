@@ -120,4 +120,24 @@ if ('save' === $_action) {
     <input type="hidden" name="token" value="<?php echo $_token; ?>">
     <input type="submit" name="action" value="unpause">
   </form>
+  <button type="button" class="openBtn" value="<?php echo $_domain; ?>">Do a debug test pull of your pod</button>
+
+<!-- Modal -->
+<div class="modal fade" id="podpull" role="dialog">
+    <div class="modal-dialog modal-xlg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Pod debug data</h4>
+            </div>
+            <div class="modal-body">
+            Loading.....
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php

@@ -10,5 +10,10 @@ $.facebox.settings.loadingImage = 'bower_components/facebox/src/loading.gif'
   $('.popover-dismiss').popover({
     trigger: 'focus'
   })
+  $('.openBtn').on('click',function(){
+    $('#podpull').modal({show:true});
+    $('.modal-body').load('/db/pull.php?debug=1&nowrite=1&domain='+$(this).val(),function(){
+    });
+  });
 });
 

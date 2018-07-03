@@ -1,3 +1,20 @@
+# 2x+
+
+## Podmins
+* Can no longer access db/pull.php to test their pod, they can however get to a debug screen from the edit pod area
+
+
+## DB
+* Add development and release dates to masterversions table https://github.com/diasporg/Poduptime/issues/143
+
+## Cleanup
+* Use the git API for release versions, check development releases on pods https://github.com/diasporg/Poduptime/issues/143
+* Forbid access to files that should be cli only https://github.com/diasporg/Poduptime/issues/152
+
+## End Users
+* Show version and update in full view cleaner https://github.com/diasporg/Poduptime/issues/143
+* Edit will send to email on file and be less delay, runner of site does not really have anyway to verify email address
+
 # 2.2.0
 
 ## Podmins

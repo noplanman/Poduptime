@@ -1,9 +1,15 @@
 {
+    "config": {
+        "platform": {
+            "php": "7.2"
+        }
+    },
     "require": {
         "noplanman/xec": "0.1.0",
         "gabordemooij/redbean": "^5.0",
         "jaybizzle/crawler-detect" :"1.*",
-        "commerceguys/enum": "^1.0"
+        "commerceguys/enum": "^1.0",
+        "php" : "^7.2"
     },
     "autoload": {
         "classmap": ["lib"]

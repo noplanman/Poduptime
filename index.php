@@ -116,7 +116,7 @@ $navs = [
       </p>
     </div>
     <div class="main col-md-10 col-lg-11 offset-md-3 offset-lg-1">
-      <a href="go.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
+      <a href="go.php" class="btn btn-sm btn-outline-warning">Confused on how to find a pod? Auto Pick </a>
       <div class="row placeholders">
       </div>
         <?php
@@ -141,12 +141,12 @@ $navs = [
 </div>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="bower_components/tablesorter/dist/js/jquery.tablesorter.min.js"></script>
-<script src="js/podup.js"></script>
 <script src="bower_components/tether/dist/js/tether.min.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="bower_components/facebox/src/facebox.js"></script>
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
 <script src="bower_components/chart.js/dist/Chart.min.js"></script>
 <?php $statsview && include_once __DIR__ . '/statsviewjs.php'; ?>
+<script src="js/podup.js"></script>
 </body>
 </html>

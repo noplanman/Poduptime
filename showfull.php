@@ -68,7 +68,7 @@ try {
     } else {
       $classver = 'black';
     }
-    echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $pod['shortversion'] . ' master version is: ' . $pod['masterversion'] . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
+    echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $pod['shortversion'] . ' master version is: ' . ($pod['masterversion'] ? $pod['masterversion'] : 'unknown') . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
     echo '<td>' . $pod['softwarename'] . '</td>';
     echo '<td><a rel="facebox" href="podstat.php?domain=' . $pod['domain'] . '">' . ($pod['uptime_alltime'] > 0 ? $pod['uptime_alltime'] . '%' : '') . '</a></td>';
     echo '<td>' . ($pod['ipv6'] ? '&#10003;' : '') . '</td>';

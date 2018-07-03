@@ -26,7 +26,6 @@ body {
 .main {
   padding: 20px;
 }
-
 .placeholders {
   margin-bottom: 30px;
   text-align: center;
@@ -42,59 +41,63 @@ body {
   display: inline-block;
 }
 .rating {
-font-size:9px;
+  font-size:9px;
 }
 .tfont {
-font-size:12px;
+  font-size:12px;
 }
 .smlogo {
-width: 16px;
-height: 16px;
-background: url('/images/smlogo.png') 0 0;
-display: inline-block;
-margin: 0 2px;
+  width: 16px;
+  height: 16px;
+  background: url('/images/smlogo.png') 0 0;
+  display: inline-block;
+  margin: 0 2px;
 }
 .smlogo-twitter {
-background-position: 0 -776px;
+  background-position: 0 -776px;
 }
 .smlogo-facebook {
-background-position: 0 -824px;
+  background-position: 0 -824px;
 }
 .smlogo-tumblr {
-background-position: 0 -792px;
+  background-position: 0 -792px;
 }
 .smlogo-wordpress {
-background-position: 0 -656px;
+  background-position: 0 -656px;
 }
 .smlogo-xmpp {
-background: none;
+  background: none;
 }
 .smlogo-xmpp img {
-vertical-align: unset;
+  vertical-align: unset;
 }
-#map { height: 580px; }
+#map {
+  height: 580px;
+}
 .mycluster {
-width: 35px;
-height: 35px;
-background-color: blue;
-text-align: left;
-font-size: 17px;
-background: url('/bower_components/leaflet/dist/images/marker-icon-2x.png') repeat-y right bottom;
-background-size: 25px 37px;
+  width: 35px;
+  height: 35px;
+  background-color: blue;
+  text-align: left;
+  font-size: 17px;
+  background: url('/bower_components/leaflet/dist/images/marker-icon-2x.png') repeat-y right bottom;
+  background-size: 25px 37px;
 }
 .icon {
-color: red;
+  color: red;
 }
 table { 
-empty-cells: show; 
+  empty-cells: show;
 }
 #facebox {
-z-index: 1000 !important;
+  z-index: 1000 !important;
 }
 #facebox .content {
-width: 800px !important;
+  width: 800px !important;
 }
 .tablesorter-header {
-background-size: 10px 15px !important;
+  background-size: 10px 15px !important;
 }
-
+.modal-xlg {
+  max-width: 92%;
+}

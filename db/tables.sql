@@ -94,6 +94,8 @@ CREATE TABLE masterversions (
  id serial8 UNIQUE PRIMARY KEY,
  software text,
  version text,
+ devlastcommit timestamp,
+ releasedate timestamp,
  date_checked timestamp DEFAULT current_timestamp
 );
 

@@ -1,10 +1,17 @@
 <?php
 //* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
 
+if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
+  header('HTTP/1.0 403 Forbidden');
+  exit;
+}
+
 use RedBeanPHP\R;
 
-$debug   = isset($_GET['debug']) || (isset($argv) && in_array('debug', $argv, true));
-$newline = PHP_SAPI === 'cli' ? "\n" : '<br>';
+$debug     = isset($_GET['debug']) || (isset($argv) && in_array('debug', $argv, true));
+$sqldebug  = isset($_GET['sqldebug']) || (isset($argv) && in_array('sqldebug', $argv, true));
+$write     = !(isset($_GET['nowrite']) || (isset($argv) && in_array('nowrite', $argv, true)));
+$newline   = PHP_SAPI === 'cli' ? "\n\n" : '<br><br>';
 
 $_domain = $_GET['domain'] ?? null;
 
@@ -18,6 +25,7 @@ define('PODUPTIME', microtime(true));
 
 // Set up global DB connection.
 R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
+$sqldebug && R::fancyDebug(true);
 R::testConnection() || die('Error in DB connection');
 R::usePartialBeans(true);
 
@@ -83,8 +91,14 @@ foreach ($pods as $pod) {
     $admin_rating = -1;
   }
 
+  if ($infos = json_decode(file_get_contents('https://' . $domain . '/.well-known/nodeinfo'), true)) {
+    $link = max($infos['links'])['href'];
+  } else {
+    $link = 'https://' . $domain . '/nodeinfo/1.0';
+  }
+
   $chss = curl_init();
-  curl_setopt($chss, CURLOPT_URL, 'https://' . $domain . '/nodeinfo/1.0');
+  curl_setopt($chss, CURLOPT_URL, $link);
   curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 10);
   curl_setopt($chss, CURLOPT_TIMEOUT, 30);
   curl_setopt($chss, CURLOPT_RETURNTRANSFER, 1);
@@ -109,8 +123,8 @@ foreach ($pods as $pod) {
   $jsonssl = json_decode($outputssl);
 
   $xdver                 = $jsonssl->software->version ?? 0;
-  $dverr                 = explode('-', trim($xdver));
-  $shortversion          = $dverr[0];
+  preg_match_all('((?:\d(.|-)?)+(\.|-)\d+\.*)', $xdver, $dverr);
+  $shortversion          = $dverr[0][0];
   $signup                = ($jsonssl->openRegistrations ?? false) === true;
   $softwarename          = $jsonssl->software->name ?? 'unknown';
   $name                  = $jsonssl->metadata->nodeName ?? $softwarename;
@@ -131,7 +145,7 @@ foreach ($pods as $pod) {
       $service_twitter   = in_array('twitter', $jsonssl->services->outbound, true);
       $service_tumblr    = in_array('tumblr', $jsonssl->services->outbound, true);
       $service_wordpress = in_array('wordpress', $jsonssl->services->outbound, true);
-      }
+    }
   }
 
   if ($jsonssl !== null) {
@@ -145,11 +159,15 @@ foreach ($pods as $pod) {
       $c['local_posts']    = $local_posts;
       $c['comment_counts'] = $comment_counts;
       $c['shortversion']   = $shortversion;
-      R::store($c);
+      if ($write) {
+        R::store($c);
+      } else {
+        echo $c;
+      }
     } catch (\RedBeanPHP\RedException $e) {
       die('Error in SQL query: ' . $e->getMessage());
     }
-    
+
     $status = PodStatus::Up;
   }
 
@@ -162,7 +180,11 @@ foreach ($pods as $pod) {
       $c['online']  = false;
       $c['error']   = $outputsslerror;
       $c['latency'] = $latency;
-      R::store($c);
+      if ($write) {
+        R::store($c);
+      } else {
+        echo $c;
+      }
     } catch (\RedBeanPHP\RedException $e) {
       die('Error in SQL query: ' . $e->getMessage());
     }
@@ -228,19 +250,47 @@ foreach ($pods as $pod) {
   _debug('Uptime', $uptime);
 
   try {
-    $masterversion = R::getCell('SELECT version FROM masterversions WHERE software = ? ORDER BY id DESC LIMIT 1', [$softwarename]);
+    $masterdata = R::getRow('SELECT version, devlastcommit, releasedate FROM masterversions WHERE software = ? ORDER BY id DESC LIMIT 1', [$softwarename]);
   } catch (\RedBeanPHP\RedException $e) {
     die('Error in SQL query: ' . $e->getMessage());
   }
 
+  $masterversion = $masterdata['version'];
   _debug('Masterversion', $masterversion);
   $masterversioncheck = explode('.',$masterversion);
   $shortversioncheck = explode('.',$shortversion);
-  if (($masterversioncheck[1] - $shortversioncheck[1]) > 1 && strpos($xdver,'dev') === false) {
-    //dev search added to address frendica using very odd versioning for dev code, we should look to pull dev versions and use them rather than assume dev is always ahead of prod code
-    _debug('Outdated', 'Yes');$score -= 2;
-  }
 
+  _debug('Days since master code release', date_diff((new DateTime($masterdata['releasedate'])),(new DateTime()))->format('%d'));
+
+
+    try {
+      $lastpodupdates = R::getRow('SELECT DISTINCT ON (shortversion) shortversion, date_checked FROM checks WHERE domain = ? AND shortversion IS NOT NULL ORDER BY shortversion DESC LIMIT 1', [$domain]);
+    } catch (\RedBeanPHP\RedException $e) {
+      die('Error in SQL query: ' . $e->getMessage());
+    }
+   
+    $devlastdays = $masterdata['devlastcommit'] ? date_diff((new DateTime($masterdata['devlastcommit'])),(new DateTime()))->format('%a') : 30;//tmp//if no dev branch then what?
+    
+    
+    _debug('Dev git last commit was  ', $devlastdays);
+      if (strpos($xdver,'dev') !== false || strpos($xdver,'rc') !== false || $shortversioncheck > $masterversioncheck) {
+//tmp//if pod is on the development branch - see when you last updated your pod and when the last commit was made to dev branch - if the repo is active and your not updating every 120 days why are you on dev branch?
+    $updategap   = date_diff((new DateTime($lastpodupdates['date_checked'])),(new DateTime($masterdata['devlastcommit'])))->format('%a');
+    if ($updategap + $devlastdays > 130) {
+      _debug('Outdated', 'Yes');$score -= 2;
+    }
+  } elseif (($masterversioncheck[1] - $shortversioncheck[1]) > 1) {
+///tmp/If pod is two versions off AND it's been more than 60 days since that release came out AND your on the master production branch
+    _debug('Outdated', 'Yes');$score -= 2;
+    $updategap   = date_diff((new DateTime($lastpodupdates['date_checked'])),(new DateTime($masterdata['releasedate'])))->format('%a');
+  } elseif ($updategap - date_diff((new DateTime($masterdata['releasedate'])),(new DateTime()))->format('%a') > 90) {
+    _debug('Outdated', 'Yes');$score -= 2;
+    $updategap   = date_diff((new DateTime($lastpodupdates['date_checked'])),(new DateTime($masterdata['releasedate'])))->format('%a');
+  } else {
+    $updategap   = date_diff((new DateTime($lastpodupdates['date_checked'])),(new DateTime($masterdata['releasedate'])))->format('%a');
+  }
+  _debug('Pod code was updated after ', $updategap);
+  
   $hidden = $score <= 70;
   _debug('Hidden', $hidden ? 'yes' : 'no');
 
@@ -306,7 +356,11 @@ foreach ($pods as $pod) {
       $p['softwarename']          = $softwarename;
     }
 
-    R::store($p);
+    if ($write) {
+      R::store($p);
+    } else {
+      echo $p;
+    }
   } catch (\RedBeanPHP\RedException $e) {
     die('Error in SQL query: ' . $e->getMessage());
   }

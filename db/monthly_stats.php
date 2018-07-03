@@ -1,5 +1,10 @@
 <?php
 
+if (PHP_SAPI !== 'cli') {
+  header('HTTP/1.0 403 Forbidden');
+  exit;
+}
+
 use RedBeanPHP\R;
 
 require_once __DIR__ . '/../vendor/autoload.php';
