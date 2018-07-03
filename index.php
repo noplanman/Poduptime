@@ -31,11 +31,10 @@ $simpleview   = !($detailedview || $mapview || $podmin || $podminedit || $statsv
   <title>Open Source Social Network Pod Uptime Status</title>
   <meta name="keywords" content="diaspora, federated pods, <?php echo $_SERVER['HTTP_HOST'] ?>, friendica, hubzilla, open source social, open source social network"/>
   <meta name="description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!"/>
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/poduptime.css"/>
   <link rel="stylesheet" href="bower_components/facebox/src/facebox.css"/>
-  <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.min.css"/>
-  <link rel="stylesheet" href="bower_components/tablesorter/dist/css/theme.bootstrap_4.min.css"/>
+  <link rel="stylesheet" href="node_modules/tablesorter/dist/css/theme.bootstrap_4.min.css"/>
   <meta property="og:url" content="https://<?php echo $_SERVER['HTTP_HOST'] ?>"/>
   <meta property="og:title" content="Social Network Pod Finder"/>
   <meta property="og:type" content="website"/>
@@ -139,14 +138,12 @@ $navs = [
     </div>
   </div>
 </div>
-<script src="bower_components/jquery/dist/jquery.min.js"></script>
-<script src="bower_components/tablesorter/dist/js/jquery.tablesorter.min.js"></script>
-<script src="bower_components/tether/dist/js/tether.min.js"></script>
-<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="bower_components/facebox/src/facebox.js"></script>
-<script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
-<script src="bower_components/chart.js/dist/Chart.min.js"></script>
-<?php $statsview && include_once __DIR__ . '/statsviewjs.php'; ?>
+<script src="node_modules/jquery/dist/jquery.min.js"></script>
+<script src="node_modules/tablesorter/dist/js/jquery.tablesorter.combined.min.js"></script>
 <script src="js/podup.js"></script>
+<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower_components/facebox/src/facebox.js"></script>
+<script src="node_modules/chart.js/dist/Chart.min.js"></script>
+<?php $statsview && include_once __DIR__ . '/statsviewjs.php'; ?>
 </body>
 </html>

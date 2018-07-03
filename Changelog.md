@@ -3,13 +3,13 @@
 ## Podmins
 * Can no longer access db/pull.php to test their pod, they can however get to a debug screen from the edit pod area
 
-
 ## DB
 * Add development and release dates to masterversions table https://github.com/diasporg/Poduptime/issues/143
 
 ## Cleanup
 * Use the git API for release versions, check development releases on pods https://github.com/diasporg/Poduptime/issues/143
 * Forbid access to files that should be cli only https://github.com/diasporg/Poduptime/issues/152
+* Move from bower to yarn for packages
 
 ## End Users
 * Show version and update in full view cleaner https://github.com/diasporg/Poduptime/issues/143
