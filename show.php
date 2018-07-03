@@ -19,17 +19,16 @@ try {
 
 ?>
 
-<meta property="og:title" content="<?php echo count($pods); ?> Federated Pods listed, Come see the privacy aware social networks."/>
-<div class="hidden-sm-up">Scroll right or rotate device for more</div>
-<div class="table-responsive">
-<table class="table table-striped table-bordered table-sm tablesorter-bootstrap table-hover">
+<meta property="og:title" content="<?php echo count($pods); ?> Federated Pods listed, Come see the privacy aware social networks." xmlns="http://www.w3.org/1999/html"/>
+<div class="d-md-none">Scroll right or rotate device for more</div>
+<table class="table table-striped table-bordered table-sm tablesorter table-hover">
   <thead class="thead-inverse">
   <tr>
     <th><a data-toggle="tooltip" data-placement="bottom" title="A pod is a site for you to set up your account.">Pod</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online.">Uptime %</a></th>
+    <th data-placeholder="Try: >= 99.94"><a data-toggle="tooltip" data-placement="bottom" title="Percent of the time the pod is online.">Uptime %</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 6 months on this pod.">Active Users</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation.">Location</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to.">Services Offered</a></th>
+    <th <?php echo  ($country_code ? 'data-placeholder="Try: $country_code"' : 'data-placeholder="Try: US"') ?>><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation.">Location</a></th>
+    <th class="filter-false"><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to.">Services Offered</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="More information from the host of this pod.">Info</a></th>
   </tr>
   </thead>
@@ -64,9 +63,15 @@ try {
     $pod['service_tumblr'] && print '<div class="smlogo smlogo-tumblr" title="Publish to Tumblr"></div>';
     $pod['service_wordpress'] && print '<div class="smlogo smlogo-wordpress"  title="Publish to WordPress"></div>';
     $pod['service_xmpp'] && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div></td>';
-    echo '<td>' . ($pod['podmin_statement'] ? '<a tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="left" title="Podmin Statement" data-html="true" data-content="' . htmlentities($pod['podmin_statement'], ENT_QUOTES) . '">&#128172;</a>' : '&nbsp;') . '</td></tr>';
+    echo '<td data-text="'. htmlentities($pod['podmin_statement'], ENT_QUOTES) .'">' . ($pod['podmin_statement'] ? '<a tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="left" title="Podmin Statement" data-html="true" data-content="' . htmlentities($pod['podmin_statement'], ENT_QUOTES) . '">&#128172;</a>' : '&nbsp;') . '</td></tr>';
   }
   ?>
   </tbody>
 </table>
+<div class="pager">
+  <span class="first pagination" alt="First" title="First page">&laquo;</span>
+  <span class="prev pagination" alt="Prev" title="Previous page">&lt;</span>
+  <span class="pagedisplay"></span>
+  <span class="next pagination" alt="Next" title="Next page">&gt;</span>
+  <span class="last pagination" alt="Last" title= "Last page">&raquo;</span>
 </div>

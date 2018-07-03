@@ -17,9 +17,9 @@ try {
 ?>
 
 <meta property="og:title" content="<?php echo count($pods); ?> Federated Pods listed, Come see the privacy aware social networks."/>
+<div class="d-md-none">Scroll right or rotate device for more</div>
 <!-- /* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */ -->
-<div class="table-responsive">
-<table class="table table-striped table-bordered table-sm tablesorter-bootstrap table-hover tfont">
+<table class="table table-striped table-bordered table-sm tablesorter table-hover tfont">
   <thead class="thead-inverse">
   <tr>
     <th><a data-toggle="tooltip" data-placement="bottom" title="A pod is a site for you to set up your account.">Pod</a></th>
@@ -33,13 +33,13 @@ try {
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 6 months on this pod.">6m</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of users active last 1 month on this pod.">1m</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total posts on this pod.">Posts</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Number of total comments on this pod.">Comments</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="How many months have we been watching this pod.">Months</a></th>
+    <th data-placeholder="Try: 10 - 50"><a data-toggle="tooltip" data-placement="bottom" title="Number of total comments on this pod.">Comments</a></th>
+    <th data-placeholder="Try: ! 0"><a data-toggle="tooltip" data-placement="bottom" title="How many months have we been watching this pod.">Months</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="User rating for this pod.">Rating</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="System Score on a 100 point scale.">Score</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this domain use DNSSEC.">DNSSEC</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation.">Country</a></th>
-    <th><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to.">Services</a></th>
+    <th <?php echo  ($country_code ? 'data-placeholder="Try: $country_code"' : 'data-placeholder="Try: US"') ?>><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation.">Country</a></th>
+    <th class="filter-false"><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to.">Services</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Click for more information about this pod from the pod host (podmin).">Info</a></th>
   </tr>
   </thead>
@@ -71,9 +71,9 @@ try {
     echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $pod['shortversion'] . ' master version is: ' . ($pod['masterversion'] ? $pod['masterversion'] : 'unknown') . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
     echo '<td>' . $pod['softwarename'] . '</td>';
     echo '<td><a rel="facebox" href="podstat.php?domain=' . $pod['domain'] . '">' . ($pod['uptime_alltime'] > 0 ? $pod['uptime_alltime'] . '%' : '') . '</a></td>';
-    echo '<td>' . ($pod['ipv6'] ? '&#10003;' : '') . '</td>';
+    echo '<td>' . ($pod['ipv6'] ? 'Y' : 'N') . '</td>';
     echo '<td>' . ($pod['latency'] > 0 ? $pod['latency'] : '') . '</td>';
-    echo '<td>' . ($pod['signup'] ? '&#10003;' : '') . '</td>';
+    echo '<td>' . ($pod['signup'] ? 'Y' : 'N') . '</td>';
     echo '<td>' . ($pod['total_users'] > 0 ? $pod['total_users'] : '') . '</td>';
     echo '<td>' . ($pod['active_users_halfyear'] > 0 ? $pod['active_users_halfyear'] : '') . '</td>';
     echo '<td>' . ($pod['active_users_monthly'] > 0 ? $pod['active_users_monthly'] : '') . '</td>';
@@ -82,7 +82,7 @@ try {
     echo '<td><div title="Last Check ' . $pod['date_updated'] . '" data-toggle="tooltip" data-placement="bottom">' . $pod['monthsmonitored'] . '</div></td>';
     echo '<td><a rel="facebox" href="rate.php?domain=' . $pod['domain'] . '">' . $pod['userrating'] . '</a></td>';
     echo '<td><div title="Pod Status is: ' . PodStatus::getKey((int)$pod['status']) . '" data-toggle="tooltip" data-placement="bottom">' . $pod['score'] . '</div></td>';
-    echo '<td>' . ($pod['dnssec'] ? '&#10003;' : '') . '</td>';
+    echo '<td>' . ($pod['dnssec'] ? 'Y' : 'N') . '</td>';
     if ($country_code === $pod['country']) {
       echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: ' . ($pod['city'] ?? 'n/a') . ' State: ' . ($pod['state'] ?? 'n/a') . '"><b>' . $pod['country'] . '</b></td>';
     } else {
@@ -96,9 +96,15 @@ try {
     $pod['service_xmpp'] && print '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
     echo '</td>';
 
-    echo '<td>' . ($pod['podmin_statement'] ? '<a tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="left" title="Podmin Statement" data-html="true" data-content="' . htmlentities($pod['podmin_statement'], ENT_QUOTES) . '">&#128172;</a>' : '&nbsp;') . '</td></tr>';
+    echo '<td data-text="'. htmlentities($pod['podmin_statement'], ENT_QUOTES) .'">' . ($pod['podmin_statement'] ? '<a tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="left" title="Podmin Statement" data-html="true" data-content="' . htmlentities($pod['podmin_statement'], ENT_QUOTES) . '">&#128172;</a>' : '&nbsp;') . '</td></tr>';
   }
   ?>
   </tbody>
 </table>
+<div class="pager">
+    <span class="first pagination" alt="First" title="First page">&laquo;</span>
+    <span class="prev pagination" alt="Prev" title="Previous page">&lt;</span>
+    <span class="pagedisplay"></span>
+    <span class="next pagination" alt="Next" title="Next page">&gt;</span>
+    <span class="last pagination" alt="Last" title= "Last page">&raquo;</span>
 </div>

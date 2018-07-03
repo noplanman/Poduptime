@@ -1,4 +1,22 @@
-$('.tablesorter-bootstrap').tablesorter()
+var $table = $('.tablesorter'),
+  pagerOptions = {
+  container: $(".pager"),
+  output: '{startRow} - {endRow}',
+  removeRows: true,
+  cssGoto: '.gotoPage'
+};
+
+$table
+  .tablesorter({
+    theme: 'default',
+    headerTemplate : '{content} {icon}', // new in v2.7. Needed to add the bootstrap icon!
+    widthFixed: true,
+    widgets: ['zebra', 'filter', 'saveSort','resizable', 'columns'],
+  })
+  .tablesorterPager(pagerOptions);
+
+$('table').trigger('pageSize', 20);
+
 $(document).ready(function(){
 $.facebox.settings.closeImage = 'bower_components/facebox/src/closelabel.png'
 $.facebox.settings.loadingImage = 'bower_components/facebox/src/loading.gif'

@@ -50,72 +50,71 @@ $navs = [
     ['text' => 'Simple View', 'href' => '/', 'active' => $simpleview],
     ['text' => 'Detailed View', 'href' => '/?detailedview', 'active' => $detailedview],
     ['text' => 'Map View', 'href' => '/?mapview', 'active' => $mapview],
-    ['text' => 'Network Stats', 'href' => '/?statsview', 'active' => $statsview],
-  ],
-  'podmin' => [
+    ['text' => 'Network Stats View', 'href' => '/?statsview', 'active' => $statsview],
     ['text' => 'Add a pod', 'href' => '/?podmin', 'active' => $podmin],
     ['text' => 'Edit a pod', 'href' => '/?podminedit', 'active' => $podminedit],
-    ['text' => 'Host a pod', 'href' => 'https://diasporafoundation.org/', 'active' => false],
   ],
   'links'  => [
     ['text' => 'Github', 'href' => 'https://github.com/diasporg/Poduptime', 'active' => false],
     ['text' => 'Contact', 'href' => 'https://dia.so/support', 'active' => false],
     ['text' => 'Wiki', 'href' => 'https://github.com/diasporg/Poduptime/wiki', 'active' => false],
     ['text' => 'API', 'href' => 'https://github.com/diasporg/Poduptime/wiki/API', 'active' => false],
+    ['text' => 'How to host a pod', 'href' => 'https://diasporafoundation.org/', 'active' => false],
   ],
 ];
 ?>
-
-<nav class="navbar navbar-inverse bg-primary fixed-top">
-  <button class="navbar-toggler navbar-toggler-right hidden-md-up" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <a class="navbar-brand" href="/">Poduptime</a>
-  <div class="collapse navbar-toggleable hidden-md-up" id="navbar">
-    <ul class="navbar-nav">
-      <?php
-      foreach ($navs['views'] as $nav_item) {
-        printf(
-          '<li class="nav-item"><a class="nav-link%1$s" href="%2$s">%3$s%4$s</a></li>',
-          $nav_item['active'] ? ' active' : '',
-          $nav_item['href'],
-          $nav_item['text'],
-          $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
-        );
-      }
-      ?>
-    </ul>
-  </div>
-</nav>
-<div class="container-fluid">
-  <div class="row">
-    <div class="sidebar col-md-3 col-lg-1 hidden-sm-down">
-
-      <?php foreach ($navs as $nav) : ?>
-        <ul class="nav nav-pills flex-column">
-          <?php
-          /** @var array $nav */
-          /** @var array $nav_item */
-          foreach ($nav as $nav_item) {
-            printf(
-              '<li class="nav-item"><a class="nav-link%1$s" href="%2$s">%3$s%4$s</a></li>',
-              $nav_item['active'] ? ' active' : '',
-              $nav_item['href'],
-              $nav_item['text'],
-              $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
-            );
-          }
-          ?>
-        </ul>
-        <hr>
-      <?php endforeach; ?>
-
-      <p>
-        <small>Data refreshed: <br><?php echo date('M d Y H:i', filemtime($lastfile)); ?> EST</small>
-      </p>
+<header>
+    <div class="collapse bg-dark" id="navbarHeader">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-md-7 py-4">
+                    <h4 class="text-white">About</h4>
+                    <p class="text-muted">Poduptime helps you find a diaspora, friendica, hubzilla or socialhome pod to use and join the federated social network.</p>
+                  <?php
+                  foreach ($navs['links'] as $nav_item) {
+                    printf(
+                      '<a href="%2$s">%3$s%4$s</a> | ',
+                      $nav_item['active'] ? ' active' : '',
+                      $nav_item['href'],
+                      $nav_item['text'],
+                      $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
+                    );
+                  }
+                  ?>
+                </div>
+                <div class="col-sm-4 offset-md-1 py-4">
+                    <h4 class="text-white">Views</h4>
+                    <ul class="navbar-nav">
+                      <?php
+                      foreach ($navs['views'] as $nav_item) {
+                        printf(
+                          '<li class="nav-item"><a class="nav-link%1$s" href="%2$s">%3$s%4$s</a></li>',
+                          $nav_item['active'] ? ' active' : '',
+                          $nav_item['href'],
+                          $nav_item['text'],
+                          $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
+                        );
+                      }
+                      ?>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="main col-md-10 col-lg-11 offset-md-3 offset-lg-1">
-      <a href="go.php" class="btn btn-sm btn-outline-warning">Confused on how to find a pod? Auto Pick </a>
+    <div class="navbar navbar-dark bg-dark box-shadow">
+        <div class="container d-flex justify-content-between">
+            <a href="/" class="navbar-brand d-flex align-items-center">
+                <strong>Poduptime</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </div>
+</header>
+<main role="main">
+    <div class="main">
+      <a href="go.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
       <div class="row placeholders">
       </div>
         <?php
@@ -138,6 +137,11 @@ $navs = [
     </div>
   </div>
 </div>
+</main>
+<br>
+<footer class="bd-footer text-muted">
+    <p>Data refreshed: <?php echo date('M d Y H:i', filemtime($lastfile)); ?> EST </p>
+</footer>
 <script src="node_modules/jquery/dist/jquery.min.js"></script>
 <script src="node_modules/tablesorter/dist/js/jquery.tablesorter.combined.min.js"></script>
 <script src="js/podup.js"></script>

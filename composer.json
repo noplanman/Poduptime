@@ -9,6 +9,7 @@
         "gabordemooij/redbean": "^5.0",
         "jaybizzle/crawler-detect" :"1.*",
         "commerceguys/enum": "^1.0",
+        "twbs/bootstrap": "^4.1.0",
         "php" : "^7.2"
     },
     "autoload": {

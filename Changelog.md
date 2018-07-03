@@ -14,6 +14,8 @@
 ## End Users
 * Show version and update in full view cleaner https://github.com/diasporg/Poduptime/issues/143
 * Edit will send to email on file and be less delay, runner of site does not really have anyway to verify email address
+* Filter and search on the columns of data
+* Paginate the results so they fit per page
 
 # 2.2.0
 
