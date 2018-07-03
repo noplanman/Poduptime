@@ -3,11 +3,11 @@
 use RedBeanPHP\R;
 
 // Required parameters.
-($_username = $_POST['username'] ?? null) || die('no username given');
-($_userurl = $_POST['userurl'] ?? null) || die('no userurl given');
+($_username = $_POST['username'] ?? null) || die('Name is required');
+//($_userurl = $_POST['userurl'] ?? null) || die('no userurl given');//lets not annoy people on this for now
 ($_domain = $_POST['domain'] ?? null) || die('no pod domain given');
-($_comment = $_POST['comment'] ?? null) || die('no comment');
-($_rating = $_POST['rating'] ?? null) || die('no rating given');
+($_comment = $_POST['comment'] ?? null) || die('A comment is required');
+($_rating = $_POST['rating'] ?? null) || die('A rating is required, move the slider to a score');
 
 // Other parameters.
 $_email = $_POST['email'] ?? '';
@@ -23,7 +23,7 @@ R::testConnection() || die('Error in DB connection');
 R::usePartialBeans(true);
 
 try {
-  $r             = R::dispense('rating_comments');
+  $r             = R::dispense('ratingcomments');
   $r['domain']   = $_domain;
   $r['comment']  = $_comment;
   $r['rating']   = $_rating;
@@ -47,4 +47,4 @@ $message_lines = [
 ];
 
 @mail($to, $subject, implode("\r\n", $message_lines), implode("\r\n", $headers));
-echo 'Comment posted!';
+print 1;
