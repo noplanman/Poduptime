@@ -7,7 +7,7 @@ defined('PODUPTIME') || die();
 
 try {
   $pods = R::getAll('
-    SELECT domain, dnssec, podmin_statement, sslexpire, masterversion, shortversion, softwarename, daysmonitored, monthsmonitored, score, signup, name, country, countryname, city, state, lat, long, uptime_alltime, active_users_halfyear, active_users_monthly, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp, latency, date_updated, ipv6, total_users, local_posts, comment_counts, userrating, status
+    SELECT domain, dnssec, podmin_statement, sslexpire, masterversion, shortversion, softwarename, daysmonitored, monthsmonitored, score, signup, name, country, countryname, city, state, lat, long, detectedlanguage, uptime_alltime, active_users_halfyear, active_users_monthly, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp, latency, date_updated, ipv6, total_users, local_posts, comment_counts, userrating, status
     FROM pods
     WHERE status < ?
     ORDER BY weightedscore DESC
@@ -40,6 +40,7 @@ try {
     <th><a data-toggle="tooltip" data-placement="bottom" title="System Score on a 100 point scale.">Score</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Does this domain use DNSSEC.">DNSSEC</a></th>
     <th <?php echo  ($country_code ? 'data-placeholder="Try: $country_code"' : 'data-placeholder="Try: US"') ?>><a data-toggle="tooltip" data-placement="bottom" title="Pod location, based on IP Geolocation.">Country</a></th>
+    <th><a data-toggle="tooltip" data-placement="bottom" title="Pod language detected from their main page text.">Language</a></th>
     <th class="filter-false"><a data-toggle="tooltip" data-placement="bottom" title="External Social Networks this pod can post to.">Services</a></th>
     <th><a data-toggle="tooltip" data-placement="bottom" title="Click for more information about this pod from the pod host (podmin).">Info</a></th>
   </tr>
@@ -92,6 +93,7 @@ try {
     } else {
       echo '<td data-toggle="tooltip" data-placement="bottom" title="Country: ' . ($pod['countryname'] ?? 'n/a') . ' City: ' . ($pod['city'] ?? 'n/a') . ' State: ' . ($pod['state'] ?? 'n/a') . '">' . $pod['country'] . '</td>';
     }
+    echo '<td>' . ($pod['detectedlanguage'] ? $pod['detectedlanguage'] : '') . '</td>';
     echo '<td>';
     $pod['service_facebook'] && print '<div class="smlogo smlogo-facebook" title="Publish to Facebook"></div>';
     $pod['service_twitter'] && print '<div class="smlogo smlogo-twitter" title="Publish to Twitter"></div>';

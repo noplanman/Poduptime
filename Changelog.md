@@ -2,10 +2,12 @@
 
 ## Podmins
 * Can no longer access db/pull.php to test their pod, they can however get to a debug screen from the edit pod area
+* Language is detected based on your homepage, edit your homepage to non-en if that is what you use
 
 ## DB
 * Add development and release dates to masterversions table https://github.com/diasporg/Poduptime/issues/143
 * Store full country name, store days monitored each pod
+* Store detectedlanguage 
 * DB migrations see db/version.md
 * rename table rating_comments to ratingcomments for redbean support
 

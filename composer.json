@@ -5,13 +5,14 @@
         }
     },
     "require": {
-        "noplanman/xec": "0.1.0",
+        "php" : "^7.2",
         "gabordemooij/redbean": "^5.0",
+        "nesbot/carbon": "^1.31",
+        "commerceguys/enum": "^1.0",
+        "noplanman/xec": "0.1.0",
         "jaybizzle/crawler-detect" :"1.*",
         "twbs/bootstrap": "^4.1.0",
-        "php" : "^7.2",
-        "commerceguys/enum": "^1.0",
-        "nesbot/carbon": "^1.31"
+        "patrickschur/language-detection": "^3.3"
     },
     "autoload": {
         "classmap": ["lib"]

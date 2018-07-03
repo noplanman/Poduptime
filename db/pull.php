@@ -7,6 +7,7 @@ if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
 }
 
 use RedBeanPHP\R;
+use LanguageDetection\Language;
 
 $debug     = isset($_GET['debug']) || (isset($argv) && in_array('debug', $argv, true));
 $sqldebug  = isset($_GET['sqldebug']) || (isset($argv) && in_array('sqldebug', $argv, true));
@@ -89,6 +90,16 @@ foreach ($pods as $pod) {
 
   if ($admindb == -1) {
     $admin_rating = -1;
+  }
+
+  $d = new DOMDocument;
+  libxml_use_internal_errors(true);
+  $d->loadHTMLFile('https://' . $domain);
+  $body = $d->getElementsByTagName('body')->item(0);
+  if ($body->nodeValue) {
+    $ld = new Language;
+    $detectedlanguage = strtoupper(key($ld->detect($body->nodeValue)->bestResults()->close()));
+    _debug('Detected Language', $detectedlanguage);
   }
 
   if ($infos = json_decode(file_get_contents('https://' . $domain . '/.well-known/nodeinfo'), true)) {
@@ -337,6 +348,7 @@ foreach ($pods as $pod) {
     $p['state']                 = $state;
     $p['lat']                   = $lat;
     $p['long']                  = $long;
+    $p['detectedlanguage']     = $detectedlanguage;
     $p['userrating']            = $user_rating;
     $p['masterversion']         = $masterversion;
     $p['weightedscore']         = $weightedscore;

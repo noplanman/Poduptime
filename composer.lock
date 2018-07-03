@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9076f2351a2d4457ed852c180ed1864",
+    "content-hash": "b4a8beac9ae1722bdbae0b3d81d7eb37",
     "packages": [
         {
             "name": "commerceguys/enum",
@@ -190,61 +190,6 @@
             "time": "2018-06-25T13:15:16+00:00"
         },
         {
-            "name": "nesbot/carbon",
-            "version": "1.31.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "385780c8ca2dbfd25452666e3f55e8dc1df58c41"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/385780c8ca2dbfd25452666e3f55e8dc1df58c41",
-                "reference": "385780c8ca2dbfd25452666e3f55e8dc1df58c41",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.9",
-                "symfony/translation": "~2.6 || ~3.0 || ~4.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "~2",
-                "phpunit/phpunit": "^4.8.35 || ^5.7"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Carbon\\Laravel\\ServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Brian Nesbitt",
-                    "email": "brian@nesbot.com",
-                    "homepage": "http://nesbot.com"
-                }
-            ],
-            "description": "A simple API extension for DateTime.",
-            "homepage": "http://carbon.nesbot.com",
-            "keywords": [
-                "date",
-                "datetime",
-                "time"
-            ],
-            "time": "2018-06-25T13:15:16+00:00"
-        },
-        {
             "name": "noplanman/xec",
             "version": "v0.1.0",
             "source": {
@@ -297,26 +242,30 @@
             "time": "2017-03-12T19:16:23+00:00"
         },
         {
-            "name": "twbs/bootstrap",
-            "version": "v4.1.0",
+            "name": "patrickschur/language-detection",
+            "version": "v3.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "8f7bd419935adfcd53c471a0202083464800619e"
+                "url": "https://github.com/patrickschur/language-detection.git",
+                "reference": "21a2e7a1b9bf6bff578ac11c6dcf3d3668aeccdf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/8f7bd419935adfcd53c471a0202083464800619e",
-                "reference": "8f7bd419935adfcd53c471a0202083464800619e",
+                "url": "https://api.github.com/repos/patrickschur/language-detection/zipball/21a2e7a1b9bf6bff578ac11c6dcf3d3668aeccdf",
+                "reference": "21a2e7a1b9bf6bff578ac11c6dcf3d3668aeccdf",
                 "shasum": ""
             },
-            "replace": {
-                "twitter/bootstrap": "self.version"
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.3.x-dev"
+            "autoload": {
+                "psr-4": {
+                    "LanguageDetection\\": "src/LanguageDetection"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -325,27 +274,18 @@
             ],
             "authors": [
                 {
-                    "name": "Jacob Thornton",
-                    "email": "jacobthornton@gmail.com"
-                },
-                {
-                    "name": "Mark Otto",
-                    "email": "markdotto@gmail.com"
+                    "name": "Patrick Schur",
+                    "email": "patrick_schur@outlook.de"
                 }
             ],
-            "description": "The most popular front-end framework for developing responsive, mobile first projects on the web.",
-            "homepage": "https://getbootstrap.com/",
+            "description": "A language detection library for PHP. Detects the language from a given text string.",
+            "homepage": "https://github.com/patrickschur/language-detection",
             "keywords": [
-                "JS",
-                "css",
-                "framework",
-                "front-end",
-                "mobile-first",
-                "responsive",
-                "sass",
-                "web"
+                "detect",
+                "detection",
+                "language"
             ],
-            "time": "2018-04-09T16:00:23+00:00"
+            "time": "2018-02-01T17:12:47+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -474,6 +414,57 @@
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
             "time": "2018-06-22T08:59:39+00:00"
+        },
+        {
+            "name": "twbs/bootstrap",
+            "version": "v4.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twbs/bootstrap.git",
+                "reference": "779ad9f174ea5ab7e755f6df0ec9e5912d67dd16"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/779ad9f174ea5ab7e755f6df0ec9e5912d67dd16",
+                "reference": "779ad9f174ea5ab7e755f6df0ec9e5912d67dd16",
+                "shasum": ""
+            },
+            "replace": {
+                "twitter/bootstrap": "self.version"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.3.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jacob Thornton",
+                    "email": "jacobthornton@gmail.com"
+                },
+                {
+                    "name": "Mark Otto",
+                    "email": "markdotto@gmail.com"
+                }
+            ],
+            "description": "The most popular front-end framework for developing responsive, mobile first projects on the web.",
+            "homepage": "https://getbootstrap.com/",
+            "keywords": [
+                "JS",
+                "css",
+                "framework",
+                "front-end",
+                "mobile-first",
+                "responsive",
+                "sass",
+                "web"
+            ],
+            "time": "2018-04-30T16:04:33+00:00"
         }
     ],
     "packages-dev": [],
@@ -482,7 +473,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^7.2"
+    },
     "platform-dev": [],
     "platform-overrides": {
         "php": "7.2"
