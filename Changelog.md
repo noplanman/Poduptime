@@ -1,3 +1,8 @@
+# 2x+
+
+## DB
+* rename table rating_comments to ratingcomments for redbean support
+
 # 2.2.0
 
 ## Podmins
