@@ -64,7 +64,7 @@ foreach ($pods as $pod) {
       }
 
       echo <<<EOF
-      <form action="edit.php" method="get">
+      <form action="/?edit" method="get">
       <input type="hidden" name="domain" value="{$_domain}">
       <input type="hidden" name="token" value="{$uuid}">
       <label>Email <input type="text" size="20" name="email"></label><br>
@@ -82,8 +82,14 @@ EOF;
   }
 }
 
+if ($infos = json_decode(file_get_contents('https://' . $_domain . '/.well-known/nodeinfo'), true)) {
+  $link = max($infos['links'])['href'];
+} else {
+  $link= 'https://' . $_domain . '/.well-known/nodeinfo';
+}
+
 $chss = curl_init();
-curl_setopt($chss, CURLOPT_URL, 'https://' . $_domain . '/nodeinfo/1.0');
+curl_setopt($chss, CURLOPT_URL, $link);
 curl_setopt($chss, CURLOPT_POST, 0);
 curl_setopt($chss, CURLOPT_HEADER, 0);
 curl_setopt($chss, CURLOPT_CONNECTTIMEOUT, 5);
@@ -118,19 +124,17 @@ if (stristr($outputssl, 'openRegistrations')) {
 
     $message_lines = [
       'https://' . $_SERVER['HTTP_HOST'],
-      'Pod: https://' . $_SERVER['HTTP_HOST'] . '/db/pull.php?debug=1&domain=' . $_domain,
-      '',
-      'Your pod will not show up right away, as it needs to pass a few checks first.',
+      'Your pod ' . $_domain . ' will not show up right away, as it needs to pass a few checks first.',
       'Give it a few hours!',
     ];
 
     @mail($to, $subject, implode("\r\n", $message_lines), implode("\r\n", $headers));
   }
 
-  echo 'Data successfully inserted! Your pod will be reviewed and live on the list in a few hours!';
+  echo 'Data successfully inserted! Your pod will be checked and live on the list in a few hours!';
 
 } else {
   $log->lwrite('Could not validate your pod, check your setup! ' . $_domain);
-  echo 'Could not validate your pod, check your setup!<br>Take a look at <a href="https://' . $_domain . '/nodeinfo/1.0">your /nodeinfo</a>';
+  echo 'Could not validate your pod, check your setup!<br>Take a look at <a href="' . $link . '">your /nodeinfo</a>';
 }
 $log->lclose();

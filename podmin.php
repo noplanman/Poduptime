@@ -29,8 +29,8 @@ Want your pod listed? Or to claim a listed pod?<br>
   </div>
 
   <div class="form-check">
-    <label class="custom-control custom-checkbox">
-      <input type="checkbox" name="podmin_notify" class="custom-control-input _form-check-input" aria-describedby="notify-hidden-help" checked>
+    <label class="custom-checkbox">
+      <input type="checkbox" name="podmin_notify" class="_form-check-input" aria-describedby="notify-hidden-help" checked>
       <span class="custom-control-indicator"></span>
       <span class="custom-control-description">Notify if pod falls to hidden status</span>
     </label>

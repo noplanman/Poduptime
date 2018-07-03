@@ -30,9 +30,9 @@ foreach ($csv as $cords) {
   }
 }
 ?>
-<link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css"/>
-<script src="bower_components/leaflet/dist/leaflet.js"></script>
-<script type="text/javascript" src="bower_components/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css"/>
+<script src="node_modules/leaflet/dist/leaflet.js"></script>
+<script type="text/javascript" src="node_modules/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 <div id="map"></div>
 <script type="text/javascript">
   var geoJsonData = {

@@ -4,15 +4,14 @@ Poduptime is software to get live stats and data on listed Diaspora Pods.
 
 Dependencies:
 ```
-php7.2 php7.2-curl php7.2-pgsql php-geoip php7.2-cli php7.2-common php7.2-json php7.2-readline php-cgi git curl postgresql postgresql-contrib wget dnsutils bind9 npm nodejs nodejs-legacy composer
+php7.2 php7.2-curl php7.2-pgsql php-geoip php7.2-cli php7.2-common php7.2-json php7.2-readline php-cgi git curl postgresql postgresql-contrib wget dnsutils bind9 npm nodejs nodejs-legacy composer yarn
 ```
 
 To Install:
 ```
 git clone https://github.com/diasporg/Poduptime.git
 cd Poduptime
-sudo npm install -g bower
-bower install
+yarn install
 composer install
 cp config.php.example config.php
 ```
@@ -38,6 +37,7 @@ touch add.log in location you configured in config.php
 
 run `db/pull.sh` manually or with cron to update your data
 run `db/pull.sh debug` to debug output
+run `db/pull.sh sqldebug` to debug sql
 run `db/pull.sh develop` to run without email alerts to end users
 run `db/pull.sh Check_System_Deleted` to re-check system deleted pods as needed
 

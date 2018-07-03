@@ -1,7 +1,25 @@
 # 2x+
 
+## Podmins
+* Can no longer access db/pull.php to test their pod, they can however get to a debug screen from the edit pod area
+
 ## DB
+* Add development and release dates to masterversions table https://github.com/diasporg/Poduptime/issues/143
+* Store full country name, store days monitored each pod
+* DB migrations see db/version.md
 * rename table rating_comments to ratingcomments for redbean support
+
+## Cleanup
+* Use the git API for release versions, check development releases on pods https://github.com/diasporg/Poduptime/issues/143
+* Forbid access to files that should be cli only https://github.com/diasporg/Poduptime/issues/152
+* Move from bower to yarn for packages
+
+## End Users
+* Show version and update in full view cleaner https://github.com/diasporg/Poduptime/issues/143
+* Edit will send to email on file and be less delay, runner of site does not really have anyway to verify email address
+* Filter and search on the columns of data
+* Paginate the results so they fit per page
+* Show time as human readable everywhere
 
 # 2.2.0
 

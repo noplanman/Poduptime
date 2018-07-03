@@ -1,21 +1,16 @@
-body {
-  padding-top: 54px;
-}
 .sub-header {
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
 }
 .sidebar {
-  background-color: #f5f5f5;
+  background-color: #fff;
   border-right: 1px solid #eee;
-  bottom: 0;
   display: block;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   padding: 10px;
   position: fixed;
-  top: 54px;
-  z-index: 1000;
+  top: 56px;
 }
 .sidebar .nav {
   margin-bottom: 20px;
@@ -26,7 +21,6 @@ body {
 .main {
   padding: 20px;
 }
-
 .placeholders {
   margin-bottom: 30px;
   text-align: center;
@@ -42,59 +36,153 @@ body {
   display: inline-block;
 }
 .rating {
-font-size:9px;
+  font-size:9px;
 }
 .tfont {
-font-size:12px;
+  font-size:12px;
 }
 .smlogo {
-width: 16px;
-height: 16px;
-background: url('/images/smlogo.png') 0 0;
-display: inline-block;
-margin: 0 2px;
+  width: 16px;
+  height: 16px;
+  background: url('/images/smlogo.png') 0 0;
+  display: inline-block;
+  margin: 0 2px;
 }
 .smlogo-twitter {
-background-position: 0 -776px;
+  background-position: 0 -776px;
 }
 .smlogo-facebook {
-background-position: 0 -824px;
+  background-position: 0 -824px;
 }
 .smlogo-tumblr {
-background-position: 0 -792px;
+  background-position: 0 -792px;
 }
 .smlogo-wordpress {
-background-position: 0 -656px;
+  background-position: 0 -656px;
 }
 .smlogo-xmpp {
-background: none;
+  background: none;
 }
 .smlogo-xmpp img {
-vertical-align: unset;
+  vertical-align: unset;
 }
-#map { height: 580px; }
+#map {
+  height: 580px;
+}
 .mycluster {
-width: 35px;
-height: 35px;
-background-color: blue;
-text-align: left;
-font-size: 17px;
-background: url('/bower_components/leaflet/dist/images/marker-icon-2x.png') repeat-y right bottom;
-background-size: 25px 37px;
+  width: 35px;
+  height: 35px;
+  background-color: blue;
+  text-align: left;
+  font-size: 17px;
+  background: url('/bower_components/leaflet/dist/images/marker-icon-2x.png') repeat-y right bottom;
+  background-size: 25px 37px;
 }
 .icon {
-color: red;
+  color: red;
 }
 table { 
-empty-cells: show; 
+  empty-cells: show;
 }
 #facebox {
-z-index: 1000 !important;
+  z-index: 1000 !important;
 }
 #facebox .content {
-width: 800px !important;
-}
-.tablesorter-header {
-background-size: 10px 15px !important;
+  width: 800px !important;
 }
 
+.tablesorter-pager .btn-group-sm .btn {
+  font-size: 1.2em; /* make pager arrows more visible */
+}
+
+.tablesorter-filter-row td {
+  background: #eee;
+  line-height: normal;
+  text-align: center; /* center the input */
+  -webkit-transition: line-height 0.1s ease;
+  -moz-transition: line-height 0.1s ease;
+  -o-transition: line-height 0.1s ease;
+  transition: line-height 0.1s ease;
+}
+
+.tablesorter-filter-row .disabled {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+  cursor: not-allowed;
+}
+
+.tablesorter-filter-row.hideme td {
+  /*** *********************************************** ***/
+  /*** change this padding to modify the thickness     ***/
+  /*** of the closed filter row (height = padding x 2) ***/
+  padding: 1px;
+  /*** *********************************************** ***/
+  margin: 0;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.tablesorter-filter-row.hideme * {
+  height: 1px;
+  min-height: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  /* don't use visibility: hidden because it disables tabbing */
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+
+/* filters */
+.tablesorter-filter {
+  width: 98%;
+  height: inherit;
+  margin: 1px;
+  padding: 1px;
+  background-color: #fff;
+  border: 1px solid #bbb;
+  color: #333;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: height 0.1s ease;
+  -moz-transition: height 0.1s ease;
+  -o-transition: height 0.1s ease;
+  transition: height 0.1s ease;
+}
+
+.pagination {
+  display: inline-block;
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  margin: 0 4px;
+  text-decoration: none;
+  transition: background-color .3s;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.pagination.disabled {
+  color: #f0f0f0;
+}
+
+.pagedisplay {
+  display: inline-block;
+  color: black;
+  float: left;
+  padding: 8px 16px !important;
+  margin: 0 4px;
+  text-decoration: none;
+  transition: background-color .3s;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.tablesorter-header {
+  background-size: 10px 15px !important;
+}
+
+.modal-xlg {
+  max-width: 92%;
+}

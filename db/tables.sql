@@ -13,6 +13,7 @@ CREATE TABLE pods (
  hidden boolean DEFAULT true,
  ip text,
  country text,
+ countryname text,
  city text,
  state text, 
  lat text,
@@ -22,6 +23,7 @@ CREATE TABLE pods (
  secure boolean,
  sslvalid text,
  monthsmonitored int,
+ daysmonitored int,
  signup boolean,
  total_users int, 
  active_users_halfyear int,
@@ -94,6 +96,8 @@ CREATE TABLE masterversions (
  id serial8 UNIQUE PRIMARY KEY,
  software text,
  version text,
+ devlastcommit timestamp,
+ releasedate timestamp,
  date_checked timestamp DEFAULT current_timestamp
 );
 
