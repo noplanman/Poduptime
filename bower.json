@@ -19,6 +19,6 @@
     "tests"
   ],
   "dependencies": {
-    "facebox": "*",
+    "facebox": "*"
   }
 }
