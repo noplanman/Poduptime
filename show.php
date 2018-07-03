@@ -1,12 +1,13 @@
 <?php
 
 use RedBeanPHP\R;
+use Carbon\Carbon;
 
 defined('PODUPTIME') || die();
 
 try {
   $pods = R::getAll('
-    SELECT domain, masterversion, shortversion, softwarename, monthsmonitored, podmin_statement, score, signup, name, country, city, state, uptime_alltime, active_users_halfyear, active_users_monthly, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp
+    SELECT domain, masterversion, shortversion, softwarename, daysmonitored, podmin_statement, score, signup, name, country, countryname, city, state, uptime_alltime, active_users_halfyear, active_users_monthly, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp
     FROM pods
     WHERE NOT hidden
       AND status = ?
@@ -38,12 +39,8 @@ try {
   foreach ($pods as $pod) {
     $verdiff  = str_replace('.', '', $pod['masterversion']) - str_replace('.', '', $pod['shortversion']);
     $pod_name = htmlentities($pod['name'], ENT_QUOTES);
-    $tip      = sprintf(
-      'This %3$s pod\'s uptime is %2$s%% over %1$s months.',
-      $pod['monthsmonitored'],
-      $pod['uptime_alltime'],
-      $pod['softwarename']
-    );
+    $humanmonitored = Carbon::now()->subDays($pod['daysmonitored'])->diffForHumans(null, true);
+    $tip      = "This {$pod['softwarename']} pod's uptime is {$pod['uptime_alltime']}% over {$humanmonitored}.";
     echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="text-success url" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></div></td>';
 
     echo '<td>' . $pod['uptime_alltime'] . '%</td>';
@@ -53,9 +50,9 @@ try {
     echo '<td data-toggle="tooltip" data-placement="bottom" title="Pod does not share user data."></td>';
     }
     if ($country_code === $pod['country']) {
-      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: ' . ($pod['city'] ?? 'n/a') . ', State: ' . ($pod['state'] ?? 'n/a') . '"><b>' . $pod['country'] . '</b></td>';
+      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="Country: ' . ($pod['countryname'] ?? 'n/a') . '&#0010;City: ' . ($pod['city'] ?? 'n/a') . '&#0010;State: ' . ($pod['state'] ?? 'n/a') . '"><b>' . $pod['country'] . '</b></td>';
     } else {
-      echo '<td data-toggle="tooltip" data-placement="bottom" title="City: ' . ($pod['city'] ?? 'n/a') . ', State: ' . ($pod['state'] ?? 'n/a') . '">' . $pod['country'] . '</td>';
+      echo '<td data-toggle="tooltip" data-placement="bottom" title="Country: ' . ($pod['countryname'] ?? 'n/a') . '&#0010;City: ' . ($pod['city'] ?? 'n/a') . '&#0010;State: ' . ($pod['state'] ?? 'n/a') . '">' . $pod['country'] . '</td>';
     }
     echo '<td>';
     $pod['service_facebook'] && print '<div class="smlogo smlogo-facebook" title="Publish to Facebook"></div>';

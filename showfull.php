@@ -1,12 +1,13 @@
 <?php
 
 use RedBeanPHP\R;
+use Carbon\Carbon;
 
 defined('PODUPTIME') || die();
 
 try {
   $pods = R::getAll('
-    SELECT domain, dnssec, podmin_statement, sslexpire, masterversion, shortversion, softwarename, monthsmonitored, score, signup, name, country, city, state, lat, long, uptime_alltime, active_users_halfyear, active_users_monthly, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp, latency, date_updated, ipv6, total_users, local_posts, comment_counts, userrating, status
+    SELECT domain, dnssec, podmin_statement, sslexpire, masterversion, shortversion, softwarename, daysmonitored, monthsmonitored, score, signup, name, country, countryname, city, state, lat, long, uptime_alltime, active_users_halfyear, active_users_monthly, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp, latency, date_updated, ipv6, total_users, local_posts, comment_counts, userrating, status
     FROM pods
     WHERE status < ?
     ORDER BY weightedscore DESC
@@ -47,7 +48,10 @@ try {
   <?php
   foreach ($pods as $pod) {
     $pod_name = htmlentities($pod['name'], ENT_QUOTES);
-    $tip = "\n Over {$pod['monthsmonitored']} months uptime is {$pod['uptime_alltime']}% and response time is {$pod['latency']}ms, last check on {$pod['date_updated']}. This site is SSL/TLS encrypted with a cert that expires: " . $pod['sslexpire'];
+    $humanmonitored = Carbon::now()->subDays($pod['daysmonitored'])->diffForHumans(null, true);
+    $humanlastcheck = (new Carbon($pod['date_updated']))->diffForHumans();
+    $humansslexpire = (new Carbon($pod['sslexpire']))->diffForHumans();
+    $tip = "\nOver the last {$humanmonitored} pod uptime was {$pod['uptime_alltime']}% and response time from Los Angeles was {$pod['latency']}ms, with a SSL cert that expires {$humansslexpire}. This pod was last checked {$humanlastcheck}";
 
     echo '<tr><td><a title="' . $tip . '" class="text-success url" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></td>';
 
@@ -79,14 +83,14 @@ try {
     echo '<td>' . ($pod['active_users_monthly'] > 0 ? $pod['active_users_monthly'] : '') . '</td>';
     echo '<td>' . ($pod['local_posts'] > 0 ? $pod['local_posts'] : '') . '</td>';
     echo '<td>' . ($pod['comment_counts'] > 0 ? $pod['comment_counts'] : '') . '</td>';
-    echo '<td><div title="Last Check ' . $pod['date_updated'] . '" data-toggle="tooltip" data-placement="bottom">' . $pod['monthsmonitored'] . '</div></td>';
+    echo '<td><div title="This pod has been monitored ' . $humanmonitored . '" data-toggle="tooltip" data-placement="bottom">' . $pod['monthsmonitored'] . '</div></td>';
     echo '<td><a rel="facebox" href="rate.php?domain=' . $pod['domain'] . '">' . $pod['userrating'] . '</a></td>';
     echo '<td><div title="Pod Status is: ' . PodStatus::getKey((int)$pod['status']) . '" data-toggle="tooltip" data-placement="bottom">' . $pod['score'] . '</div></td>';
     echo '<td>' . ($pod['dnssec'] ? 'Y' : 'N') . '</td>';
     if ($country_code === $pod['country']) {
-      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="City: ' . ($pod['city'] ?? 'n/a') . ' State: ' . ($pod['state'] ?? 'n/a') . '"><b>' . $pod['country'] . '</b></td>';
+      echo '<td class="text-success" data-toggle="tooltip" data-placement="bottom" title="Country: ' . ($pod['countryname'] ?? 'n/a') . ' City: ' . ($pod['city'] ?? 'n/a') . ' State: ' . ($pod['state'] ?? 'n/a') . '"><b>' . $pod['country'] . '</b></td>';
     } else {
-      echo '<td data-toggle="tooltip" data-placement="bottom" title="City: ' . ($pod['city'] ?? 'n/a') . ' State: ' . ($pod['state'] ?? 'n/a') . '">' . $pod['country'] . '</td>';
+      echo '<td data-toggle="tooltip" data-placement="bottom" title="Country: ' . ($pod['countryname'] ?? 'n/a') . ' City: ' . ($pod['city'] ?? 'n/a') . ' State: ' . ($pod['state'] ?? 'n/a') . '">' . $pod['country'] . '</td>';
     }
     echo '<td>';
     $pod['service_facebook'] && print '<div class="smlogo smlogo-facebook" title="Publish to Facebook"></div>';

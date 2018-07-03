@@ -1,6 +1,7 @@
 <?php
 
 use RedBeanPHP\R;
+use Carbon\Carbon;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
@@ -63,6 +64,54 @@ $navs = [
   ],
 ];
 ?>
+
+<nav class="navbar navbar-inverse bg-primary fixed-top">
+  <button class="navbar-toggler navbar-toggler-right hidden-md-up" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="/">Poduptime</a>
+  <div class="collapse navbar-toggleable hidden-md-up" id="navbar">
+    <ul class="navbar-nav">
+      <?php
+      foreach ($navs['views'] as $nav_item) {
+        printf(
+          '<li class="nav-item"><a class="nav-link%1$s" href="%2$s">%3$s%4$s</a></li>',
+          $nav_item['active'] ? ' active' : '',
+          $nav_item['href'],
+          $nav_item['text'],
+          $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
+        );
+      }
+      ?>
+    </ul>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    <div class="sidebar col-md-3 col-lg-1 hidden-sm-down">
+
+      <?php foreach ($navs as $nav) : ?>
+        <ul class="nav nav-pills flex-column">
+          <?php
+          /** @var array $nav */
+          /** @var array $nav_item */
+          foreach ($nav as $nav_item) {
+            printf(
+              '<li class="nav-item"><a class="nav-link%1$s" href="%2$s">%3$s%4$s</a></li>',
+              $nav_item['active'] ? ' active' : '',
+              $nav_item['href'],
+              $nav_item['text'],
+              $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
+            );
+          }
+          ?>
+        </ul>
+        <hr>
+      <?php endforeach; ?>
+
+      <p>
+        <small>Data refreshed: <br><?php echo Carbon::createFromTimestamp(filemtime($lastfile))->diffForHumans(); ?></small>
+      </p>
 <header>
     <div class="collapse bg-dark" id="navbarHeader">
         <div class="container">

@@ -220,17 +220,19 @@ foreach ($pods as $pod) {
 
   $location = geoip_record_by_name($ip);
   _debug('Location', $location, true);
-  $country  = !empty($location['country_code']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_code']) : null;
-  $city     = !empty($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : null;
-  $state    = !empty($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : null;
-  $lat      = !empty($location['latitude']) ? $location['latitude'] : 0;
-  $long     = !empty($location['longitude']) ? $location['longitude'] : 0;
+  $countryname  = !empty($location['country_name']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_name']) : null;
+  $country      = !empty($location['country_code']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_code']) : null;
+  $city         = !empty($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : null;
+  $state        = !empty($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : null;
+  $lat          = !empty($location['latitude']) ? $location['latitude'] : 0;
+  $long         = !empty($location['longitude']) ? $location['longitude'] : 0;
 
   echo $newline;
   $statslastdate = date('Y-m-d H:i:s');
 
   $diff   = (new DateTime())->diff(new DateTime($dateadded));
   $months = $diff->m + ($diff->y * 12);
+  $days = $diff->days;
 
   try {
     $checks = R::getRow('
@@ -320,6 +322,7 @@ foreach ($pods as $pod) {
     $p['hidden']                = $hidden;
     $p['ip']                    = $ip;
     $p['ipv6']                  = $ipv6;
+    $p['daysmonitored']         = $days;
     $p['monthsmonitored']       = $months;
     $p['uptime_alltime']        = $uptime;
     $p['status']                = $status;
@@ -329,6 +332,7 @@ foreach ($pods as $pod) {
     $p['score']                 = $score;
     $p['adminrating']           = $admin_rating;
     $p['country']               = $country;
+    $p['countryname']           = $countryname;
     $p['city']                  = $city;
     $p['state']                 = $state;
     $p['lat']                   = $lat;

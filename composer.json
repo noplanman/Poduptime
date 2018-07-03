@@ -8,9 +8,10 @@
         "noplanman/xec": "0.1.0",
         "gabordemooij/redbean": "^5.0",
         "jaybizzle/crawler-detect" :"1.*",
-        "commerceguys/enum": "^1.0",
         "twbs/bootstrap": "^4.1.0",
-        "php" : "^7.2"
+        "php" : "^7.2",
+        "commerceguys/enum": "^1.0",
+        "nesbot/carbon": "^1.31"
     },
     "autoload": {
         "classmap": ["lib"]
