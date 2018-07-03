@@ -38,16 +38,16 @@ if ($_email) {
   $subject   = 'Temporary edit key for ' . $_SERVER['HTTP_HOST'];
   $headers[] = 'Bcc: ' . $adminemail;
   $expire    = time() + 2700;
-  $output    = 'Link sent to your email';
+  $output    = 'Link sent to your email.';
 } elseif (!$pod['email']) {
-  die('domain is registered but no email associated, to add an email use the add a pod feature');
+  die('Domain is registered but no email associated, to add an email use the add a pod feature.');
 } else {
-  $to              = $adminemail;
-  $subject         = 'FORWARD REQUEST: Temporary edit key for ' . $_SERVER['HTTP_HOST'];
-  $message_lines[] = 'User trying to edit pod without email address.';
+  $to              = $pod['email'];
+  $subject         = 'Temporary edit key for ' . $_SERVER['HTTP_HOST'];
+  $message_lines[] = 'Looks like you did not enter your email address, be sure to update it if you forgot the one we have for you.';
   $message_lines[] = 'Email found: ' . $pod['email'];
-  $expire          = time() + 9700;
-  $output          = 'Link sent to administrator to review and verify, if approved they will forward the edit key to you.';
+  $expire          = time() + 2700;
+  $output          = 'Link sent to email we have for this pod on file.';
 }
 
 try {

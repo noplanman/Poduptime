@@ -83,7 +83,7 @@ try {
             ticks: {
               min: 0,
               max: 100,
-              stepSize: 20
+              stepSize: 50
             }
           }, {
             position: "right",
@@ -140,9 +140,6 @@ try {
           yAxes: [{
             position: "left",
             "id": "l2"
-          }, {
-            position: "right",
-            "id": "r2"
           }]
         }
       }

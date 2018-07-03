@@ -1,0 +1,26 @@
+{
+  "name": "poduptime",
+  "version": "1.0.0",
+  "description": "Poduptime is software to get live stats and data on listed Diaspora Pods.",
+  "main": "index.php",
+  "dependencies": {
+    "bootstrap": "^4.1.1",
+    "bower-resolve": "^2.2.1",
+    "chart.js": "^2.7.2",
+    "jquery": "^3.3.1",
+    "leaflet": "^1.3.1",
+    "leaflet.markercluster": "^1.3.0",
+    "tablesorter": "^2.30.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "git+https://github.com/diasporg/Poduptime.git",
+  "author": "dmorley <david@usr.io>",
+  "license": "AGPL",
+  "bugs": {
+    "url": "https://github.com/diasporg/Poduptime/issues"
+  },
+  "homepage": "https://github.com/diasporg/Poduptime#readme"
+}

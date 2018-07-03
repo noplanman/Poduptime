@@ -14,6 +14,7 @@ try {
     FROM pods
     WHERE status < ?
     GROUP BY softwarename
+    ORDER BY softwarename
   ', [PodStatus::System_Deleted]);
 } catch (\RedBeanPHP\RedException $e) {
   die('Error in SQL query: ' . $e->getMessage());
@@ -47,8 +48,8 @@ try {
         labels: <?php echo json_encode(array_column($totals, 'softwarename')); ?>,
         datasets: [{
           data: data,
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#419641", "#A569BD", "#EB984E"],
-          hoverBackgroundColor: ["#FF6360", "#36A2AD", "#FFCE10", "#419615", "#A569AA", "#EB980A"]
+          backgroundColor: ["#C8412E", "#36A2EB", "#FFCE56", "#419641", "#A569BD", "#EB984E", "#AC8416", "#4F8AAA", "#19FFE2", "#87FE12", "#F3BB88"],
+          hoverBackgroundColor: ["#C8887B", "#36A2AD", "#FFCE10", "#419615", "#A569AA", "#EB980A", "#AC8456", "#4F8BAB", "#19FFE9", "#87FE32", "#F3FB88"]
         }]
       },
       options: {
