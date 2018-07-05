@@ -1,24 +1,24 @@
 {
-  "name": "poduptime",
-  "homepage": "https://github.com/diasporg/Poduptime",
-  "authors": [
-    "David Morley <support@diasp.org>"
-  ],
-  "description": "Diaspora pod checking site",
-  "main": "",
-  "keywords": [
-    "diaspora"
-  ],
-  "license": "AGPL",
-  "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "dependencies": {
-    "facebox": "*"
-  }
+    "name": "poduptime",
+    "homepage": "https://github.com/diasporg/Poduptime",
+    "authors": [
+        "David Morley <support@diasp.org>"
+    ],
+    "description": "Diaspora pod checking site",
+    "main": "",
+    "keywords": [
+        "diaspora"
+    ],
+    "license": "AGPL",
+    "private": true,
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "facebox": "*"
+    }
 }

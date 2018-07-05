@@ -1,24 +1,39 @@
 <?php
-/* Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
+/**
+ * Config for Poduptime.
+ */
+
+declare(strict_types=1);
+
 //backup directory
 $backup_dir = '/backup';
+
 //log directory
 $log_dir = '/log';
+
 //location of pg dump
 $pg_dump_dir = '/usr/bin';
+
 //db host
 $pghost = 'localhost';
+
 //db username
 $pguser = '';
+
 //db password
 $pgpass = '';
+
 //db name
 $pgdb = '';
+
 //admin email for forms
 $adminemail = '';
+
 //DNS server for dnssec testing. 1.1.1.1 tests the best
 $dnsserver = '';
+
 //CA for curl to use - suggest wget http://curl.haxx.se/ca/cacert.pem as they pull from mozilla if you use a system CA then certs like wosign and startssl will be valid but users will be unable to connect to them
 $cafullpath = '';
+
 //Mapbox.com API key. https://www.mapbox.com/help/how-access-tokens-work/
 $mapboxkey = '';

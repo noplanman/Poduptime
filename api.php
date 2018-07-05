@@ -1,5 +1,10 @@
 <?php
-//Copyright (c) 2011, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file.
+
+/**
+ * API access for pod data.
+ */
+
+declare(strict_types=1);
 
 use RedBeanPHP\R;
 
@@ -21,7 +26,7 @@ R::testConnection() || die('Error in DB connection');
 R::usePartialBeans(true);
 
 if ($_format === 'georss') {
-  echo <<<EOF
+    echo <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss.org/georss">
 <title>Diaspora Pods</title>
@@ -30,26 +35,26 @@ if ($_format === 'georss') {
 
 EOF;
 
-  try {
-    $pods = R::getAll('
-      SELECT name, monthsmonitored, responsetimelast7, uptimelast7, dateupdated, score, domain, country, lat, long
-      FROM pods_apiv1
-    ');
-  } catch (\RedBeanPHP\RedException $e) {
-    die('Error in SQL query: ' . $e->getMessage());
-  }
+    try {
+        $pods = R::getAll('
+            SELECT name, monthsmonitored, responsetimelast7, uptimelast7, dateupdated, score, domain, country, lat, long
+            FROM pods_apiv1
+        ');
+    } catch (\RedBeanPHP\RedException $e) {
+        die('Error in SQL query: ' . $e->getMessage());
+    }
 
-  foreach ($pods as $pod) {
-    $summary = sprintf(
-      'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of 100 this pod is a %6$s right now',
-      htmlentities($pod['name'], ENT_QUOTES),
-      $pod['monthsmonitored'],
-      $pod['responsetimelast7'],
-      $pod['uptimelast7'],
-      $pod['dateupdated'],
-      $pod['score']
-    );
-    echo <<<EOF
+    foreach ($pods as $pod) {
+        $summary = sprintf(
+            'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of 100 this pod is a %6$s right now',
+            htmlentities($pod['name'], ENT_QUOTES),
+            $pod['monthsmonitored'],
+            $pod['responsetimelast7'],
+            $pod['uptimelast7'],
+            $pod['dateupdated'],
+            $pod['score']
+        );
+        echo <<<EOF
 <entry>
   <title>https://{$pod['domain']}</title>
   <link href="https://{$pod['domain']}"/>
@@ -62,51 +67,50 @@ EOF;
 </entry>
 
 EOF;
-  }
-  echo '</feed>';
+    }
+    echo '</feed>';
 } elseif ($_format === 'json') {
+    try {
+        $pods = R::getAll('
+            SELECT id, domain, status, secure, score, userrating, adminrating, city, state, country, lat, long, ip, ipv6, pingdomurl, monthsmonitored, uptimelast7, responsetimelast7, local_posts, comment_counts, dateCreated, dateUpdated, dateLaststats, hidden
+            FROM pods_apiv1
+        ');
+    } catch (\RedBeanPHP\RedException $e) {
+        die('Error in SQL query: ' . $e->getMessage());
+    }
 
-  try {
-    $pods = R::getAll('
-      SELECT id, domain, status, secure, score, userrating, adminrating, city, state, country, lat, long, ip, ipv6, pingdomurl, monthsmonitored, uptimelast7, responsetimelast7, local_posts, comment_counts, dateCreated, dateUpdated, dateLaststats, hidden
-      FROM pods_apiv1
-    ');
-  } catch (\RedBeanPHP\RedException $e) {
-    die('Error in SQL query: ' . $e->getMessage());
-  }
+    //json output, thx Vipul A M for fixing this
+    header('Content-type: application/json');
 
-  //json output, thx Vipul A M for fixing this
-  header('Content-type: application/json');
-
-  $obj = [
-    'podcount' => count($pods),
-    'pods'     => allToString($pods),
-  ];
-  if ($_method === 'jsonp') {
-    print $_callback . '(' . json_encode($obj) . ')';
-  } else {
-    print json_encode($obj);
-  }
+    $obj = [
+        'podcount' => count($pods),
+        'pods'     => allToString($pods),
+    ];
+    if ($_method === 'jsonp') {
+        print $_callback . '(' . json_encode($obj) . ')';
+    } else {
+        print json_encode($obj);
+    }
 } else {
-  try {
-    $pods = R::getAll('
-      SELECT domain, uptimelast7, country
-      FROM pods_apiv1
-    ');
-  } catch (\RedBeanPHP\RedException $e) {
-    die('Error in SQL query: ' . $e->getMessage());
-  }
+    try {
+        $pods = R::getAll('
+            SELECT domain, uptimelast7, country
+            FROM pods_apiv1
+        ');
+    } catch (\RedBeanPHP\RedException $e) {
+        die('Error in SQL query: ' . $e->getMessage());
+    }
 
-  $i = 0;
-  foreach ($pods as $pod) {
-    $i++ > 0 && print ',';
-    printf(
-      '%1$s Up %2$s%% This Month - Located in: %3$s',
-      $pod['domain'],
-      $pod['uptimelast7'],
-      $pod['country']
-    );
-  }
+    $i = 0;
+    foreach ($pods as $pod) {
+        $i++ > 0 && print ',';
+        printf(
+            '%1$s Up %2$s%% This Month - Located in: %3$s',
+            $pod['domain'],
+            $pod['uptimelast7'],
+            $pod['country']
+        );
+    }
 }
 
 /**
@@ -121,18 +125,18 @@ EOF;
  */
 function allToString(array $arr)
 {
-  $ret = $arr;
-  foreach ($ret as &$item) {
-    if (is_array($item)) {
-      /** @var array $item */
-      foreach ($item as &$field) {
-        $field !== null && $field = (string) $field;
-      }
-    } else {
-      $item !== null && $item = (string) $item;
+    $ret = $arr;
+    foreach ($ret as &$item) {
+        if (is_array($item)) {
+            /** @var array $item */
+            foreach ($item as &$field) {
+                $field !== null && $field = (string) $field;
+            }
+        } else {
+            $item !== null && $item = (string) $item;
+        }
+        unset($field, $item);
     }
-    unset($field, $item);
-  }
 
-  return $ret;
+    return $ret;
 }

@@ -1,7 +1,13 @@
 <?php
 
-use RedBeanPHP\R;
+/**
+ * Main entry point for podupti.me.
+ */
+
+declare(strict_types=1);
+
 use Carbon\Carbon;
+use RedBeanPHP\R;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
@@ -28,40 +34,40 @@ $simpleview   = !($detailedview || $mapview || $podmin || $podminedit || $statsv
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Open Source Social Network Pod Uptime Status</title>
-  <meta name="keywords" content="diaspora, federated pods, <?php echo $_SERVER['HTTP_HOST'] ?>, friendica, hubzilla, open source social, open source social network"/>
-  <meta name="description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!"/>
-  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/poduptime.css"/>
-  <link rel="stylesheet" href="bower_components/facebox/src/facebox.css"/>
-  <link rel="stylesheet" href="node_modules/tablesorter/dist/css/theme.bootstrap_4.min.css"/>
-  <meta property="og:url" content="https://<?php echo $_SERVER['HTTP_HOST'] ?>"/>
-  <meta property="og:title" content="Social Network Pod Finder"/>
-  <meta property="og:type" content="website"/>
-  <meta property="og:description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta charset="utf-8">
+    <title>Open Source Social Network Pod Uptime Status</title>
+    <meta name="keywords" content="diaspora, federated pods, <?php echo $_SERVER['HTTP_HOST'] ?>, friendica, hubzilla, open source social, open source social network"/>
+    <meta name="description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!"/>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/poduptime.css"/>
+    <link rel="stylesheet" href="bower_components/facebox/src/facebox.css"/>
+    <link rel="stylesheet" href="node_modules/tablesorter/dist/css/theme.bootstrap_4.min.css"/>
+    <meta property="og:url" content="https://<?php echo $_SERVER['HTTP_HOST'] ?>"/>
+    <meta property="og:title" content="Social Network Pod Finder"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
 </head>
 <body>
 
 <?php
 $navs = [
-  'views'  => [
-    ['text' => 'Simple View', 'href' => '/', 'active' => $simpleview],
-    ['text' => 'Detailed View', 'href' => '/?detailedview', 'active' => $detailedview],
-    ['text' => 'Map View', 'href' => '/?mapview', 'active' => $mapview],
-    ['text' => 'Network Stats View', 'href' => '/?statsview', 'active' => $statsview],
-    ['text' => 'Add a pod', 'href' => '/?podmin', 'active' => $podmin],
-    ['text' => 'Edit a pod', 'href' => '/?podminedit', 'active' => $podminedit],
-  ],
-  'links'  => [
-    ['text' => 'Github', 'href' => 'https://github.com/diasporg/Poduptime', 'active' => false],
-    ['text' => 'Contact', 'href' => 'https://dia.so/support', 'active' => false],
-    ['text' => 'Wiki', 'href' => 'https://github.com/diasporg/Poduptime/wiki', 'active' => false],
-    ['text' => 'API', 'href' => 'https://github.com/diasporg/Poduptime/wiki/API', 'active' => false],
-    ['text' => 'How to host a pod', 'href' => 'https://diasporafoundation.org/', 'active' => false],
-  ],
+    'views' => [
+        ['text' => 'Simple View', 'href' => '/', 'active' => $simpleview],
+        ['text' => 'Detailed View', 'href' => '/?detailedview', 'active' => $detailedview],
+        ['text' => 'Map View', 'href' => '/?mapview', 'active' => $mapview],
+        ['text' => 'Network Stats View', 'href' => '/?statsview', 'active' => $statsview],
+        ['text' => 'Add a pod', 'href' => '/?podmin', 'active' => $podmin],
+        ['text' => 'Edit a pod', 'href' => '/?podminedit', 'active' => $podminedit],
+    ],
+    'links' => [
+        ['text' => 'Github', 'href' => 'https://github.com/diasporg/Poduptime', 'active' => false],
+        ['text' => 'Contact', 'href' => 'https://dia.so/support', 'active' => false],
+        ['text' => 'Wiki', 'href' => 'https://github.com/diasporg/Poduptime/wiki', 'active' => false],
+        ['text' => 'API', 'href' => 'https://github.com/diasporg/Poduptime/wiki/API', 'active' => false],
+        ['text' => 'How to host a pod', 'href' => 'https://diasporafoundation.org/', 'active' => false],
+    ],
 ];
 ?>
 
@@ -72,32 +78,32 @@ $navs = [
                 <div class="col-sm-8 col-md-7 py-4">
                     <h4 class="text-white">About</h4>
                     <p class="text-muted">Poduptime helps you find a diaspora, friendica, hubzilla or socialhome pod to use and join the federated social network.</p>
-                  <?php
-                  foreach ($navs['links'] as $nav_item) {
-                    printf(
-                      '<a href="%2$s">%3$s%4$s</a> | ',
-                      $nav_item['active'] ? ' active' : '',
-                      $nav_item['href'],
-                      $nav_item['text'],
-                      $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
-                    );
-                  }
-                  ?>
+                    <?php
+                    foreach ($navs['links'] as $nav_item) {
+                        printf(
+                            '<a href="%2$s">%3$s%4$s</a> | ',
+                            $nav_item['active'] ? ' active' : '',
+                            $nav_item['href'],
+                            $nav_item['text'],
+                            $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
+                        );
+                    }
+                    ?>
                 </div>
                 <div class="col-sm-4 offset-md-1 py-4">
                     <h4 class="text-white">Views</h4>
                     <ul class="navbar-nav">
-                      <?php
-                      foreach ($navs['views'] as $nav_item) {
-                        printf(
-                          '<li class="nav-item"><a class="nav-link%1$s" href="%2$s">%3$s%4$s</a></li>',
-                          $nav_item['active'] ? ' active' : '',
-                          $nav_item['href'],
-                          $nav_item['text'],
-                          $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
-                        );
-                      }
-                      ?>
+                        <?php
+                        foreach ($navs['views'] as $nav_item) {
+                            printf(
+                                '<li class="nav-item"><a class="nav-link%1$s" href="%2$s">%3$s%4$s</a></li>',
+                                $nav_item['active'] ? ' active' : '',
+                                $nav_item['href'],
+                                $nav_item['text'],
+                                $nav_item['active'] ? ' <span class="sr-only">(current)</span>' : ''
+                            );
+                        }
+                        ?>
                     </ul>
                 </div>
             </div>
@@ -116,29 +122,29 @@ $navs = [
 </header>
 <main role="main">
     <div class="main">
-      <a href="go.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
-      <div class="row placeholders">
-      </div>
+        <a href="go.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
+        <div class="row placeholders">
+        </div>
         <?php
         if ($detailedview) {
-          include_once __DIR__ . '/showfull.php';
+            include_once __DIR__ . '/showfull.php';
         } elseif ($mapview) {
-          include_once __DIR__ . '/showmap.php';
+            include_once __DIR__ . '/showmap.php';
         } elseif ($statsview) {
-          include_once __DIR__ . '/statsview.php';
+            include_once __DIR__ . '/statsview.php';
         } elseif ($podmin) {
-          include_once __DIR__ . '/podmin.php';
+            include_once __DIR__ . '/podmin.php';
         } elseif ($podminedit) {
-          include_once __DIR__ . '/podminedit.php';
+            include_once __DIR__ . '/podminedit.php';
         } elseif ($edit) {
-          include_once __DIR__ . '/db/edit.php';
+            include_once __DIR__ . '/db/edit.php';
         } else {
-          include_once __DIR__ . '/show.php';
+            include_once __DIR__ . '/show.php';
         }
         ?>
     </div>
-  </div>
-</div>
+    </div>
+    </div>
 </main>
 <br>
 <footer class="bd-footer text-muted">

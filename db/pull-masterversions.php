@@ -1,9 +1,14 @@
 <?php
-//* Copyright (c) 2017, David Morley. This file is licensed under the Affero General Public License version 3 or later. See the COPYRIGHT file. */
+
+/**
+ * Pull master software versions.
+ */
+
+declare(strict_types=1);
 
 if (PHP_SAPI !== 'cli') {
-  header('HTTP/1.0 403 Forbidden');
-  exit;
+    header('HTTP/1.0 403 Forbidden');
+    exit;
 }
 
 use RedBeanPHP\R;
@@ -19,22 +24,22 @@ R::testConnection() || die('Error in DB connection');
 R::usePartialBeans(true);
 
 $softwares = [
-  'diaspora'     => ['repo' => 'diaspora/diaspora', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => 'develop'],
-  'friendica'    => ['repo' => 'friendica/friendica', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => 'develop'],
-  'hubzilla'     => ['repo' => 'hubzilla%2fcore', 'gitsite' => 'framagit.org', 'gittype' => 'gitlab', 'devbranch' => 'dev'],
-  'pleroma'      => ['repo' => 'pleroma%2fpleroma', 'gitsite' => 'git.pleroma.social', 'gittype' => 'gitlab', 'devbranch' => 'develop'],
-  'socialhome'   => ['repo' => 'jaywink/socialhome', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => ''],
-  'social-relay' => ['repo' => 'jaywink/social-relay', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => ''],
-  'ganggo'       => ['repo' => 'ganggo/ganggo', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => ''],
+    'diaspora'     => ['repo' => 'diaspora/diaspora', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => 'develop'],
+    'friendica'    => ['repo' => 'friendica/friendica', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => 'develop'],
+    'hubzilla'     => ['repo' => 'hubzilla%2fcore', 'gitsite' => 'framagit.org', 'gittype' => 'gitlab', 'devbranch' => 'dev'],
+    'pleroma'      => ['repo' => 'pleroma%2fpleroma', 'gitsite' => 'git.pleroma.social', 'gittype' => 'gitlab', 'devbranch' => 'develop'],
+    'socialhome'   => ['repo' => 'jaywink/socialhome', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => ''],
+    'social-relay' => ['repo' => 'jaywink/social-relay', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => ''],
+    'ganggo'       => ['repo' => 'ganggo/ganggo', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => ''],
 ];
 
 $opts = [
-  'http'         => ['method' => 'GET', 'header' => ['User-Agent: Poduptime']]
+    'http' => ['method' => 'GET', 'header' => ['User-Agent: Poduptime']],
 ];
 
 foreach ($softwares as $software => $details) {
     if ($details['gittype'] == 'github') {
-        $context = stream_context_create($opts);
+        $context     = stream_context_create($opts);
         $releasejson = json_decode(file_get_contents('https://' . $details["gitsite"] . '/repos/' . $details["repo"] . '/releases/latest', false, $context));
         if ($details["devbranch"]) {
             $commitjson = json_decode(file_get_contents('https://' . $details["gitsite"] . '/repos/' . $details["repo"] . '/commits/' . $details["devbranch"], false, $context));
@@ -58,7 +63,7 @@ foreach ($softwares as $software => $details) {
             }
         }
     } elseif ($details['gittype'] == 'gitlab') {
-        $context = stream_context_create($opts);
+        $context     = stream_context_create($opts);
         $releasejson = json_decode(file_get_contents('https://' . $details["gitsite"] . '/api/v4/projects/' . $details["repo"] . '/repository/tags', false, $context));
         if ($details["devbranch"]) {
             $commitjson = json_decode(file_get_contents('https://' . $details["gitsite"] . '/api/v4/projects/' . $details["repo"] . '/repository/commits/' . $details["devbranch"], false, $context));
@@ -67,9 +72,9 @@ foreach ($softwares as $software => $details) {
         }
         if ($masterversion = $releasejson[0]->name ? str_replace('v', '', $releasejson[0]->name) : '') {
             try {
-                $m = R::dispense('masterversions');
+                $m             = R::dispense('masterversions');
                 $m['software'] = $software;
-                $m['version'] = $masterversion;
+                $m['version']  = $masterversion;
                 if ($releasedate = $releasejson[0] ? $releasejson[0]->commit->created_at : '') {
                     $m['releasedate'] = $releasedate;
                 }
@@ -84,5 +89,5 @@ foreach ($softwares as $software => $details) {
     }
 
 
-  printf('%s:%s:%s ', $software, $masterversion, $devlastcommit ?: 'n/a');
+    printf('%s:%s:%s ', $software, $masterversion, $devlastcommit ?: 'n/a');
 }

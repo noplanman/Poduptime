@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Save pod rating.
+ */
+
+declare(strict_types=1);
+
 use RedBeanPHP\R;
 
 // Required parameters.
@@ -23,15 +29,15 @@ R::testConnection() || die('Error in DB connection');
 R::usePartialBeans(true);
 
 try {
-  $r             = R::dispense('ratingcomments');
-  $r['domain']   = $_domain;
-  $r['comment']  = $_comment;
-  $r['rating']   = $_rating;
-  $r['username'] = $_username;
-  $r['userurl']  = $_userurl;
-  R::store($r);
+    $r             = R::dispense('ratingcomments');
+    $r['domain']   = $_domain;
+    $r['comment']  = $_comment;
+    $r['rating']   = $_rating;
+    $r['username'] = $_username;
+    $r['userurl']  = $_userurl;
+    R::store($r);
 } catch (\RedBeanPHP\RedException $e) {
-  die('Error in SQL query: ' . $e->getMessage());
+    die('Error in SQL query: ' . $e->getMessage());
 }
 
 $to      = $adminemail;
@@ -39,11 +45,11 @@ $headers = ['From: ' . $_email];
 $subject = 'New rating added to poduptime ';
 
 $message_lines = [
-  'Pod: ' . $_domain,
-  'Username: ' . $_username,
-  'User URL: ' . $_userurl,
-  'Comment: ' . $_comment,
-  'Rating:' . $_rating,
+    'Pod: ' . $_domain,
+    'Username: ' . $_username,
+    'User URL: ' . $_userurl,
+    'Comment: ' . $_comment,
+    'Rating:' . $_rating,
 ];
 
 @mail($to, $subject, implode("\r\n", $message_lines), implode("\r\n", $headers));

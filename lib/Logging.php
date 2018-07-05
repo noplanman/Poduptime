@@ -1,5 +1,6 @@
 <?php
-/** 
+
+/**
  * Logging class:
  * - contains lfile, lwrite and lclose public methods
  * - lfile sets path and name of log file
@@ -9,30 +10,43 @@
  * - message is written with the following format: [d/M/Y:H:i:s] (script name) message
  * - http://www.redips.net/php/write-to-log-file/
  */
-class Logging {
-    private $log_file, $fp;
-    public function lfile($path) {
+
+declare(strict_types=1);
+
+namespace Poduptime;
+
+class Logging
+{
+    private $fp;
+    private $log_file;
+
+    public function lfile($path): void
+    {
         $this->log_file = $path;
     }
-    public function lwrite($message) {
-        if (!is_resource($this->fp)) {
+
+    public function lwrite($message): void
+    {
+        if (!\is_resource($this->fp)) {
             $this->lopen();
         }
         $script_name = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
-        $time = @date('[d/M/Y:H:i:s]');
+        $time        = @date('[d/M/Y:H:i:s]');
         fwrite($this->fp, "$time ($script_name) $message" . PHP_EOL);
     }
-    public function lclose() {
+
+    public function lclose(): void
+    {
         fclose($this->fp);
     }
-    private function lopen() {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+
+    private function lopen(): void
+    {
+        $log_file_default = '/tmp/logfile.txt';
+        if (0 === stripos(PHP_OS, 'WIN')) {
             $log_file_default = 'c:/php/logfile.txt';
         }
-        else {
-            $log_file_default = '/tmp/logfile.txt';
-        }
-        $lfile = $this->log_file ? $this->log_file : $log_file_default;
-        $this->fp = fopen($lfile, 'a') or exit("Can't open $lfile!");
+        $lfile = $this->log_file ?: $log_file_default;
+        $this->fp = fopen($lfile, 'ab') or exit("Can't open {$lfile}!");
     }
 }
