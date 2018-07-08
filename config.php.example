@@ -5,13 +5,13 @@
 
 declare(strict_types=1);
 
-//backup directory
+//backup directory - app directory path
 $backup_dir = '/backup';
 
-//log directory
+//log directory - app directory path
 $log_dir = '/log';
 
-//location of pg dump
+//location of pg dump - full dir path
 $pg_dump_dir = '/usr/bin';
 
 //db host
@@ -32,8 +32,11 @@ $adminemail = '';
 //DNS server for dnssec testing. 1.1.1.1 tests the best
 $dnsserver = '';
 
-//CA for curl to use - suggest wget http://curl.haxx.se/ca/cacert.pem as they pull from mozilla if you use a system CA then certs like wosign and startssl will be valid but users will be unable to connect to them
+//CA for curl to use - full path
 $cafullpath = '';
 
 //Mapbox.com API key. https://www.mapbox.com/help/how-access-tokens-work/
 $mapboxkey = '';
+
+//GeoIp2 city database file in mmdb format - full path
+$geoip2db = '';

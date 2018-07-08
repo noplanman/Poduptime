@@ -14,6 +14,7 @@ if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
 use LanguageDetection\Language;
 use Poduptime\PodStatus;
 use RedBeanPHP\R;
+use GeoIp2\Database\Reader;
 
 $debug    = isset($_GET['debug']) || (isset($argv) && in_array('debug', $argv, true));
 $sqldebug = isset($_GET['sqldebug']) || (isset($argv) && in_array('sqldebug', $argv, true));
@@ -35,6 +36,9 @@ R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
 $sqldebug && R::fancyDebug(true);
 R::testConnection() || die('Error in DB connection');
 R::usePartialBeans(true);
+
+// Setup GeoIP Database
+$reader = new Reader($geoip2db);
 
 try {
     $sql = '
@@ -235,14 +239,15 @@ foreach ($pods as $pod) {
     _debug('IPv6', $ipv6);
     _debug('Iplookupv6', $iplookupv6, true);
 
-    $location = geoip_record_by_name($ip);
-    _debug('Location', $location, true);
-    $countryname = !empty($location['country_name']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_name']) : null;
-    $country     = !empty($location['country_code']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['country_code']) : null;
-    $city        = !empty($location['city']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['city']) : null;
-    $state       = !empty($location['region']) ? iconv('UTF-8', 'UTF-8//IGNORE', $location['region']) : null;
-    $lat         = !empty($location['latitude']) ? $location['latitude'] : 0;
-    $long        = !empty($location['longitude']) ? $location['longitude'] : 0;
+    $geo = $reader->city($ip);
+    $countryname = !empty($geo->country->name) ? iconv('UTF-8', 'UTF-8//IGNORE', $geo->country->name) : null;
+    $country     = !empty($geo->country->isoCode) ? iconv('UTF-8', 'UTF-8//IGNORE', $geo->country->isoCode) : null;
+    $city        = !empty($geo->city->name) ? iconv('UTF-8', 'UTF-8//IGNORE', $geo->city->name) : null;
+    $state       = !empty($geo->mostSpecificSubdivision->name) ? iconv('UTF-8', 'UTF-8//IGNORE', $geo->mostSpecificSubdivision->name) : null;
+    $lat         = !empty($geo->location->latitude) ? $geo->location->latitude : 0;
+    $long        = !empty($geo->location->longitude) ? $geo->location->longitude : 0;
+
+    _debug('Location', json_encode($geo->raw), true);
 
     echo $newline;
     $statslastdate = date('Y-m-d H:i:s');
