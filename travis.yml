@@ -1,0 +1,24 @@
+# .travis.yml
+language: php
+
+php:
+  - 7.2
+  - 7.3
+
+# In case of timeouts and build failures you may want to prepend 'travis_retry' to the following commands:
+before_script:
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install -n
+
+script:
+  - php vendor/bin/phpunit
+
+after_script:
+  - php vendor/bin/codacycoverage clover build/coverage/xml
+
+# whitelist
+branches:
+  only:
+    - master
+    - develop
+
