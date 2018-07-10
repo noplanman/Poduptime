@@ -48,7 +48,7 @@ try {
     if (!(new CrawlerDetect())->isCrawler()) {
         R::store($c);
     }
-    setcookie("domain", $domain, 2147483647);
+    setcookie("domain", $domain, Carbon::now()->addCentury()->timestamp);
     header('Location: https://' . $domain);
 } catch (\RedBeanPHP\RedException $e) {
     die('Error in SQL query: ' . $e->getMessage());

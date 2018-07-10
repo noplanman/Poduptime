@@ -47,7 +47,7 @@ try {
         $pod_name       = htmlentities($pod['name'], ENT_QUOTES);
         $humanmonitored = Carbon::now()->subDays($pod['daysmonitored'])->diffForHumans(null, true);
         $tip            = "This {$pod['softwarename']} pod's uptime is {$pod['uptime_alltime']}% over {$humanmonitored}.";
-        if ($_COOKIE["domain"] === $pod['domain']) {
+        if ($_COOKIE['domain'] ?? null === $pod['domain']) {
             echo '<tr><td class="bg-success"><div title="This is the last pod you visited from this site. ' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="text-body url" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></div></td>';
         } else {
             echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="text-success url" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></div></td>';

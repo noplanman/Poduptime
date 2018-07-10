@@ -59,7 +59,7 @@ try {
         $humanlastcheck = (new Carbon($pod['date_updated']))->diffForHumans();
         $humansslexpire = (new Carbon($pod['sslexpire']))->diffForHumans();
         $tip            = "\nOver the last {$humanmonitored} pod uptime was {$pod['uptime_alltime']}% and response time from Los Angeles was {$pod['latency']}ms, with a SSL cert that expires {$humansslexpire}. This pod was last checked {$humanlastcheck}";
-        if ($_COOKIE["domain"] === $pod['domain']) {
+        if ($_COOKIE['domain'] ?? null === $pod['domain']) {
             echo '<tr><td class="bg-success"><a title="This is the last pod you visited from this site. ' . $tip . '" class="text-body url" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></td>';
         } else {
             echo '<tr><td><a title="' . $tip . '" class="text-success url" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></td>';
