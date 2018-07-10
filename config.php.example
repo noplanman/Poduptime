@@ -32,11 +32,11 @@ $adminemail = '';
 //DNS server for dnssec testing. 1.1.1.1 tests the best
 $dnsserver = '';
 
-//CA for curl to use - full file path
+//CA for curl to use - full file path (pull.sh will update monthly to this directory as cacert.pem)
 $cafullpath = '';
 
 //Mapbox.com API key. https://www.mapbox.com/help/how-access-tokens-work/
 $mapboxkey = '';
 
-//GeoIp2 city database file in mmdb format - full file path
+//Geolite2-city database file in mmdb format - full file path (pull.sh will update monthly to this directory as GeoLite2-City.mmdb)
 $geoip2db = '';
