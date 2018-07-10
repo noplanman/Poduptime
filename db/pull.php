@@ -240,12 +240,12 @@ foreach ($pods as $pod) {
     _debug('Iplookupv6', $iplookupv6, true);
 
     $geo = $reader->city($ip);
-    $countryname = !empty($geo->country->name) ? iconv('UTF-8', 'UTF-8//IGNORE', $geo->country->name) : null;
-    $country     = !empty($geo->country->isoCode) ? iconv('UTF-8', 'UTF-8//IGNORE', $geo->country->isoCode) : null;
-    $city        = !empty($geo->city->name) ? iconv('UTF-8', 'UTF-8//IGNORE', $geo->city->name) : null;
-    $state       = !empty($geo->mostSpecificSubdivision->name) ? iconv('UTF-8', 'UTF-8//IGNORE', $geo->mostSpecificSubdivision->name) : null;
-    $lat         = !empty($geo->location->latitude) ? $geo->location->latitude : 0;
-    $long        = !empty($geo->location->longitude) ? $geo->location->longitude : 0;
+    $countryname = $geo->country->name ?? null ?: 0;
+    $country     = $geo->country->isoCode ?? null ?: 0;
+    $city        = $geo->city->name ?? null ?: 0;
+    $state       = $geo->mostSpecificSubdivision->name ?? null ?: 0;
+    $lat         = $geo->location->latitude ?? null ?: 0;
+    $long        = $geo->location->longitude ?? null ?: 0;
 
     _debug('Location', json_encode($geo->raw), true);
 

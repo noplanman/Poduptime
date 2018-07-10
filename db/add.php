@@ -15,7 +15,7 @@ require_once __DIR__ . '/../config.php';
 define('PODUPTIME', microtime(true));
 
 $log = new Logging();
-$log->lfile(__DIR__ . '/../' . $log_dir . '/add.log');
+$log->lfile( $log_dir . '/add.log');
 if (!($_domain = $_GET['domain'] ?? null)) {
     $log->lwrite('no domain given');
     die('no pod domain given');

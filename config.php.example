@@ -5,10 +5,10 @@
 
 declare(strict_types=1);
 
-//backup directory - app directory path
+//backup directory - full dir path
 $backup_dir = '/backup';
 
-//log directory - app directory path
+//log directory - full dir path
 $log_dir = '/log';
 
 //location of pg dump - full dir path
@@ -32,11 +32,11 @@ $adminemail = '';
 //DNS server for dnssec testing. 1.1.1.1 tests the best
 $dnsserver = '';
 
-//CA for curl to use - full path
+//CA for curl to use - full file path
 $cafullpath = '';
 
 //Mapbox.com API key. https://www.mapbox.com/help/how-access-tokens-work/
 $mapboxkey = '';
 
-//GeoIp2 city database file in mmdb format - full path
+//GeoIp2 city database file in mmdb format - full file path
 $geoip2db = '';
