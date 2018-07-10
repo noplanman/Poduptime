@@ -46,13 +46,15 @@ if [ "$HOUR" = 23 ] || [ "$@" = "init" ]; then
   fi
   if [ "$DAY" = 23 ]  || [ "$@" = "init" ]; then
     printf "%s" "Updating CA..."
-    if curl -Lss https://curl.haxx.se/ca/cacert.pem -o ../cacert.pem; then
+    CACERT_FILE="$(php -r "include __DIR__ . '/../config.php'; echo \$cafullpath;")"
+    if curl -Lss https://curl.haxx.se/ca/cacert.pem -o "$CACERT_FILE"; then
       echo "$HAPPY"
     else
       echo "$SAD"
     fi
     printf "%s" "Updating GeoIP2 DB..."
-    if funzip <(curl -Lss http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz) > ../GeoLite2-City.mmdb; then
+    GEODB_FILE="$(php -r "include __DIR__ . '/../config.php'; echo \$geoip2db;")"
+    if funzip <(curl -Lss http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz) > "$GEODB_FILE"; then
       echo "$HAPPY"
     else
       echo "$SAD"
