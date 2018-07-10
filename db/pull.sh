@@ -46,13 +46,13 @@ if [ "$HOUR" = 23 ] || [ "$@" = "init" ]; then
   fi
   if [ "$DAY" = 23 ]  || [ "$@" = "init" ]; then
     printf "%s" "Updating CA..."
-    if wget -q https://curl.haxx.se/ca/cacert.pem -O ../cacert.pem; then
+    if curl -Lss https://curl.haxx.se/ca/cacert.pem -o ../cacert.pem; then
       echo "$HAPPY"
     else
       echo "$SAD"
     fi
     printf "%s" "Updating GeoIP2 DB..."
-    if wget -qO- http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz | gunzip -c > ../GeoLite2-City.mmdb; then
+    if funzip <(curl -Lss http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz) > ../GeoLite2-City.mmdb; then
       echo "$HAPPY"
     else
       echo "$SAD"
