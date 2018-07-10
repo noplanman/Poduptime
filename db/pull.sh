@@ -4,8 +4,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
 FLAG_FILE="/tmp/poduptime.pulling"
-HOUR=`date +%H`
-DAY=`date +%d`
+HOUR=$(date +%H)
+DAY=$(date +%d)
 HAPPY=" :-)"
 SAD=" :-("
 
