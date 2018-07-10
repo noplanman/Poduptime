@@ -6,10 +6,10 @@
 declare(strict_types=1);
 
 //backup directory - full dir path
-$backup_dir = '/backup';
+$backup_dir = __DIR__ . '/backup';
 
 //log directory - full dir path
-$log_dir = '/log';
+$log_dir = __DIR__ . '/log';
 
 //location of pg dump - full dir path
 $pg_dump_dir = '/usr/bin';

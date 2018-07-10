@@ -52,7 +52,7 @@ if [ "$HOUR" = 23 ] || [ "$@" = "init" ]; then
       echo "$SAD"
     fi
     printf "%s" "Updating GeoIP2 DB..."
-    if funzip <(curl -L http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz) > ../GeoLite2-City.mmdb; then
+    if wget -qO- http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz | gunzip -c > ../GeoLite2-City.mmdb; then
       echo "$HAPPY"
     else
       echo "$SAD"

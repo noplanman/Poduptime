@@ -240,10 +240,10 @@ foreach ($pods as $pod) {
     _debug('Iplookupv6', $iplookupv6, true);
 
     $geo = $reader->city($ip);
-    $countryname = $geo->country->name ?? null ?: 0;
-    $country     = $geo->country->isoCode ?? null ?: 0;
-    $city        = $geo->city->name ?? null ?: 0;
-    $state       = $geo->mostSpecificSubdivision->name ?? null ?: 0;
+    $countryname = $geo->country->name ?? null ?: null;
+    $country     = $geo->country->isoCode ?? null ?: null;
+    $city        = $geo->city->name ?? null ?: null;
+    $state       = $geo->mostSpecificSubdivision->name ?? null ?: null;
     $lat         = $geo->location->latitude ?? null ?: 0;
     $long        = $geo->location->longitude ?? null ?: 0;
 
