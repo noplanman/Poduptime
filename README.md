@@ -34,6 +34,7 @@ psql -U podupuser podupdb < db/tables.sql
 
 Edit `config.php` to add your DB and file settings.
 touch add.log in location you configured in config.php
+start your first run with `db/pull.sh init`
 
 run `db/pull.sh` manually or with cron to update your data
 run `db/pull.sh debug` to debug output

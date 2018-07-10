@@ -15,6 +15,7 @@
 * Use the git API for release versions, check development releases on pods https://github.com/diasporg/Poduptime/issues/143
 * Forbid access to files that should be cli only https://github.com/diasporg/Poduptime/issues/152
 * Move from bower to yarn for packages
+* NOTE config.php.examples change to full paths for 2 items!
 
 ## End Users
 * Show version and update in full view cleaner https://github.com/diasporg/Poduptime/issues/143
