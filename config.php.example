@@ -1,9 +1,8 @@
 <?php
+
 /**
  * Config for Poduptime.
  */
-
-declare(strict_types=1);
 
 //backup directory - full dir path
 $backup_dir = __DIR__ . '/backup';

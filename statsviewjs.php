@@ -43,7 +43,7 @@ try {
 ?>
 <script>
     /**
-     * Add a new chart for the passed data.
+     * Add a new pie chart for the passed data.
      *
      * @param id   HTML element ID to place the chart.
      * @param data Data to display on the chart.
@@ -66,14 +66,19 @@ try {
         });
     }
 
+    /**
+     * Add a new line chart for the passed data.
+     *
+     * @param id   HTML element ID to place the chart.
+     * @param data Data to display on the chart.
+     */
     function addLineChart(id, data) {
         new Chart(document.getElementById(id), {
             type: "line",
             data: {
                 labels: <?php echo json_encode(array_column($check_totals, 'yymm')); ?>,
                 datasets: [{
-                    // @todo: Use 'data' parameter here instead of doubling PHP code execution.
-                    data: <?php echo json_encode(array_column($check_totals, 'users')); ?>,
+                    data: data,
                     label: 'Users',
                     fill: false,
                     borderColor: "#2ecc71",

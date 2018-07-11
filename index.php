@@ -29,6 +29,8 @@ $statsview    = isset($_GET['statsview']);
 $podmin       = isset($_GET['podmin']);
 $podminedit   = isset($_GET['podminedit']);
 $edit         = isset($_GET['edit']);
+$add          = isset($_GET['add']);
+$gettoken     = isset($_GET['gettoken']);
 $simpleview   = !($detailedview || $mapview || $podmin || $podminedit || $statsview);
 ?>
 <!doctype html>
@@ -40,7 +42,7 @@ $simpleview   = !($detailedview || $mapview || $podmin || $podminedit || $statsv
     <meta name="description" content="Diaspora Pod Live Status. Find a Diaspora pod to sign up for, rate pods, find one close to you!"/>
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/poduptime.css"/>
-    <link rel="stylesheet" href="bower_components/facebox/src/facebox.css"/>
+    <link rel="stylesheet" href="node_modules/featherlight/release/featherlight.min.css"/>
     <link rel="stylesheet" href="node_modules/tablesorter/dist/css/theme.bootstrap_4.min.css"/>
     <meta property="og:url" content="https://<?php echo $_SERVER['HTTP_HOST'] ?>"/>
     <meta property="og:title" content="Social Network Pod Finder"/>
@@ -122,8 +124,8 @@ $navs = [
 </header>
 <main role="main">
     <div class="main">
-        <a href="go.php" class="btn btn-sm btn-success">Confused? Auto pick a pod for you.</a>
-        <div class="row placeholders">
+        <a href="go.php" class="m-1 btn btn-sm btn-info">Confused? Auto pick a pod for you.</a>
+        <div class="row">
         </div>
         <?php
         if ($detailedview) {
@@ -138,24 +140,26 @@ $navs = [
             include_once __DIR__ . '/podminedit.php';
         } elseif ($edit) {
             include_once __DIR__ . '/db/edit.php';
+        } elseif ($add) {
+            include_once __DIR__ . '/db/add.php';
+        } elseif ($gettoken) {
+            include_once __DIR__ . '/db/gettoken.php';
         } else {
             include_once __DIR__ . '/show.php';
         }
         ?>
     </div>
-    </div>
-    </div>
 </main>
-<br>
-<footer class="bd-footer text-muted">
-    <small>Data refreshed: <?php echo Carbon::createFromTimestamp(filemtime($lastfile))->diffForHumans(); ?></small>
+<footer class="ml-2 text-muted">
+    <small>Data refreshed <?php echo Carbon::createFromTimestamp(filemtime($lastfile))->diffForHumans(); ?></small>
 </footer>
 <script src="node_modules/jquery/dist/jquery.min.js"></script>
 <script src="node_modules/tablesorter/dist/js/jquery.tablesorter.combined.min.js"></script>
 <script src="node_modules/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js"></script>
 <script src="js/podup.js"></script>
 <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="bower_components/facebox/src/facebox.js"></script>
+<script src="node_modules/popper.js/dist/popper.js"></script>
+<script src="node_modules/featherlight/release/featherlight.min.js"></script>
 <script src="node_modules/chart.js/dist/Chart.min.js"></script>
 <?php $statsview && include_once __DIR__ . '/statsviewjs.php'; ?>
 </body>

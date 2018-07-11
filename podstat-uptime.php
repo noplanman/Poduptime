@@ -25,11 +25,8 @@ $sql = "
     SELECT
         to_char(date_checked, 'yyyy MM') AS yymm,
         count(*) AS total_checks,
-        round(avg(total_users)) AS users,
         round(avg(online::INT),2)*100 AS uptime,
-        round(avg(latency),2) * 1000 AS latency,
-        round(avg(local_posts)) AS local_posts,
-        round(avg(comment_counts)) AS comment_counts
+        round(avg(latency),2) * 1000 AS latency
     FROM checks
     WHERE domain = ?
     GROUP BY yymm
@@ -43,8 +40,9 @@ try {
     die('Error in SQL query: ' . $e->getMessage());
 }
 ?>
-<canvas id="pod_chart_responses"></canvas>
-<canvas id="pod_chart_counts"></canvas>
+<div class="chart-container mb-6 p-1" style="height:400px; width:700px">
+    <canvas id="pod_chart_responses"></canvas>
+</div>
 <script>
     /**
      * Add a new chart for the passed data.
@@ -68,7 +66,7 @@ try {
             }, {
                 data: <?php echo json_encode(array_column($totals, 'latency')); ?>,
                 label: 'Latency ms',
-                fill: true,
+                fill: false,
                 yAxisID: "r1",
                 borderColor: "#a93226",
                 backgroundColor: "#a93226",
@@ -97,50 +95,6 @@ try {
                         max: 500,
                         stepSize: 50
                     }
-                }]
-            }
-        }
-    });
-    new Chart(document.getElementById('pod_chart_counts'), {
-        type: "line",
-        data: {
-            labels: <?php echo json_encode(array_column($totals, 'yymm')); ?>,
-            datasets: [{
-                data: <?php echo json_encode(array_column($totals, 'users')); ?>,
-                label: 'Users',
-                fill: false,
-                yAxisID: "l2",
-                borderColor: "#e67e22",
-                backgroundColor: "#e67e22",
-                borderWidth: 4,
-                pointHoverRadius: 6
-            }, {
-                data: <?php echo json_encode(array_column($totals, 'local_posts')); ?>,
-                label: 'Local Posts',
-                fill: false,
-                yAxisID: "l2",
-                borderColor: "#2980b9",
-                backgroundColor: "#2980b9",
-                borderWidth: 4,
-                pointHoverRadius: 6
-            }, {
-                data: <?php echo json_encode(array_column($totals, 'comment_counts')); ?>,
-                label: 'Comments',
-                fill: false,
-                yAxisID: "l2",
-                borderColor: "#FFD700",
-                backgroundColor: "#FFD700",
-                borderWidth: 4,
-                pointHoverRadius: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            scales: {
-                yAxes: [{
-                    position: "left",
-                    "id": "l2"
                 }]
             }
         }

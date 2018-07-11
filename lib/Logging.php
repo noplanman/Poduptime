@@ -17,7 +17,7 @@ namespace Poduptime;
 
 class Logging
 {
-    private $fp;
+    private $handle;
     private $log_file;
 
     public function lfile($path): void
@@ -27,17 +27,17 @@ class Logging
 
     public function lwrite($message): void
     {
-        if (!\is_resource($this->fp)) {
+        if (!\is_resource($this->handle)) {
             $this->lopen();
         }
         $script_name = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
         $time        = @date('[d/M/Y:H:i:s]');
-        fwrite($this->fp, "$time ($script_name) $message" . PHP_EOL);
+        fwrite($this->handle, "$time ($script_name) $message" . PHP_EOL);
     }
 
     public function lclose(): void
     {
-        fclose($this->fp);
+        fclose($this->handle);
     }
 
     private function lopen(): void
@@ -47,6 +47,6 @@ class Logging
             $log_file_default = 'c:/php/logfile.txt';
         }
         $lfile = $this->log_file ?: $log_file_default;
-        $this->fp = fopen($lfile, 'ab') or exit("Can't open {$lfile}!");
+        $this->handle = fopen($lfile, 'ab') or exit("Can't open {$lfile}!");
     }
 }

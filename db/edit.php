@@ -6,6 +6,7 @@
 
 declare(strict_types=1);
 
+use Carbon\Carbon;
 use Poduptime\PodStatus;
 use RedBeanPHP\R;
 
@@ -94,54 +95,36 @@ if ('save' === $_action) {
 // Forms.
 
 ?>
-    Authorized to edit <b><?php echo $_domain; ?></b> until <?php echo $pod['tokenexpire']; ?><br>
-    <form>
-        <input type="hidden" name="edit">
-        <input type="hidden" name="domain" value="<?php echo $_domain; ?>">
-        <input type="hidden" name="token" value="<?php echo $_token; ?>">
-        <label>Email <input type="text" size="40" name="email" value="<?php echo $pod['email']; ?>"></label><br>
-        <label>Podmin Statement (You can use HTML to include links to your terms and policies and information about your pod you wish to share with users.) <br><textarea cols="150" rows="10" name="podmin_statement"><?php echo $pod['podmin_statement']; ?></textarea></label><br>
-        <label>Weight <input type="text" size="2" name="weight" value="<?php echo $pod['weight']; ?>"> This lets you weight your pod lower on the list if you have too much traffic coming in, 10 is the norm use lower to move down the list.</label><br>
-        <label>Notify if pod falls to hidden status? <input type="checkbox" name="podmin_notify" <?php echo $pod['podmin_notify'] ? 'checked' : ''; ?> ></label><br>
-        <input type="submit" name="action" value="save">
-    </form>
-    <br>
-    <br>Your pod status is currently: <?php echo PodStatus::getKey((int) $pod['status']); ?>
-    <br>
-    <form>
-        <input type="hidden" name="edit">
-        <input type="hidden" name="domain" value="<?php echo $_domain; ?>">
-        <input type="hidden" name="token" value="<?php echo $_token; ?>">
-        <input type="submit" name="action" value="delete">
-    </form>
-    <form>
-        <input type="hidden" name="edit">
-        <input type="hidden" name="domain" value="<?php echo $_domain; ?>">
-        <input type="hidden" name="token" value="<?php echo $_token; ?>">
-        <input type="submit" name="action" value="pause">
-    </form>
-    <form>
-        <input type="hidden" name="edit">
-        <input type="hidden" name="domain" value="<?php echo $_domain; ?>">
-        <input type="hidden" name="token" value="<?php echo $_token; ?>">
-        <input type="submit" name="action" value="unpause">
-    </form>
-    <button type="button" class="openBtn" value="<?php echo $_domain; ?>">Do a debug test pull of your pod</button>
-
-    <!-- Modal -->
-    <div class="modal fade" id="podpull" role="dialog">
-        <div class="modal-dialog modal-xlg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Pod debug data</h4>
-                </div>
-                <div class="modal-body">
-                    Loading.....
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+Authorized to edit <b><?php echo $_domain; ?></b> for <?php echo (new Carbon($pod['tokenexpire']))->diffForHumans(null, true); ?><br>
+<form>
+    <input type="hidden" name="edit">
+    <input type="hidden" name="domain" value="<?php echo $_domain; ?>">
+    <input type="hidden" name="token" value="<?php echo $_token; ?>">
+    <label>Email <input type="text" size="40" name="email" value="<?php echo $pod['email']; ?>"></label><br>
+    <label>Podmin Statement (You can use HTML to include links to your terms and policies and information about your pod you wish to share with users.) <br><textarea cols="150" rows="10" name="podmin_statement"><?php echo $pod['podmin_statement']; ?></textarea></label><br>
+    <label>Weight <input type="text" size="2" name="weight" value="<?php echo $pod['weight']; ?>"> This lets you weight your pod lower on the list if you have too much traffic coming in, 10 is the norm use lower to move down the list.</label><br>
+    <label>Notify if pod falls off the list? <input type="checkbox" name="podmin_notify" <?php echo $pod['podmin_notify'] ? 'checked' : ''; ?> ></label><br>
+    <input type="submit" name="action" value="save">
+</form>
+<br>
+<br>Your pod status is currently: <?php echo PodStatus::getKey((int) $pod['status']); ?>
+<br>
+<form>
+    <input type="hidden" name="edit">
+    <input type="hidden" name="domain" value="<?php echo $_domain; ?>">
+    <input type="hidden" name="token" value="<?php echo $_token; ?>">
+    <input type="submit" name="action" value="delete">
+</form>
+<form>
+    <input type="hidden" name="edit">
+    <input type="hidden" name="domain" value="<?php echo $_domain; ?>">
+    <input type="hidden" name="token" value="<?php echo $_token; ?>">
+    <input type="submit" name="action" value="pause">
+</form>
+<form>
+    <input type="hidden" name="edit">
+    <input type="hidden" name="domain" value="<?php echo $_domain; ?>">
+    <input type="hidden" name="token" value="<?php echo $_token; ?>">
+    <input type="submit" name="action" value="unpause">
+</form>
+<button type="button" data-featherlight="/db/pull.php?debug=1&nowrite=1&domain=<?php echo $_domain; ?>">Do a debug test pull of your pod</button>

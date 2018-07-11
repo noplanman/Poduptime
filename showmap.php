@@ -17,9 +17,8 @@ try {
     $pods = R::getAll("
         SELECT domain, signup, name, lat, long, softwarename, uptime_alltime, active_users_halfyear, service_facebook, service_twitter, service_tumblr, service_wordpress, service_xmpp
         FROM pods
-        WHERE NOT hidden
+        WHERE long != ''
             AND lat != ''
-            AND long != ''
             AND status < ?
     ", [PodStatus::RECHECK]);
 } catch (\RedBeanPHP\RedException $e) {
@@ -59,7 +58,7 @@ foreach ($csv as $cords) {
                 $pod['service_wordpress'] && $feat .= '<div class="smlogo smlogo-wordpress" title="Publish to WordPress"></div>';
                 $pod['service_xmpp'] && $feat .= '<div class="smlogo smlogo-xmpp"><img src="/images/icon-xmpp.png" width="16" height="16" title="XMPP chat server" alt="XMPP chat server"></div>';
 
-                $pod_name = htmlentities($pod['name'], ENT_QUOTES);
+                $pod_name = htmlentities($pod['name'] ?? '', ENT_QUOTES);
                 $signup   = $pod['signup'] ? 'yes' : 'no';
                 echo <<<EOF
 {

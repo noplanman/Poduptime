@@ -1,27 +1,3 @@
-.sub-header {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-
-.sidebar {
-    background-color: #fff;
-    border-right: 1px solid #eee;
-    display: block;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    padding: 10px;
-    position: fixed;
-    top: 56px;
-}
-
-.sidebar .nav {
-    margin-bottom: 20px;
-}
-
-.sidebar .nav .nav-link {
-    padding: .3em .7em;
-}
-
 .main {
     padding: 20px;
 }
@@ -42,10 +18,6 @@
 .placeholder img {
     border-radius: 50%;
     display: inline-block;
-}
-
-.rating {
-    font-size: 9px;
 }
 
 .tfont {
@@ -94,24 +66,12 @@
     background-color: blue;
     text-align: left;
     font-size: 17px;
-    background: url('/bower_components/leaflet/dist/images/marker-icon-2x.png') repeat-y right bottom;
+    background: url('/node_modules/leaflet/dist/images/marker-icon-2x.png') repeat-y right bottom;
     background-size: 25px 37px;
 }
 
 .icon {
     color: red;
-}
-
-table {
-    empty-cells: show;
-}
-
-#facebox {
-    z-index: 1000 !important;
-}
-
-#facebox .content {
-    width: 800px !important;
 }
 
 .tablesorter-pager .btn-group-sm .btn {
@@ -178,7 +138,7 @@ table {
     display: inline-block;
     color: black;
     float: left;
-    padding: 8px 16px;
+    padding: 2px 8px;
     margin: 0 4px;
     text-decoration: none;
     transition: background-color .3s;
@@ -194,7 +154,7 @@ table {
     display: inline-block;
     color: black;
     float: left;
-    padding: 8px 16px !important;
+    padding: 2px 8px !important;
     margin: 0 4px;
     text-decoration: none;
     transition: background-color .3s;
@@ -206,6 +166,33 @@ table {
     background-size: 10px 15px !important;
 }
 
-.modal-xlg {
-    max-width: 92%;
+.loadingtable {
+    visibility: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+.featherlight-close-icon {
+    font-size: 30px;
+}
+
+.featherlight-loading .featherlight-content {
+    -webkit-animation: featherlightLoader 1s infinite linear;
+    animation: featherlightLoader 1s infinite linear;
+    background: transparent;
+    border: 8px solid #8f8f8f;
+    border-left-color: #fff;
+    border-radius: 80px;
+    width: 80px;
+    height: 80px;
+    min-width: 0;
+}
+
+.featherlight-loading .featherlight-content > * {
+    display: none !important;
+}
+
+.featherlight-loading .featherlight-close,
+.featherlight-loading .featherlight-inner {
+    display: none;
 }

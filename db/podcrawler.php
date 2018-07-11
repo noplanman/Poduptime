@@ -58,5 +58,6 @@ if ($pods = json_decode(file_get_contents('https://diasp.org/pods.json'), true))
 
 $results = array_diff($foundpods, $existingpods);
 foreach ($results as $result) {
+    echo $result . ' ';
     echo exec("php-cgi add.php domain={$result}") . "\r\n";
 }

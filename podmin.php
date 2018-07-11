@@ -11,7 +11,7 @@ declare(strict_types=1);
 <br>
 Want your pod listed? Or to claim a listed pod?<br>
 <br>
-<form action="db/add.php" method="get">
+<form method="get">
     <div class="form-group row">
         <label for="domain-input" class="col-2 col-form-label">Pod Domain *</label>
         <div class="col-10">
@@ -41,12 +41,12 @@ Want your pod listed? Or to claim a listed pod?<br>
         <label class="custom-checkbox">
             <input type="checkbox" name="podmin_notify" class="_form-check-input" aria-describedby="notify-hidden-help" checked>
             <span class="custom-control-indicator"></span>
-            <span class="custom-control-description">Notify if pod falls to hidden status</span>
+            <span class="custom-control-description">Notify if pod falls off the list</span>
         </label>
-        <small id="notify-hidden-help" class="form-text text-muted">You will get a notification if the pod gets hidden due to a bad score.</small>
+        <small id="notify-hidden-help" class="form-text text-muted">You will get a notification if the pod falls off the list due to a bad score.</small>
     </div>
 
     <br>
-
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <input type="hidden" name="add">
+    <button type="submit" class="btn btn-primary" name="action" value="save">Submit</button>
 </form>

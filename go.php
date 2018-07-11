@@ -6,6 +6,7 @@
 
 declare(strict_types=1);
 
+use Carbon\Carbon;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use RedBeanPHP\R;
 
@@ -48,7 +49,8 @@ try {
     if (!(new CrawlerDetect())->isCrawler()) {
         R::store($c);
     }
-    setcookie("domain", $domain, Carbon::now()->addCentury()->timestamp);
+
+    setcookie('domain', $domain, Carbon::now()->addCentury()->timestamp);
     header('Location: https://' . $domain);
 } catch (\RedBeanPHP\RedException $e) {
     die('Error in SQL query: ' . $e->getMessage());

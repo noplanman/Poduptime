@@ -21,9 +21,9 @@ echo "pg backup of $pgdb made";
 $dirh = dir($backup_dir);
 while ($entry = $dirh->read()) {
     $old_file_time = (date('U') - $keep);
-    $file_created  = filectime( "$backup_dir/$entry");
+    $file_created  = filectime("$backup_dir/$entry");
     if ($file_created < $old_file_time && !is_dir($entry)) {
-        if (unlink( "$backup_dir/$entry")) {
+        if (unlink("$backup_dir/$entry")) {
             echo 'Cleaned up old backups';
         }
     }

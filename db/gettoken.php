@@ -9,20 +9,13 @@ declare(strict_types=1);
 use RedBeanPHP\R;
 
 // Required parameters.
-($_domain = $_POST['domain'] ?? null) || die('no pod domain given');
+($_domain = $_GET['domain'] ?? null) || die('no pod domain given');
 
 // Other parameters.
-$_email = $_POST['email'] ?? '';
+$_email = $_GET['email'] ?? '';
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../config.php';
-
-define('PODUPTIME', microtime(true));
-
-// Set up global DB connection.
-R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
-R::testConnection() || die('Error in DB connection');
-R::usePartialBeans(true);
 
 try {
     $pod = R::findOne('pods', 'domain = ?', [$_domain]);

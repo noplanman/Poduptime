@@ -47,7 +47,7 @@ EOF;
     foreach ($pods as $pod) {
         $summary = sprintf(
             'This pod %1$s has been watched for %2$s months and its average ping time is %3$s with uptime of %4$s%% this month and was last checked on %5$s. On a score of 100 this pod is a %6$s right now',
-            htmlentities($pod['name'], ENT_QUOTES),
+            htmlentities($pod['name'] ?? '', ENT_QUOTES),
             $pod['monthsmonitored'],
             $pod['responsetimelast7'],
             $pod['uptimelast7'],
@@ -128,14 +128,12 @@ function allToString(array $arr)
     $ret = $arr;
     foreach ($ret as &$item) {
         if (is_array($item)) {
-            /** @var array $item */
-            foreach ($item as &$field) {
-                $field !== null && $field = (string) $field;
-            }
-        } else {
-            $item !== null && $item = (string) $item;
+            $item = allToString($item);
+            continue;
         }
-        unset($field, $item);
+
+        $item !== null && $item = (string) $item;
+        unset($item);
     }
 
     return $ret;

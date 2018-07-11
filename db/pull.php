@@ -11,10 +11,10 @@ if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
     exit;
 }
 
+use GeoIp2\Database\Reader;
 use LanguageDetection\Language;
 use Poduptime\PodStatus;
 use RedBeanPHP\R;
-use GeoIp2\Database\Reader;
 
 $debug    = isset($_GET['debug']) || (isset($argv) && in_array('debug', $argv, true));
 $sqldebug = isset($_GET['sqldebug']) || (isset($argv) && in_array('sqldebug', $argv, true));
@@ -42,7 +42,7 @@ $reader = new Reader($geoip2db);
 
 try {
     $sql = '
-        SELECT domain, score, date_created, adminrating, weight, hidden, podmin_notify, email, masterversion, shortversion, status
+        SELECT domain, score, date_created, weight, podmin_notify, email, masterversion, shortversion, status
         FROM pods
     ';
 
@@ -65,9 +65,7 @@ foreach ($pods as $pod) {
     $domain    = $pod['domain'];
     $score     = (int) $pod['score'];
     $dateadded = $pod['date_created'];
-    $admindb   = (int) $pod['adminrating'];
     $weight    = $pod['weight'];
-    $hiddennow = $pod['hidden'];
     $email     = $pod['email'];
     $notify    = $pod['podmin_notify'];
     $masterv   = $pod['masterversion'];
@@ -76,8 +74,8 @@ foreach ($pods as $pod) {
 
     try {
         $ratings = R::getAll('
-            SELECT admin, rating
-            FROM rating_comments
+            SELECT rating
+            FROM ratingcomments
             WHERE domain = ?
         ', [$domain]);
     } catch (\RedBeanPHP\RedException $e) {
@@ -86,21 +84,12 @@ foreach ($pods as $pod) {
 
     _debug('Domain', $domain);
 
-    $user_ratings  = [];
-    $admin_ratings = [];
+    $user_ratings = [];
     foreach ($ratings as $rating) {
-        if ($rating['admin'] == 0) {
-            $user_ratings[] = $rating['rating'];
-        } elseif ($rating['admin'] == 1) {
-            $admin_ratings[] = $rating['rating'];
-        }
+        $admin_ratings[] = $rating['rating'];
     }
-    $user_rating  = empty($user_ratings) ? 0 : max(10, round(array_sum($user_ratings) / count($user_ratings), 2));
-    $admin_rating = empty($admin_ratings) ? 0 : max(10, round(array_sum($admin_ratings) / count($admin_ratings), 2));
 
-    if ($admindb == -1) {
-        $admin_rating = -1;
-    }
+    $user_rating = empty($user_ratings) ? 0 : round(array_sum($user_ratings) / count($user_ratings), 2);
 
     $d = new DOMDocument;
     libxml_use_internal_errors(true);
@@ -112,11 +101,14 @@ foreach ($pods as $pod) {
         _debug('Detected Language', $detectedlanguage);
     }
 
-    if ($infos = json_decode(file_get_contents('https://' . $domain . '/.well-known/nodeinfo'), true)) {
-        $link = max($infos['links'])['href'];
+    if ($infos = file_get_contents('https://' . $domain . '/.well-known/nodeinfo')) {
+        $info = json_decode($infos, true);
+        $link = max($info['links'])['href'];
     } else {
         $link = 'https://' . $domain . '/nodeinfo/1.0';
     }
+
+    _debug('Nodeinfo link', $link);
 
     $chss = curl_init();
     curl_setopt($chss, CURLOPT_URL, $link);
@@ -141,35 +133,34 @@ foreach ($pods as $pod) {
     _debug('NStime', $nstime);
     _debug('Latency', $latency);
 
-    $jsonssl = json_decode($outputssl);
-
-    $xdver = $jsonssl->software->version ?? 0;
-    preg_match_all('((?:\d(.|-)?)+(\.|-)\d+\.*)', $xdver, $dverr);
-    $shortversion          = $dverr[0][0];
-    $signup                = ($jsonssl->openRegistrations ?? false) === true;
-    $softwarename          = $jsonssl->software->name ?? 'unknown';
-    $name                  = $jsonssl->metadata->nodeName ?? $softwarename;
-    $total_users           = $jsonssl->usage->users->total ?? 0;
-    $active_users_halfyear = $jsonssl->usage->users->activeHalfyear ?? 0;
-    $active_users_monthly  = $jsonssl->usage->users->activeMonth ?? 0;
-    $local_posts           = $jsonssl->usage->localPosts ?? 0;
-    $comment_counts        = $jsonssl->usage->localComments ?? 0;
-    $service_xmpp          = ($jsonssl->metadata->xmppChat ?? false) === true;
-    $service_facebook      = false;
-    $service_twitter       = false;
-    $service_tumblr        = false;
-    $service_wordpress     = false;
-    if (json_last_error() === 0) {
-        (!$jsonssl->software->version) || $score += 1;
-        if (is_array($jsonssl->services->outbound)) {
-            $service_facebook  = in_array('facebook', $jsonssl->services->outbound, true);
-            $service_twitter   = in_array('twitter', $jsonssl->services->outbound, true);
-            $service_tumblr    = in_array('tumblr', $jsonssl->services->outbound, true);
-            $service_wordpress = in_array('wordpress', $jsonssl->services->outbound, true);
-        }
-    }
+    $jsonssl = ($outputssl ? json_decode($outputssl) : null);
 
     if ($jsonssl !== null) {
+        $xdver = $jsonssl->software->version ?? 0;
+        preg_match_all('((?:\d(.|-)?)+(\.|-)\d+\.*)', $xdver, $dverr);
+        $shortversion          = $dverr[0][0];
+        $signup                = ($jsonssl->openRegistrations ?? false) === true;
+        $softwarename          = $jsonssl->software->name ?? 'unknown';
+        $name                  = $jsonssl->metadata->nodeName ?? $softwarename;
+        $total_users           = $jsonssl->usage->users->total ?? 0;
+        $active_users_halfyear = $jsonssl->usage->users->activeHalfyear ?? 0;
+        $active_users_monthly  = $jsonssl->usage->users->activeMonth ?? 0;
+        $local_posts           = $jsonssl->usage->localPosts ?? 0;
+        $comment_counts        = $jsonssl->usage->localComments ?? 0;
+        $service_xmpp          = ($jsonssl->metadata->xmppChat ?? false) === true;
+        $service_facebook      = false;
+        $service_twitter       = false;
+        $service_tumblr        = false;
+        $service_wordpress     = false;
+        if (json_last_error() === 0) {
+            (!$jsonssl->software->version) || $score += 1;
+            if (is_array($jsonssl->services->outbound)) {
+                $service_facebook  = in_array('facebook', $jsonssl->services->outbound, true);
+                $service_twitter   = in_array('twitter', $jsonssl->services->outbound, true);
+                $service_tumblr    = in_array('tumblr', $jsonssl->services->outbound, true);
+                $service_wordpress = in_array('wordpress', $jsonssl->services->outbound, true);
+            }
+        }
 
         try {
             $c                   = R::dispense('checks');
@@ -235,11 +226,9 @@ foreach ($pods as $pod) {
     $ipv6       = (bool) preg_grep('/\s+IN\s+AAAA\s+.*/', $iplookupv6);
 
     _debug('IPv4', $ip);
-    _debug('Iplookupv4', $iplookupv4, true);
     _debug('IPv6', $ipv6);
-    _debug('Iplookupv6', $iplookupv6, true);
 
-    $geo = $reader->city($ip);
+    $geo         = $reader->city($ip);
     $countryname = $geo->country->name ?? null ?: null;
     $country     = $geo->country->isoCode ?? null ?: null;
     $city        = $geo->city->name ?? null ?: null;
@@ -279,13 +268,15 @@ foreach ($pods as $pod) {
         die('Error in SQL query: ' . $e->getMessage());
     }
 
-    $masterversion = $masterdata['version'];
+    $masterversion = ($masterdata['version'] ?? '0.0.0.0');
+    $devlastcommit = ($masterdata['devlastcommit'] ?? date('Y-m-d H:i:s'));
+    $releasedate   = ($masterdata['releasedate'] ?? date('Y-m-d H:i:s'));
     _debug('Masterversion', $masterversion);
     $masterversioncheck = explode('.', $masterversion);
-    $shortversioncheck  = explode('.', $shortversion);
+    $shortversioncheck  = (strpos($shortversion, '.') ? explode('.', $shortversion) : $shortversion);
+    //this is still off with a pod with v1 as total version. cant explode that, won't have a [0] or [1] later to use either
 
-    _debug('Days since master code release', date_diff((new DateTime($masterdata['releasedate'])), (new DateTime()))->format('%d'));
-
+    _debug('Days since master code release', date_diff(new DateTime($releasedate), new DateTime())->format('%d'));
 
     try {
         $lastpodupdates = R::getRow('SELECT DISTINCT ON (shortversion) shortversion, date_checked FROM checks WHERE domain = ? AND shortversion IS NOT NULL ORDER BY shortversion DESC LIMIT 1', [$domain]);
@@ -293,39 +284,38 @@ foreach ($pods as $pod) {
         die('Error in SQL query: ' . $e->getMessage());
     }
 
-    $devlastdays = $masterdata['devlastcommit'] ? date_diff((new DateTime($masterdata['devlastcommit'])), (new DateTime()))->format('%a') : 30;//tmp//if no dev branch then what?
-
+    $lastdatechecked = ($lastpodupdates['date_checked'] ?? date('Y-m-d H:i:s'));
+    $devlastdays     = $devlastcommit ? date_diff(new DateTime($devlastcommit), new DateTime())->format('%a') : 30;//tmp//if no dev branch then what?
 
     _debug('Dev git last commit was  ', $devlastdays);
+    $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($devlastcommit))->format('%a');
+
     if (strpos($xdver, 'dev') !== false || strpos($xdver, 'rc') !== false || $shortversioncheck > $masterversioncheck) {
-//tmp//if pod is on the development branch - see when you last updated your pod and when the last commit was made to dev branch - if the repo is active and your not updating every 120 days why are you on dev branch?
-        $updategap = date_diff((new DateTime($lastpodupdates['date_checked'])), (new DateTime($masterdata['devlastcommit'])))->format('%a');
+        //tmp//if pod is on the development branch - see when you last updated your pod and when the last commit was made to dev branch - if the repo is active and your not updating every 120 days why are you on dev branch?
+
         if ($updategap + $devlastdays > 130) {
             _debug('Outdated', 'Yes');
             $score -= 2;
         }
     } elseif (($masterversioncheck[1] - $shortversioncheck[1]) > 1) {
-///tmp/If pod is two versions off AND it's been more than 60 days since that release came out AND your on the master production branch
+        ///tmp/If pod is two versions off AND it's been more than 60 days since that release came out AND your on the master production branch
         _debug('Outdated', 'Yes');
         $score     -= 2;
-        $updategap = date_diff((new DateTime($lastpodupdates['date_checked'])), (new DateTime($masterdata['releasedate'])))->format('%a');
-    } elseif ($updategap - date_diff((new DateTime($masterdata['releasedate'])), (new DateTime()))->format('%a') > 90) {
+        $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($releasedate))->format('%a');
+    } elseif ($updategap - date_diff(new DateTime($releasedate), new DateTime())->format('%a') > 90) {
         _debug('Outdated', 'Yes');
         $score     -= 2;
-        $updategap = date_diff((new DateTime($lastpodupdates['date_checked'])), (new DateTime($masterdata['releasedate'])))->format('%a');
+        $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($releasedate))->format('%a');
     } else {
-        $updategap = date_diff((new DateTime($lastpodupdates['date_checked'])), (new DateTime($masterdata['releasedate'])))->format('%a');
+        $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($releasedate))->format('%a');
     }
     _debug('Pod code was updated after ', $updategap);
 
-    $hidden = $score <= 70;
-    _debug('Hidden', $hidden ? 'yes' : 'no');
-
-    if (!$hiddennow && $hidden && $notify && !(isset($argv) && in_array('develop', $argv, true))) {
+    if ($score < 70 && $notify && !(isset($argv) && in_array('develop', $argv, true))) {
         $to      = $email;
         $headers = ['From: ' . $adminemail, 'Bcc: ' . $adminemail];
         $subject = 'Monitoring notice from poduptime';
-        $message = 'Notice for ' . $domain . '. Your score fell to ' . $score . ' and your pod is now marked as hidden.';
+        $message = 'Notice for ' . $domain . '. Your score fell to ' . $score . ' and your pod is now not showing on the site.';
         @mail($to, $subject, $message, implode("\r\n", $headers));
         _debug('Mail Notice', 'sent to ' . $email);
     }
@@ -333,7 +323,7 @@ foreach ($pods as $pod) {
         $score = 100;
     } elseif ($score < 0) {
         $score = 0;
-        if ($masterv <> $shortv) {
+        if ($masterv !== $shortv) {
             $status = PodStatus::SYSTEM_DELETED;
         }
     }
@@ -343,8 +333,6 @@ foreach ($pods as $pod) {
 
     try {
         $p                     = R::findOne('pods', 'domain = ?', [$domain]);
-        $p['secure']           = true;
-        $p['hidden']           = $hidden;
         $p['ip']               = $ip;
         $p['ipv6']             = $ipv6;
         $p['daysmonitored']    = $days;
@@ -355,7 +343,6 @@ foreach ($pods as $pod) {
         $p['date_updated']     = date('Y-m-d H:i:s');
         $p['latency']          = $avglatency;
         $p['score']            = $score;
-        $p['adminrating']      = $admin_rating;
         $p['country']          = $country;
         $p['countryname']      = $countryname;
         $p['city']             = $city;
@@ -369,7 +356,7 @@ foreach ($pods as $pod) {
         $p['sslvalid']         = $outputsslerror;
         $p['dnssec']           = $dnssec;
         $p['sslexpire']        = $sslexpire;
-        if ($dbstatus == PodStatus::UP && $status == PodStatus::UP) {
+        if ($dbstatus === PodStatus::UP && $status === PodStatus::UP) {
             $p['shortversion']          = $shortversion;
             $p['signup']                = $signup;
             $p['total_users']           = $total_users;
@@ -389,7 +376,8 @@ foreach ($pods as $pod) {
         if ($write) {
             R::store($p);
         } else {
-            echo $p;
+            echo 'Data not saved, testing only';
+            echo $newline;
         }
     } catch (\RedBeanPHP\RedException $e) {
         die('Error in SQL query: ' . $e->getMessage());
@@ -416,12 +404,11 @@ function _debug($label, $var = null, $dump = false)
         return;
     }
 
+    $output = (string) $var;
     if ($dump || is_array($var)) {
         $output = print_r($var, true);
     } elseif (is_bool($var)) {
         $output = $var ? 'true' : 'false';
-    } else {
-        $output = (string) $var;
     }
 
     printf('%s: %s%s', $label, $output, $newline);

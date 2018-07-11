@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 ?>
 
-<form action="db/gettoken.php" method="post">
+<form method="get">
     <div class="form-group row">
         <label for="domain-input" class="col-2 col-form-label">Pod Domain *</label>
         <div class="col-10">
@@ -29,6 +29,6 @@ declare(strict_types=1);
     </div>
 
     <br>
-
+    <input type="hidden" name="gettoken">
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>

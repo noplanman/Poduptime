@@ -22,18 +22,6 @@ R::usePartialBeans(true);
 ?>
 <html>
 <head>
-    <style type="text/css">
-        #slider {
-            margin: 10px;
-            width: 250px;
-            display: inline-block;
-        }
-
-        #rating {
-            height: 35px;
-            width: 35px;
-        }
-    </style>
     <script>
         $(document).ready(function () {
             $('#addrating').click(function () {
@@ -57,13 +45,6 @@ R::usePartialBeans(true);
                     }
                 });
             });
-
-            $('#slider').slider({
-                animate: true, max: 10, min: 1, step: 1, value: 5, stop: function (event, ui) {
-                    var value = $('#slider').slider('option', 'value');
-                    $('#rating').prop('value', value)
-                }
-            });
         });
     </script>
 </head>
@@ -82,13 +63,8 @@ R::usePartialBeans(true);
         echo '<b>This pod has no rating yet!</b>';
     } else {
         foreach ($ratings as $rating) {
-            if ($rating['admin'] === '1') {
-                echo 'Poduptime Approved Comment - User: <b>' . $rating['username'] . '</b> Url: <a href="' . $rating['userurl'] . '">' . $rating['userurl'] . '</a> Rating: <b>' . $rating['rating'] . '</b> <br>';
-                echo '<i>' . $rating['comment'] . '</i><span class="label" title="id: ' . $rating['id'] . '" style="float:right;margin-right:115px;">' . $rating['date_created'] . '</span><hr>';
-            } else {
-                echo '<div class="m-1 rounded bg-light"><div class="row"><div class="col-10">Comment from: <b>' . $rating['username'] . '</b></div> <div class="col">Rating: ' . $rating['rating'] . '</div></div>';
-                echo '<div class="row"><div class="col-10"><i>' . $rating['comment'] . '</i></div><div="col" title="id: ' . $rating['id'] . '">' . date('Y-m-d', strtotime($rating['date_created'])) . '</div></div>';
-            }
+            echo '<div class="m-1 rounded bg-light"><div class="row"><div class="col-10">Comment from: <b>' . $rating['username'] . '</b></div> <div class="col">Rating: ' . $rating['rating'] . '</div></div>';
+            echo '<div class="row"><div class="col-10"><i>' . $rating['comment'] . '</i></div><div="col" title="id: ' . $rating['id'] . '">' . date('Y-m-d', strtotime($rating['date_created'])) . '</div></div>';
         }
     }
     ?>
@@ -98,9 +74,7 @@ R::usePartialBeans(true);
     Would you like to add a comment?<br>
     <label>Your Name:<br><input id="username" name="username"></label><br>
     <label>Comment:<br><textarea id="comment" name="comment"></textarea></label><br>
-    Rating (1-10 scale, 10 high)<br>
-    <div id="slider"></div>
-    <input class="disabled" disabled="" id="rating" name="rating" value=""><br>
+    <label>Rating (1-10 scale, 10 high):<br><input id="rating" name="rating" type="number" min="1" max="10" step="1"></label><br>
     <input class="btn primary" id="submitrating" type="submit" value="Submit your Rating">
     <div class="alert-message warning" id="error" style="display:none">
         <span id="errortext">Some Error</span>

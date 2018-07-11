@@ -12,10 +12,17 @@ use RedBeanPHP\R;
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../config.php';
 
-define('PODUPTIME', microtime(true));
+if (PHP_SAPI === 'cli' || PHP_SAPI === 'cgi-fcgi') {
+    define('PODUPTIME', microtime(true));
+
+    // Set up global DB connection.
+    R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
+    R::testConnection() || die('Error in DB connection');
+    R::usePartialBeans(true);
+}
 
 $log = new Logging();
-$log->lfile( $log_dir . '/add.log');
+$log->lfile($log_dir . '/add.log');
 if (!($_domain = $_GET['domain'] ?? null)) {
     $log->lwrite('no domain given');
     die('no pod domain given');
@@ -30,11 +37,6 @@ $_domain = strtolower($_domain);
 if (!filter_var(gethostbyname($_domain), FILTER_VALIDATE_IP)) {
     die('Could not validate the domain name, be sure to enter it as "domain.com" (no caps, no slashes, no extras)');
 }
-
-// Set up global DB connection.
-R::setup("pgsql:host={$pghost};dbname={$pgdb}", $pguser, $pgpass, true);
-R::testConnection() || die('Error in DB connection');
-R::usePartialBeans(true);
 
 try {
     $pods = R::getAll('
@@ -53,23 +55,28 @@ foreach ($pods as $pod) {
         }
 
         $digtxt = exec(escapeshellcmd('dig ' . $_domain . ' TXT +short'));
-        if (strpos($digtxt, $pod['publickey']) !== false) {
-            echo 'domain validated, you can now add details ';
-            $uuid   = md5(uniqid($_domain, true));
-            $expire = time() + 2700;
+        if (strpos($digtxt, $pod['publickey']) === false) {
+            $log->lwrite('domain already exists and can be registered' . $_domain);
+            die('domain already exists, you can claim the domain by adding a DNS TXT record that states<br><b> ' . $_domain . ' IN TXT "' . $pod['publickey'] . '"</b>');
+        }
 
-            try {
-                $p                = R::load('pods', $pod['id']);
-                $p['token']       = $uuid;
-                $p['tokenexpire'] = date('Y-m-d H:i:s', $expire);
+        echo 'domain validated, you can now add details ';
+        $uuid   = md5(uniqid($_domain, true));
+        $expire = time() + 2700;
 
-                R::store($p);
-            } catch (\RedBeanPHP\RedException $e) {
-                die('Error in SQL query: ' . $e->getMessage());
-            }
+        try {
+            $p                = R::load('pods', $pod['id']);
+            $p['token']       = $uuid;
+            $p['tokenexpire'] = date('Y-m-d H:i:s', $expire);
 
-            echo <<<EOF
-      <form action="/?edit" method="get">
+            R::store($p);
+        } catch (\RedBeanPHP\RedException $e) {
+            die('Error in SQL query: ' . $e->getMessage());
+        }
+
+        echo <<<EOF
+      <form method="get">
+      <input type="hidden" name="edit">
       <input type="hidden" name="domain" value="{$_domain}">
       <input type="hidden" name="token" value="{$uuid}">
       <label>Email <input type="text" size="20" name="email"></label><br>
@@ -79,18 +86,14 @@ foreach ($pods as $pod) {
       </form>
 EOF;
 
-            die;
-        } else {
-            $log->lwrite('domain already exists and can be registered' . $_domain);
-            die('domain already exists, you can claim the domain by adding a DNS TXT record that states<br><b> ' . $_domain . ' IN TXT "' . $pod['publickey'] . '"</b>');
-        }
+        die;
     }
 }
 
-if ($infos = json_decode(file_get_contents('https://' . $_domain . '/.well-known/nodeinfo'), true)) {
-    $link = max($infos['links'])['href'];
-} else {
-    $link = 'https://' . $_domain . '/.well-known/nodeinfo';
+$link = 'https://' . $_domain . '/nodeinfo/1.0';
+if ($infos = file_get_contents('https://' . $_domain . '/.well-known/nodeinfo')) {
+    $info = json_decode($infos, true);
+    $link = max($info['links'])['href'];
 }
 
 $chss = curl_init();
@@ -103,7 +106,7 @@ curl_setopt($chss, CURLOPT_NOBODY, 0);
 $outputssl = curl_exec($chss);
 curl_close($chss);
 
-if (stristr($outputssl, 'openRegistrations')) {
+if (stripos($outputssl, 'openRegistrations') !== false) {
     $log->lwrite('Your pod has ssl and is valid ' . $_domain);
     echo 'Your pod has ssl and is valid<br>';
 
