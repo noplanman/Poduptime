@@ -138,7 +138,7 @@ foreach ($pods as $pod) {
     if ($jsonssl !== null) {
         $xdver = $jsonssl->software->version ?? 0;
         preg_match_all('((?:\d(.|-)?)+(\.|-)\d+\.*)', $xdver, $dverr);
-        $shortversion          = $dverr[0][0];
+        $shortversion          = $dverr[0][0] ?? '0.0.0.0';
         $signup                = ($jsonssl->openRegistrations ?? false) === true;
         $softwarename          = $jsonssl->software->name ?? 'unknown';
         $name                  = $jsonssl->metadata->nodeName ?? $softwarename;
