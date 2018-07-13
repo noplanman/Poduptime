@@ -65,7 +65,7 @@
     height: 35px;
     text-align: left;
     font-size: 17px;
-    background: blue url('/node_modules/leaflet/dist/images/marker-icon-2x.png') repeat-y right bottom;
+    background: url('/node_modules/leaflet/dist/images/marker-icon-2x.png') repeat-y right bottom;
     background-size: 25px 37px;
 }
 
