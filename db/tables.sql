@@ -86,6 +86,7 @@ CREATE TABLE checks (
  local_posts int,
  comment_counts int,
  shortversion text,
+ version text,
  date_checked timestamp DEFAULT current_timestamp
 );
 

@@ -71,7 +71,7 @@ try {
             $tip            = "Over the last {$humanmonitored} pod uptime was {$pod['uptime_alltime']}% and response time from Los Angeles was {$pod['latency']}ms, with a SSL cert that expires {$humansslexpire}. This pod was last checked {$humanlastcheck}";
 
             if (($_COOKIE['domain'] ?? null) === $pod['domain']) {
-                echo '<tr><td class="bg-success"><a title="This is the last pod you visited from this site. ' . $tip . '" class="text-body url" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></td>';
+                echo '<tr><td class="bg-secondary"><a title="This is the last pod you visited from this site. ' . $tip . '" class="text-warning url" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></td>';
             } else {
                 echo '<tr><td><a title="' . $tip . '" class="text-success url" data-toggle="tooltip" data-placement="bottom" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></td>';
             }
@@ -96,17 +96,17 @@ try {
             echo '<td class="' . $classver . '"><div title="' . $pre . ' version: ' . $pod['shortversion'] . ' master version is: ' . ($pod['masterversion'] ?: 'unknown') . '" data-toggle="tooltip" data-placement="bottom">' . $version . '</div></td>';
 
             echo '<td>' . $pod['softwarename'] . '</td>';
-            echo '<td><a href="#" data-featherlight="podstat-uptime.php?domain=' . $pod['domain'] . '">' . ($pod['uptime_alltime'] > 0 ? $pod['uptime_alltime'] . '%' : '') . '</a></td>';
+            echo '<td><a href="#" data-featherlight-variant="table-responsive" data-featherlight="podstat-uptime.php?domain=' . $pod['domain'] . '">' . ($pod['uptime_alltime'] > 0 ? $pod['uptime_alltime'] . '%' : '') . '</a></td>';
             echo '<td>' . ($pod['ipv6'] ? 'Y' : 'N') . '</td>';
             echo '<td>' . ($pod['latency'] > 0 ? $pod['latency'] : '') . '</td>';
             echo '<td>' . ($pod['signup'] ? 'Y' : 'N') . '</td>';
-            echo '<td><a href="#" data-featherlight="podstat-counts.php?domain=' . $pod['domain'] . '">' . ($pod['total_users'] > 0 ? $pod['total_users'] : '') . '</a></td>';
+            echo '<td><a href="#" data-featherlight-variant="table-responsive" data-featherlight="podstat-counts.php?domain=' . $pod['domain'] . '">' . ($pod['total_users'] > 0 ? $pod['total_users'] : '') . '</a></td>';
             echo '<td>' . ($pod['active_users_halfyear'] > 0 ? $pod['active_users_halfyear'] : '') . '</td>';
             echo '<td>' . ($pod['active_users_monthly'] > 0 ? $pod['active_users_monthly'] : '') . '</td>';
             echo '<td>' . ($pod['local_posts'] > 0 ? $pod['local_posts'] : '') . '</td>';
             echo '<td>' . ($pod['comment_counts'] > 0 ? $pod['comment_counts'] : '') . '</td>';
             echo '<td><div title="This pod has been monitored ' . $humanmonitored . '" data-toggle="tooltip" data-placement="bottom">' . $pod['monthsmonitored'] . '</div></td>';
-            echo '<td><a href="#" data-featherlight="rate.php?domain=' . $pod['domain'] . '">' . $pod['userrating'] . '</a></td>';
+            echo '<td><a href="#" data-featherlight-variant="table-responsive" data-featherlight="rate.php?domain=' . $pod['domain'] . '">' . $pod['userrating'] . '</a></td>';
             echo '<td><div title="Pod Status is: ' . PodStatus::getKey((int) $pod['status']) . '" data-toggle="tooltip" data-placement="bottom">' . $pod['score'] . '</div></td>';
             echo '<td>' . ($pod['dnssec'] ? 'Y' : 'N') . '</td>';
             if ($country_code === $pod['country']) {
@@ -115,7 +115,7 @@ try {
                 echo '<td data-toggle="tooltip" data-placement="bottom" title="Country: ' . ($pod['countryname'] ?? 'n/a') . ' City: ' . ($pod['city'] ?? 'n/a') . ' State: ' . ($pod['state'] ?? 'n/a') . '">' . $pod['country'] . '</td>';
             }
             echo '<td>' . ($pod['detectedlanguage'] ?: '') . '</td>';
-            echo '<td>';
+            echo '<td class="text-truncate">';
             $pod['service_facebook'] && print '<div class="smlogo smlogo-facebook" title="Publish to Facebook"></div>';
             $pod['service_twitter'] && print '<div class="smlogo smlogo-twitter" title="Publish to Twitter"></div>';
             $pod['service_tumblr'] && print '<div class="smlogo smlogo-tumblr" title="Publish to Tumblr"></div>';

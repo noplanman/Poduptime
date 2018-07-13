@@ -25,7 +25,7 @@ if ! wget -q --spider --tries=2 --timeout=15 https://www.google.com; then
 fi
 echo "$HAPPY"
 
-if [ "$HOUR" = 23 ] || [ "$@" = 'init' ]; then
+if [ "$HOUR" = 23 ] || [ "$1" = 'init' ]; then
   printf "%s" "Pulling in master versions..."
   if php pull-masterversions.php; then
     echo "$HAPPY"
@@ -44,7 +44,7 @@ if [ "$HOUR" = 23 ] || [ "$@" = 'init' ]; then
   else
     echo "$SAD"
   fi
-  if [ "$DAY" = 23 ]  || [ "$@" = 'init' ]; then
+  if [ "$DAY" = 23 ]  || [ "$1" = 'init' ]; then
     printf "%s" "Updating CA..."
     CACERT_FILE="$(php -r "include __DIR__ . '/../config.php'; echo \$cafullpath;")"
     if curl -Lss https://curl.haxx.se/ca/cacert.pem -o "$CACERT_FILE"; then

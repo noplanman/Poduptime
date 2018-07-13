@@ -30,7 +30,7 @@ $softwares = [
     'pleroma'      => ['repo' => 'pleroma%2fpleroma', 'gitsite' => 'git.pleroma.social', 'gittype' => 'gitlab', 'devbranch' => 'develop'],
     'socialhome'   => ['repo' => 'jaywink/socialhome', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => ''],
     'social-relay' => ['repo' => 'jaywink/social-relay', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => ''],
-    'ganggo'       => ['repo' => 'ganggo/ganggo', 'gitsite' => 'api.github.com', 'gittype' => 'github', 'devbranch' => ''],
+    'ganggo'       => ['repo' => 'ganggo%2fganggo', 'gitsite' => 'git.feneas.org', 'gittype' => 'gitlab', 'devbranch' => ''],
 ];
 
 $opts = [

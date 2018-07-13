@@ -47,11 +47,11 @@ try {
             $humanmonitored = Carbon::now()->subDays($pod['daysmonitored'])->diffForHumans(null, true);
             $tip            = "This {$pod['softwarename']} pod's uptime is {$pod['uptime_alltime']}% over {$humanmonitored}.";
             if (($_COOKIE['domain'] ?? null) === $pod['domain']) {
-                echo '<tr><td class="bg-success"><div title="This is the last pod you visited from this site. ' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="text-body url" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></div></td>';
+                echo '<tr><td class="bg-secondary"><div title="This is the last pod you visited from this site. ' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="text-warning url" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></div></td>';
             } else {
                 echo '<tr><td><div title="' . $tip . '" data-toggle="tooltip" data-placement="bottom"><a class="text-success url" target="_self" href="/go.php?domain=' . $pod['domain'] . '">' . $pod['domain'] . '</a></div></td>';
             }
-            echo '<td><a href="#" data-featherlight="podstat-uptime.php?domain=' . $pod['domain'] . '">' . ($pod['uptime_alltime'] > 0 ? $pod['uptime_alltime'] . '%' : '') . '</a></td>';
+            echo '<td><a href="#" data-featherlight-variant="table-responsive" data-featherlight="podstat-uptime.php?domain=' . $pod['domain'] . '">' . ($pod['uptime_alltime'] > 0 ? $pod['uptime_alltime'] . '%' : '') . '</a></td>';
             if ($pod['active_users_halfyear'] > 0) {
                 echo '<td data-toggle="tooltip" data-placement="bottom" title="Active users six months: ' . $pod['active_users_halfyear'] . ', Active users one month: ' . $pod['active_users_monthly'] . '">' . $pod['active_users_halfyear'] . '</td>';
             } else {

@@ -25,8 +25,8 @@ R::usePartialBeans(true);
     <script>
         $(document).ready(function () {
             $('#addrating').click(function () {
+                $('.ratings').hide('fast');
                 $('#commentform').show('slow');
-                $('.ratings').hide('slow');
             });
             $('#submitrating').click(function () {
                 var domain = '<?php echo $_domain; ?>';
@@ -49,6 +49,16 @@ R::usePartialBeans(true);
     </script>
 </head>
 <body>
+<div id="commentform" class="container" style="display:none">
+    Would you like to add a comment?<br>
+    <label>Your Name:<br><input id="username" name="username"></label><br>
+    <label>Comment:<br><textarea id="comment" name="comment"></textarea></label><br>
+    <label>Rating (1-10 scale, 10 high):<br><input id="rating" name="rating" type="number" min="1" max="10" step="1"></label><br>
+    <input class="btn primary" id="submitrating" type="submit" value="Submit your Rating">
+    <div class="alert-message warning" id="error" style="display:none">
+        <span id="errortext">Some Error</span>
+    </div>
+</div>
 <div>
     <?php
 
@@ -58,27 +68,17 @@ R::usePartialBeans(true);
         die('Error in SQL query: ' . $e->getMessage());
     }
 
-    echo '<div class="container ratings"><div class="row"><div class="col col-10"><h3>Podupti.me ratings for ' . $_domain . ' pod</h3></div></div>';
+    echo '<div class="container ratings"><div class="row"><div class="col col-10"><b>Ratings for ' . $_domain . '</b></div></div>';
     if (empty($ratings)) {
         echo '<b>This pod has no rating yet!</b>';
     } else {
         foreach ($ratings as $rating) {
-            echo '<div class="m-1 rounded bg-light"><div class="row"><div class="col-10">Comment from: <b>' . $rating['username'] . '</b></div> <div class="col">Rating: ' . $rating['rating'] . '</div></div>';
-            echo '<div class="row"><div class="col-10"><i>' . $rating['comment'] . '</i></div><div="col" title="id: ' . $rating['id'] . '">' . date('Y-m-d', strtotime($rating['date_created'])) . '</div></div>';
+            echo '<div class="m-1 rounded"><div class="row  bg-secondary"><div class="col-10">Comment from: <b>' . $rating['username'] . '</b></div> <div class="col text-right">Rating: ' . $rating['rating'] . '</div></div>';
+            echo '<div class="row"><div class="col-10"><i>' . $rating['comment'] . '</i></div><div class="col text-muted text-right" title="id: ' . $rating['id'] . '">' . date('Y-m-d', strtotime($rating['date_created'])) . '</div></div></div>';
         }
     }
     ?>
     <input id="addrating" class="btn primary" type="submit" value="Add a Rating">
-</div>
-<div id="commentform" style="display:none">
-    Would you like to add a comment?<br>
-    <label>Your Name:<br><input id="username" name="username"></label><br>
-    <label>Comment:<br><textarea id="comment" name="comment"></textarea></label><br>
-    <label>Rating (1-10 scale, 10 high):<br><input id="rating" name="rating" type="number" min="1" max="10" step="1"></label><br>
-    <input class="btn primary" id="submitrating" type="submit" value="Submit your Rating">
-    <div class="alert-message warning" id="error" style="display:none">
-        <span id="errortext">Some Error</span>
-    </div>
 </div>
 </body>
 </html>

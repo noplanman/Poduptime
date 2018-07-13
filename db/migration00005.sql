@@ -5,3 +5,4 @@ UPDATE pods SET status=1 WHERE status IS NULL;
 ALTER TABLE pods ALTER status SET DEFAULT 1;
 ALTER TABLE rating_comments DROP COLUMN admin;
 ALTER TABLE rating_comments RENAME TO ratingcomments;
+ALTER TABLE checks ADD version text;

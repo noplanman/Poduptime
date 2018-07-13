@@ -6,9 +6,12 @@
 
 declare(strict_types=1);
 
-if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
-    header('HTTP/1.0 403 Forbidden');
-    exit;
+if (!in_array(PHP_SAPI, ['cgi-fcgi', 'cli'])) {
+    $referer = ($_SERVER['HTTP_REFERER'] ? parse_url($_SERVER['HTTP_REFERER'])['host'] : '');
+    if ($referer !== $_SERVER['SERVER_NAME']) {
+        header('HTTP/1.0 403 Forbidden');
+        exit;
+    }
 }
 
 use GeoIp2\Database\Reader;
@@ -37,10 +40,11 @@ $sqldebug && R::fancyDebug(true);
 R::testConnection() || die('Error in DB connection');
 R::usePartialBeans(true);
 
-// Setup GeoIP Database
-$reader = new Reader($geoip2db);
 
 try {
+    // Setup GeoIP Database
+    $reader = new Reader($geoip2db);
+
     $sql = '
         SELECT domain, score, date_created, weight, podmin_notify, email, masterversion, shortversion, status
         FROM pods
@@ -59,6 +63,8 @@ try {
     }
 } catch (\RedBeanPHP\RedException $e) {
     die('Error in SQL query: ' . $e->getMessage());
+} catch (\MaxMind\Db\Reader\InvalidDatabaseException $e) {
+    die('Invalid GeoIP database: ' . $e->getMessage());
 }
 
 foreach ($pods as $pod) {
@@ -84,28 +90,17 @@ foreach ($pods as $pod) {
 
     _debug('Domain', $domain);
 
-    $user_ratings = [];
-    foreach ($ratings as $rating) {
-        $admin_ratings[] = $rating['rating'];
+    $user_rating = 0;
+    if ($user_ratings = array_column($ratings, 'rating')) {
+        $user_rating = round(array_sum($user_ratings) / count($user_ratings), 2);
     }
 
-    $user_rating = empty($user_ratings) ? 0 : round(array_sum($user_ratings) / count($user_ratings), 2);
+    // Default link to fetch node info.
+    $link = "https://{$domain}/nodeinfo/1.0";
 
-    $d = new DOMDocument;
-    libxml_use_internal_errors(true);
-    $d->loadHTMLFile('https://' . $domain);
-    $body = $d->getElementsByTagName('body')->item(0);
-    if ($body->nodeValue) {
-        $ld               = new Language;
-        $detectedlanguage = strtoupper(key($ld->detect($body->nodeValue)->bestResults()->close()));
-        _debug('Detected Language', $detectedlanguage);
-    }
-
-    if ($infos = file_get_contents('https://' . $domain . '/.well-known/nodeinfo')) {
+    if (($infos = @file_get_contents("https://{$domain}/.well-known/nodeinfo")) !== false) {
         $info = json_decode($infos, true);
         $link = max($info['links'])['href'];
-    } else {
-        $link = 'https://' . $domain . '/nodeinfo/1.0';
     }
 
     _debug('Nodeinfo link', $link);
@@ -136,9 +131,9 @@ foreach ($pods as $pod) {
     $jsonssl = ($outputssl ? json_decode($outputssl) : null);
 
     if ($jsonssl !== null) {
-        $xdver = $jsonssl->software->version ?? 0;
-        preg_match_all('((?:\d(.|-)?)+(\.|-)\d+\.*)', $xdver, $dverr);
-        $shortversion          = $dverr[0][0] ?? '0.0.0.0';
+        $version               = $jsonssl->software->version ?? 0;
+        preg_match_all('((?:\d(.|-)?)+(\.)\d+\.*)', $version, $sversion);
+        $shortversion          = $sversion[0][0] ?? '0.0.0.0';
         $signup                = ($jsonssl->openRegistrations ?? false) === true;
         $softwarename          = $jsonssl->software->name ?? 'unknown';
         $name                  = $jsonssl->metadata->nodeName ?? $softwarename;
@@ -171,6 +166,7 @@ foreach ($pods as $pod) {
             $c['local_posts']    = $local_posts;
             $c['comment_counts'] = $comment_counts;
             $c['shortversion']   = $shortversion;
+            $c['version']        = $version;
             if ($write) {
                 R::store($c);
             } else {
@@ -180,10 +176,86 @@ foreach ($pods as $pod) {
             die('Error in SQL query: ' . $e->getMessage());
         }
 
+        _debug('Version code', $shortversion);
+
+        try {
+            $masterdata = R::getRow('
+                SELECT version, devlastcommit, releasedate
+                FROM masterversions
+                WHERE software = ?
+                ORDER BY id
+                DESC LIMIT 1
+            ', [$softwarename]);
+        } catch (\RedBeanPHP\RedException $e) {
+            die('Error in SQL query: ' . $e->getMessage());
+        }
+
+        $masterversion = ($masterdata['version'] ?? '0.0.0.0');
+        $devlastcommit = ($masterdata['devlastcommit'] ?? date('Y-m-d H:i:s'));
+        $releasedate   = ($masterdata['releasedate'] ?? date('Y-m-d H:i:s'));
+        _debug('Masterversion', $masterversion);
+        $masterversioncheck = explode('.', $masterversion);
+        $shortversioncheck  = (strpos($shortversion, '.') ? explode('.', $shortversion) : implode('.', ['0', preg_replace('/\D/', '', $shortversion), '0']));
+        //this is still off with a pod with v1 as total version. cant explode that, won't have a [0] or [1] later to use either
+
+        _debug('Days since master code release', date_diff(new DateTime($releasedate), new DateTime())->format('%d'));
+
+        try {
+            $lastpodupdates = R::getRow('
+                SELECT DISTINCT ON (shortversion, date_checked) shortversion, date_checked
+                FROM checks
+                WHERE domain = ?
+                    AND shortversion IS NOT NULL
+                ORDER BY shortversion DESC, date_checked
+                LIMIT 1
+            ', [$domain]);
+        } catch (\RedBeanPHP\RedException $e) {
+            die('Error in SQL query: ' . $e->getMessage());
+        }
+
+        $lastdatechecked = ($lastpodupdates['date_checked'] ?? date('Y-m-d H:i:s'));
+        $devlastdays     = $devlastcommit ? date_diff(new DateTime($devlastcommit), new DateTime())->format('%a') : 30;//tmp//if no dev branch then what?
+
+        _debug('Dev last commit was  ', $devlastdays);
+        $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($devlastcommit))->format('%a');
+
+        if (strpos($version, 'dev') !== false || strpos($version, 'rc') !== false || $shortversioncheck > $masterversioncheck) {
+            //tmp//if pod is on the development branch - see when you last updated your pod and when the last commit was made to dev branch - if the repo is active and your not updating every 120 days why are you on dev branch?
+
+            if ($updategap + $devlastdays > 400) {
+                _debug('Outdated', 'Yes');
+                $score -= 2;
+            }
+        } elseif (($masterversioncheck[1] - $shortversioncheck[1]) > 1) {
+            ///tmp/If pod is two versions off AND it's been more than 60 days since that release came out AND your on the master production branch
+            _debug('Outdated', 'Yes');
+            $score     -= 2;
+            $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($releasedate))->format('%a');
+        } elseif ($updategap - date_diff(new DateTime($releasedate), new DateTime())->format('%a') > 90) {
+            _debug('Outdated', 'Yes');
+            $score     -= 2;
+            $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($releasedate))->format('%a');
+        } else {
+            $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($releasedate))->format('%a');
+        }
+        _debug('Pod code was updated after ', $updategap);
+
+        $d = new DOMDocument;
+        libxml_use_internal_errors(true);
+        $d->loadHTMLFile('https://' . $domain);
+        $body = $d->getElementsByTagName('body')->item(0);
+        if ($body->nodeValue) {
+            $ld               = new Language;
+            $detectedlanguage = strtoupper(key($ld->detect($body->nodeValue)->bestResults()->close()));
+            _debug('Detected Language', $detectedlanguage);
+        } else {
+            $score -= 1;
+        }
+
         $status = PodStatus::UP;
     }
 
-    if (!$jsonssl) {
+    if (!$jsonssl && !$body) {
         _debug('Connection', 'Can not connect to pod');
 
         try {
@@ -205,7 +277,6 @@ foreach ($pods as $pod) {
         $status = PodStatus::DOWN;
     }
 
-    _debug('Version code', $shortversion);
     _debug('Signup Open', $signup);
 
     $dnsserver = !empty($dnsserver) ? $dnsserver : '1.1.1.1';
@@ -228,16 +299,17 @@ foreach ($pods as $pod) {
     _debug('IPv4', $ip);
     _debug('IPv6', $ipv6);
 
-    $geo         = $reader->city($ip);
-    $countryname = $geo->country->name ?? null ?: null;
-    $country     = $geo->country->isoCode ?? null ?: null;
-    $city        = $geo->city->name ?? null ?: null;
-    $state       = $geo->mostSpecificSubdivision->name ?? null ?: null;
-    $lat         = $geo->location->latitude ?? null ?: 0;
-    $long        = $geo->location->longitude ?? null ?: 0;
+    if ($ip) {
+        $geo         = $reader->city($ip);
+        $countryname = ($geo->country->name ?? null) ?: null;
+        $country     = ($geo->country->isoCode ?? null) ?: null;
+        $city        = ($geo->city->name ?? null) ?: null;
+        $state       = ($geo->mostSpecificSubdivision->name ?? null) ?: null;
+        $lat         = ($geo->location->latitude ?? null) ?: 0;
+        $long        = ($geo->location->longitude ?? null) ?: 0;
 
-    _debug('Location', json_encode($geo->raw), true);
-
+        _debug('Location', json_encode($geo->raw), true);
+    }
     echo $newline;
     $statslastdate = date('Y-m-d H:i:s');
 
@@ -261,55 +333,6 @@ foreach ($pods as $pod) {
     }
 
     _debug('Uptime', $uptime);
-
-    try {
-        $masterdata = R::getRow('SELECT version, devlastcommit, releasedate FROM masterversions WHERE software = ? ORDER BY id DESC LIMIT 1', [$softwarename]);
-    } catch (\RedBeanPHP\RedException $e) {
-        die('Error in SQL query: ' . $e->getMessage());
-    }
-
-    $masterversion = ($masterdata['version'] ?? '0.0.0.0');
-    $devlastcommit = ($masterdata['devlastcommit'] ?? date('Y-m-d H:i:s'));
-    $releasedate   = ($masterdata['releasedate'] ?? date('Y-m-d H:i:s'));
-    _debug('Masterversion', $masterversion);
-    $masterversioncheck = explode('.', $masterversion);
-    $shortversioncheck  = (strpos($shortversion, '.') ? explode('.', $shortversion) : $shortversion);
-    //this is still off with a pod with v1 as total version. cant explode that, won't have a [0] or [1] later to use either
-
-    _debug('Days since master code release', date_diff(new DateTime($releasedate), new DateTime())->format('%d'));
-
-    try {
-        $lastpodupdates = R::getRow('SELECT DISTINCT ON (shortversion) shortversion, date_checked FROM checks WHERE domain = ? AND shortversion IS NOT NULL ORDER BY shortversion DESC LIMIT 1', [$domain]);
-    } catch (\RedBeanPHP\RedException $e) {
-        die('Error in SQL query: ' . $e->getMessage());
-    }
-
-    $lastdatechecked = ($lastpodupdates['date_checked'] ?? date('Y-m-d H:i:s'));
-    $devlastdays     = $devlastcommit ? date_diff(new DateTime($devlastcommit), new DateTime())->format('%a') : 30;//tmp//if no dev branch then what?
-
-    _debug('Dev git last commit was  ', $devlastdays);
-    $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($devlastcommit))->format('%a');
-
-    if (strpos($xdver, 'dev') !== false || strpos($xdver, 'rc') !== false || $shortversioncheck > $masterversioncheck) {
-        //tmp//if pod is on the development branch - see when you last updated your pod and when the last commit was made to dev branch - if the repo is active and your not updating every 120 days why are you on dev branch?
-
-        if ($updategap + $devlastdays > 130) {
-            _debug('Outdated', 'Yes');
-            $score -= 2;
-        }
-    } elseif (($masterversioncheck[1] - $shortversioncheck[1]) > 1) {
-        ///tmp/If pod is two versions off AND it's been more than 60 days since that release came out AND your on the master production branch
-        _debug('Outdated', 'Yes');
-        $score     -= 2;
-        $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($releasedate))->format('%a');
-    } elseif ($updategap - date_diff(new DateTime($releasedate), new DateTime())->format('%a') > 90) {
-        _debug('Outdated', 'Yes');
-        $score     -= 2;
-        $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($releasedate))->format('%a');
-    } else {
-        $updategap = date_diff(new DateTime($lastdatechecked), new DateTime($releasedate))->format('%a');
-    }
-    _debug('Pod code was updated after ', $updategap);
 
     if ($score < 70 && $notify && !(isset($argv) && in_array('develop', $argv, true))) {
         $to      = $email;
@@ -356,7 +379,7 @@ foreach ($pods as $pod) {
         $p['sslvalid']         = $outputsslerror;
         $p['dnssec']           = $dnssec;
         $p['sslexpire']        = $sslexpire;
-        if ($dbstatus === PodStatus::UP && $status === PodStatus::UP) {
+        if ($dbstatus == PodStatus::UP && $status == PodStatus::UP) {
             $p['shortversion']          = $shortversion;
             $p['signup']                = $signup;
             $p['total_users']           = $total_users;
